@@ -1,187 +1,107 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import DemoTemplate from '../../components/DemoTemplate';
 
-export default function HomePage() {
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
+export default function BusinessDemo() {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
-  const templates = [
+  const services = [
     {
-      id: 1,
-      name: "עסק מקומי",
-      description: "תבנית מושלמת לעסקים מקומיים - חברות הייטק, שירותי יועצים ועוד",
-      image: "/templates/local-business.jpg",
-      category: "עסקי",
-      price: "₪2,500",
-      demoUrl: "/demos/business"
+      icon: "🌐",
+      title: "פיתוח אתרים מתקדמים",
+      description: "אתרים רספונסיביים עם טכנולוגיות החדישות ביותר",
+      price: "₪15,000 - ₪50,000",
+      features: ["React & Next.js", "עיצוב רספונסיבי", "אופטימיזציה לSEO", "מהירות טעינה מקסימלית"]
     },
     {
-      id: 2,
-      name: "מסעדה ובתי קפה",
-      description: "תבנית מותאמת למסעדות, בתי קפה ועסקי הגסטרונומיה",
-      image: "/templates/restaurant.jpg",
-      category: "מסחרי",
-      price: "₪2,800",
-      demoUrl: "#"
+      icon: "📱",
+      title: "אפליקציות מובייל",
+      description: "אפליקציות iOS ו-Android עם חוויית משתמש מעולה",
+      price: "₪25,000 - ₪80,000",
+      features: ["React Native", "עיצוב UI/UX", "אינטגרציות API", "פרסום ב-Store"]
     },
     {
-      id: 3,
-      name: "רופא/קליניקה",
-      description: "תבנית מקצועית לרופאים, מרפאות וקליניקות רפואיות",
-      image: "/templates/medical.jpg",
-      category: "מקצועי",
-      price: "₪3,000",
-      demoUrl: "#"
+      icon: "⚙️",
+      title: "מערכות ניהול",
+      description: "פתרונות ERP ו-CRM מותאמים אישית לעסק שלכם",
+      price: "₪30,000 - ₪100,000",
+      features: ["ניהול לקוחות", "מעקב מכירות", "דוחות מתקדמים", "אוטומציה"]
     },
     {
-      id: 4,
-      name: "חנות אונליין",
-      description: "תבנית מתקדמת לחנויות אונליין עם מערכת הזמנות",
-      image: "/templates/ecommerce.jpg",
-      category: "מסחרי",
-      price: "₪4,000",
-      demoUrl: "#"
+      icon: "🔒",
+      title: "אבטחת מידע",
+      description: "הגנה מלאה על המידע והמערכות הדיגיטליות",
+      price: "₪20,000 - ₪60,000",
+      features: ["הצפנת נתונים", "גיבוי אוטומטי", "ניטור איומים", "הדרכות צוות"]
+    },
+    {
+      icon: "💡",
+      title: "ייעוץ טכנולוגי",
+      description: "ייעוץ מקצועי להטמעת טכנולוגיות מתקדמות",
+      price: "₪500/שעה",
+      features: ["אבחון מערכות", "תכנון ארכיטקטורה", "אסטרטגיה דיגיטלית", "הדרכת צוותים"]
+    },
+    {
+      icon: "🛠️",
+      title: "תמיכה ותחזוקה",
+      description: "תמיכה טכנית 24/7 ותחזוקה שוטפת למערכות",
+      price: "₪2,000/חודש",
+      features: ["תמיכה 24/7", "עדכונים שוטפים", "מעקב ביצועים", "גיבויים יומיים"]
     }
   ];
 
-  const handleTemplateSelect = async (template) => {
-    setSelectedTemplate(template);
-    
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/templates/select`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          templateId: template.id,
-          templateName: template.name,
-          price: template.price
-        }),
-      });
-
-      const data = await response.json();
-      console.log('Template selected:', data);
-      
-      // הצגת הודעת הצלחה
-      alert(`נבחרה תבנית: ${template.name}\nמחיר: ${template.price}\nנחזור אליך תוך 24 שעות!`);
-    } catch (error) {
-      console.error('Error selecting template:', error);
-      alert('שגיאה בבחירת התבנית. אנא נסה שוב.');
-    }
-  };
+  const stats = [
+    { number: "200+", label: "פרויקטים מוצלחים" },
+    { number: "98%", label: "שביעות רצון לקוחות" },
+    { number: "24/7", label: "תמיכה טכנית" },
+    { number: "50+", label: "לקוחות עסקיים" }
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 rtl">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-reverse space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">W</span>
-              </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                WebMaster Pro
-              </h1>
-            </div>
-            <nav className="hidden md:flex space-x-reverse space-x-8">
-              <a href="#templates" className="text-gray-700 hover:text-blue-600 transition-colors">תבניות</a>
-              <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors">מחירים</a>
-              <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">צור קשר</a>
-            </nav>
-          </div>
-        </div>
-      </header>
-
+    <DemoTemplate title="דמו עסק מקומי - טכנולוגיה מתקדמת">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 animate-fade-in">
-            🚀 WebMaster Pro
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 animate-slide-up">
-            צור אתרים מקצועיים עם AI מתקדם תוך דקות ספורות
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
-            <a 
-              href="#templates" 
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-medium hover:shadow-lg transition-all transform hover:scale-105"
-            >
-              התחל עכשיו
-            </a>
-            <a 
-              href="#pricing" 
-              className="bg-white text-gray-700 px-8 py-4 rounded-xl text-lg font-medium border-2 border-gray-200 hover:border-blue-300 transition-all"
-            >
-              צפה במחירים
-            </a>
+      <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 text-white overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+              טכנולוגיה מתקדמת בע"ם
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 opacity-90 animate-slide-up">
+              פתרונות טכנולוגיים מתקדמים לעסקים מובילים
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
+              <button
+                onClick={() => setIsContactOpen(true)}
+                className="bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-medium hover:shadow-lg transition-all transform hover:scale-105"
+              >
+                קבלו הצעת מחיר
+              </button>
+              <button className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-medium hover:bg-white hover:text-blue-600 transition-all">
+                הורידו קטלוג
+              </button>
+            </div>
           </div>
         </div>
+        
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-float"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-white/5 rounded-full animate-float-slow"></div>
       </section>
 
-      {/* Templates Gallery */}
-      <section id="templates" className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              תבניות מקצועיות
-            </h2>
-            <p className="text-xl text-gray-600">
-              בחר מתוך מגוון תבניות מעוצבות במיוחד עבור עסקך
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {templates.map((template) => (
-              <div 
-                key={template.id} 
-                className={`bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 ${
-                  selectedTemplate?.id === template.id ? 'ring-4 ring-blue-500' : ''
-                }`}
-              >
-                <div className="h-48 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                  <div className="text-6xl">
-                    {template.id === 1 && '🏢'}
-                    {template.id === 2 && '🍽️'}
-                    {template.id === 3 && '👨‍⚕️'}
-                    {template.id === 4 && '🛒'}
-                  </div>
+      {/* Stats Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">
+                  {stat.number}
                 </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-xl font-bold text-gray-900">{template.name}</h3>
-                    <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-                      {template.category}
-                    </span>
-                  </div>
-                  <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-                    {template.description}
-                  </p>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-2xl font-bold text-blue-600">{template.price}</span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <button
-                      onClick={() => handleTemplateSelect(template)}
-                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105"
-                    >
-                      התחל לבנות עם {template.name} - {template.price}
-                    </button>
-                    {template.demoUrl !== "#" ? (
-                      <Link 
-                        href={template.demoUrl}
-                        className="w-full text-center text-blue-600 text-sm font-medium hover:underline py-2 block"
-                      >
-                        צפה בדמו →
-                      </Link>
-                    ) : (
-                      <span className="w-full text-center text-gray-400 text-sm py-2 block">
-                        דמו בפיתוח →
-                      </span>
-                    )}
-                  </div>
+                <div className="text-gray-600 font-medium">
+                  {stat.label}
                 </div>
               </div>
             ))}
@@ -189,142 +109,183 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            מחירים שקופים
-          </h2>
-          <p className="text-xl text-gray-600 mb-12">
-            ללא עלויות נסתרות, ללא מנויים חודשיים
-          </p>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-gray-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">חבילה בסיסית</h3>
-              <div className="text-4xl font-bold text-blue-600 mb-6">₪2,500 - ₪3,000</div>
-              <ul className="text-right space-y-3 text-gray-600">
-                <li className="flex items-center">
-                  <span className="text-green-500 ml-2">✓</span>
-                  עיצוב מקצועי ורספונסיבי
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 ml-2">✓</span>
-                  אופטימיזציה למנועי חיפוש
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 ml-2">✓</span>
-                  טופס יצירת קשר
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 ml-2">✓</span>
-                  חיבור לרשתות חברתיות
-                </li>
-              </ul>
-            </div>
-            
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-              <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-bold">
-                מומלץ
-              </div>
-              <h3 className="text-2xl font-bold mb-4">חבילה מתקדמת</h3>
-              <div className="text-4xl font-bold mb-6">₪3,500 - ₪4,000</div>
-              <ul className="text-right space-y-3">
-                <li className="flex items-center">
-                  <span className="text-green-300 ml-2">✓</span>
-                  כל מה שיש בחבילה הבסיסית
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-300 ml-2">✓</span>
-                  מערכת ניהול תוכן
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-300 ml-2">✓</span>
-                  אינטגרציה עם מערכות CRM
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-300 ml-2">✓</span>
-                  תמיכה טכנית 6 חודשים
-                </li>
-              </ul>
-            </div>
+      {/* Services Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              השירותים שלנו
+            </h2>
+            <p className="text-xl text-gray-600">
+              פתרונות טכנולוגיים מותאמים לכל סוג עסק
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-white/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            מוכנים להתחיל?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            צרו קשר עוד היום ותקבלו אתר מקצועי תוך 7 ימי עבודה
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="tel:+972501234567" 
-              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-xl text-lg font-medium hover:shadow-lg transition-all transform hover:scale-105"
-            >
-              📞 התקשרו עכשיו
-            </a>
-            <a 
-              href="mailto:info@webmasterpro.co.il" 
-              className="bg-white text-gray-700 px-8 py-4 rounded-xl text-lg font-medium border-2 border-gray-200 hover:border-blue-300 transition-all"
-            >
-              ✉️ שלחו מייל
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-reverse space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">W</span>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service, index) => (
+              <div key={index} className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105">
+                <div className="text-4xl mb-4">{service.icon}</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  {service.title}
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  {service.description}
+                </p>
+                <div className="text-2xl font-bold text-blue-600 mb-4">
+                  {service.price}
                 </div>
-                <span className="text-xl font-bold">WebMaster Pro</span>
+                <ul className="space-y-2">
+                  {service.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-center text-sm text-gray-600">
+                      <span className="text-green-500 ml-2">✓</span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <p className="text-gray-400 text-sm">
-                פתרונות אתרים מקצועיים עם טכנולוגיית AI מתקדמת
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">שירותים</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>בניית אתרים</li>
-                <li>עיצוב UI/UX</li>
-                <li>אופטימיזציה לSEO</li>
-                <li>תחזוקה שוטפת</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">תמיכה</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li>מרכז עזרה</li>
-                <li>צ'אט חי</li>
-                <li>טלפון: 050-123-4567</li>
-                <li>info@webmasterpro.co.il</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">עקבו אחרינו</h4>
-              <div className="flex space-x-reverse space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">פייסבוק</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">אינסטגרם</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">לינקדאין</a>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2025 WebMaster Pro. כל הזכויות שמורות.</p>
+            ))}
           </div>
         </div>
-      </footer>
-    </div>
+      </section>
+
+      {/* About Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                מובילים בחדשנות טכנולוגית
+              </h2>
+              <p className="text-lg text-gray-600 mb-6">
+                אנחנו צוות של מתכנתים ומעצבים מנוסים, שמתמחים בפיתוח פתרונות טכנולוגיים מתקדמים עבור עסקים בכל הגדלים.
+              </p>
+              <p className="text-lg text-gray-600 mb-8">
+                המטרה שלנו היא להביא לעסק שלכם את הטכנולוגיות הכי מתקדמות, עם דגש על יעילות, אמינות וחוויית משתמש מעולה.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => setIsContactOpen(true)}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                >
+                  צרו קשר עוד היום
+                </button>
+                <button className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                  עיינו בפורטפוליו
+                </button>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 h-96 flex items-center justify-center">
+                <div className="text-8xl">💻</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form Modal */}
+      {isContactOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-gray-900">צרו קשר</h3>
+              <button
+                onClick={() => setIsContactOpen(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            <form className="space-y-4">
+              <input
+                type="text"
+                placeholder="שם מלא"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <input
+                type="email"
+                placeholder="אימייל"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <input
+                type="tel"
+                placeholder="טלפון"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <textarea
+                placeholder="ספרו לנו על הפרויקט שלכם"
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              ></textarea>
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              >
+                שלחו הודעה
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Chat Widget */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+        >
+          💬
+        </button>
+        
+        {isChatOpen && (
+          <div className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-xl p-6 w-80">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="font-bold text-gray-900">צ'אט עם המומחים</h4>
+              <button
+                onClick={() => setIsChatOpen(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="space-y-3 mb-4">
+              <div className="bg-gray-100 p-3 rounded-lg">
+                <p className="text-sm">שלום! איך אפשר לעזור לכם היום?</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="כתבו הודעה..."
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              />
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+                שלח
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes float-slow {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-float-slow {
+          animation: float-slow 8s ease-in-out infinite;
+        }
+      `}</style>
+    </DemoTemplate>
   );
 }
