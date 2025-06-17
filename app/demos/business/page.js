@@ -1,78 +1,51 @@
 'use client';
 
 import { useState } from 'react';
-import DemoTemplate from '../../components/DemoTemplate';
+import Link from 'next/link';
 
 export default function BusinessDemo() {
   const [isContactOpen, setIsContactOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-
-  const services = [
-    {
-      icon: "🌐",
-      title: "פיתוח אתרים מתקדמים",
-      description: "אתרים רספונסיביים עם טכנולוגיות החדישות ביותר",
-      price: "₪15,000 - ₪50,000",
-      features: ["React & Next.js", "עיצוב רספונסיבי", "אופטימיזציה לSEO", "מהירות טעינה מקסימלית"]
-    },
-    {
-      icon: "📱",
-      title: "אפליקציות מובייל",
-      description: "אפליקציות iOS ו-Android עם חוויית משתמש מעולה",
-      price: "₪25,000 - ₪80,000",
-      features: ["React Native", "עיצוב UI/UX", "אינטגרציות API", "פרסום ב-Store"]
-    },
-    {
-      icon: "⚙️",
-      title: "מערכות ניהול",
-      description: "פתרונות ERP ו-CRM מותאמים אישית לעסק שלכם",
-      price: "₪30,000 - ₪100,000",
-      features: ["ניהול לקוחות", "מעקב מכירות", "דוחות מתקדמים", "אוטומציה"]
-    },
-    {
-      icon: "🔒",
-      title: "אבטחת מידע",
-      description: "הגנה מלאה על המידע והמערכות הדיגיטליות",
-      price: "₪20,000 - ₪60,000",
-      features: ["הצפנת נתונים", "גיבוי אוטומטי", "ניטור איומים", "הדרכות צוות"]
-    },
-    {
-      icon: "💡",
-      title: "ייעוץ טכנולוגי",
-      description: "ייעוץ מקצועי להטמעת טכנולוגיות מתקדמות",
-      price: "₪500/שעה",
-      features: ["אבחון מערכות", "תכנון ארכיטקטורה", "אסטרטגיה דיגיטלית", "הדרכת צוותים"]
-    },
-    {
-      icon: "🛠️",
-      title: "תמיכה ותחזוקה",
-      description: "תמיכה טכנית 24/7 ותחזוקה שוטפת למערכות",
-      price: "₪2,000/חודש",
-      features: ["תמיכה 24/7", "עדכונים שוטפים", "מעקב ביצועים", "גיבויים יומיים"]
-    }
-  ];
-
-  const stats = [
-    { number: "200+", label: "פרויקטים מוצלחים" },
-    { number: "98%", label: "שביעות רצון לקוחות" },
-    { number: "24/7", label: "תמיכה טכנית" },
-    { number: "50+", label: "לקוחות עסקיים" }
-  ];
 
   return (
-    <DemoTemplate title="דמו עסק מקומי - טכנולוגיה מתקדמת">
+    <div className="min-h-screen bg-gray-50 rtl">
+      {/* Navigation */}
+      <nav className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-reverse space-x-4">
+              <Link 
+                href="/#templates"
+                className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                <span className="mr-2">←</span>
+                חזרה לגלריה
+              </Link>
+              <span className="text-gray-300">|</span>
+              <span className="text-gray-600 font-medium">דמו עסק מקומי</span>
+            </div>
+            <div className="flex items-center space-x-reverse space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold">ט</span>
+              </div>
+              <span className="text-xl font-bold text-gray-900">
+                טכנולוגיה מתקדמת בע"ם
+              </span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6">
               טכנולוגיה מתקדמת בע"ם
             </h1>
-            <p className="text-xl md:text-2xl mb-8 opacity-90 animate-slide-up">
+            <p className="text-xl md:text-2xl mb-8 opacity-90">
               פתרונות טכנולוגיים מתקדמים לעסקים מובילים
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => setIsContactOpen(true)}
                 className="bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-medium hover:shadow-lg transition-all transform hover:scale-105"
@@ -85,26 +58,28 @@ export default function BusinessDemo() {
             </div>
           </div>
         </div>
-        
-        {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-32 h-32 bg-white/5 rounded-full animate-float-slow"></div>
       </section>
 
       {/* Stats Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-gray-600 font-medium">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">200+</div>
+              <div className="text-gray-600 font-medium">פרויקטים מוצלחים</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">98%</div>
+              <div className="text-gray-600 font-medium">שביעות רצון לקוחות</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">24/7</div>
+              <div className="text-gray-600 font-medium">תמיכה טכנית</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">50+</div>
+              <div className="text-gray-600 font-medium">לקוחות עסקיים</div>
+            </div>
           </div>
         </div>
       </section>
@@ -122,28 +97,137 @@ export default function BusinessDemo() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105">
-                <div className="text-4xl mb-4">{service.icon}</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  {service.title}
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  {service.description}
-                </p>
-                <div className="text-2xl font-bold text-blue-600 mb-4">
-                  {service.price}
-                </div>
-                <ul className="space-y-2">
-                  {service.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center text-sm text-gray-600">
-                      <span className="text-green-500 ml-2">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {/* Service 1 */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105">
+              <div className="text-4xl mb-4">🌐</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">פיתוח אתרים מתקדמים</h3>
+              <p className="text-gray-600 mb-4">אתרים רספונסיביים עם טכנולוגיות החדישות ביותר</p>
+              <div className="text-2xl font-bold text-blue-600 mb-4">₪15,000 - ₪50,000</div>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  React & Next.js
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  עיצוב רספונסיבי
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  אופטימיזציה לSEO
+                </li>
+              </ul>
+            </div>
+
+            {/* Service 2 */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105">
+              <div className="text-4xl mb-4">📱</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">אפליקציות מובייל</h3>
+              <p className="text-gray-600 mb-4">אפליקציות iOS ו-Android עם חוויית משתמש מעולה</p>
+              <div className="text-2xl font-bold text-blue-600 mb-4">₪25,000 - ₪80,000</div>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  React Native
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  עיצוב UI/UX
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  פרסום ב-Store
+                </li>
+              </ul>
+            </div>
+
+            {/* Service 3 */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105">
+              <div className="text-4xl mb-4">⚙️</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">מערכות ניהול</h3>
+              <p className="text-gray-600 mb-4">פתרונות ERP ו-CRM מותאמים אישית לעסק שלכם</p>
+              <div className="text-2xl font-bold text-blue-600 mb-4">₪30,000 - ₪100,000</div>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  ניהול לקוחות
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  דוחות מתקדמים
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  אוטומציה
+                </li>
+              </ul>
+            </div>
+
+            {/* Service 4 */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105">
+              <div className="text-4xl mb-4">🔒</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">אבטחת מידע</h3>
+              <p className="text-gray-600 mb-4">הגנה מלאה על המידע והמערכות הדיגיטליות</p>
+              <div className="text-2xl font-bold text-blue-600 mb-4">₪20,000 - ₪60,000</div>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  הצפנת נתונים
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  ניטור איומים
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  הדרכות צוות
+                </li>
+              </ul>
+            </div>
+
+            {/* Service 5 */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105">
+              <div className="text-4xl mb-4">💡</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">ייעוץ טכנולוגי</h3>
+              <p className="text-gray-600 mb-4">ייעוץ מקצועי להטמעת טכנולוגיות מתקדמות</p>
+              <div className="text-2xl font-bold text-blue-600 mb-4">₪500/שעה</div>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  אבחון מערכות
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  תכנון ארכיטקטורה
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  הדרכת צוותים
+                </li>
+              </ul>
+            </div>
+
+            {/* Service 6 */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105">
+              <div className="text-4xl mb-4">🛠️</div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">תמיכה ותחזוקה</h3>
+              <p className="text-gray-600 mb-4">תמיכה טכנית 24/7 ותחזוקה שוטפת למערכות</p>
+              <div className="text-2xl font-bold text-blue-600 mb-4">₪2,000/חודש</div>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  תמיכה 24/7
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  עדכונים שוטפים
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 ml-2">✓</span>
+                  גיבויים יומיים
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -228,64 +312,31 @@ export default function BusinessDemo() {
         </div>
       )}
 
-      {/* Chat Widget */}
-      <div className="fixed bottom-6 right-6 z-40">
-        <button
-          onClick={() => setIsChatOpen(!isChatOpen)}
-          className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-        >
-          💬
-        </button>
-        
-        {isChatOpen && (
-          <div className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-xl p-6 w-80">
-            <div className="flex justify-between items-center mb-4">
-              <h4 className="font-bold text-gray-900">צ'אט עם המומחים</h4>
-              <button
-                onClick={() => setIsChatOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="space-y-3 mb-4">
-              <div className="bg-gray-100 p-3 rounded-lg">
-                <p className="text-sm">שלום! איך אפשר לעזור לכם היום?</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="כתבו הודעה..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-                שלח
-              </button>
-            </div>
+      {/* Call to Action Footer */}
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-12">
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <h3 className="text-3xl font-bold mb-4">
+            מעוניינים לקבל אתר כזה לעסק שלכם?
+          </h3>
+          <p className="text-xl mb-8 opacity-90">
+            WebMaster Pro יכולה לבנות לכם אתר מקצועי ומותאם אישית תוך 7 ימי עבודה
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/#contact"
+              className="bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-medium hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              התחלו עכשיו - ₪2,500
+            </Link>
+            <Link 
+              href="tel:+972501234567"
+              className="bg-blue-700 text-white px-8 py-4 rounded-xl text-lg font-medium hover:bg-blue-800 transition-all"
+            >
+              📞 התקשרו מיד
+            </Link>
           </div>
-        )}
+        </div>
       </div>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-        
-        @keyframes float-slow {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-        
-        .animate-float-slow {
-          animation: float-slow 8s ease-in-out infinite;
-        }
-      `}</style>
-    </DemoTemplate>
+    </div>
   );
 }
