@@ -1,12 +1,3 @@
-# קובץ 3: החלפה מלאה של app/page.js
-
-**מה לעשות:**
-1. ב-GitHub פתח: `app/page.js` (הקובץ הקיים)
-2. לחץ על העיפרון (Edit)
-3. **מחק את כל התוכן הישן**
-4. הדבק את הקוד החדש המלא למטה:
-
-```javascript
 'use client';
 
 import { useState } from 'react';
@@ -31,7 +22,7 @@ export default function HomePage() {
       description: "תבנית מותאמת למסעדות, בתי קפה ועסקי הגסטרונומיה",
       image: "/templates/restaurant.jpg",
       category: "מסחרי",
-      price: "₪3,000",
+      price: "₪2,800",
       demoUrl: "#"
     },
     {
@@ -40,7 +31,7 @@ export default function HomePage() {
       description: "תבנית מקצועית לרופאים, מרפאות וקליניקות רפואיות",
       image: "/templates/medical.jpg",
       category: "מקצועי",
-      price: "₪3,500",
+      price: "₪3,000",
       demoUrl: "#"
     },
     {
@@ -173,17 +164,28 @@ export default function HomePage() {
                   </div>
                   <div className="flex flex-col gap-2">
                     <button
-                      onClick={() => handleTemplateSelect(template)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleTemplateSelect(template);
+                      }}
                       className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105"
                     >
                       התחל לבנות עם {template.name} - {template.price}
                     </button>
-                    <Link 
-                      href={template.demoUrl}
-                      className="w-full text-center text-blue-600 text-sm font-medium hover:underline py-2"
-                    >
-                      צפה בדמו →
-                    </Link>
+                    {template.demoUrl !== "#" ? (
+                      <Link 
+                        href={template.demoUrl}
+                        className="w-full text-center text-blue-600 text-sm font-medium hover:underline py-2 block"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        צפה בדמו →
+                      </Link>
+                    ) : (
+                      <span className="w-full text-center text-gray-400 text-sm py-2 block">
+                        דמו בפיתוח →
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -331,8 +333,3 @@ export default function HomePage() {
     </div>
   );
 }
-```
-
-5. לחץ: "Commit changes"
-
-**זהו! זה הקובץ המלא עם כל הקישורים לדמויים! 🎉**
