@@ -84,6 +84,23 @@ export default function EditorPage() {
         objectFit: 'cover'
       }
     },
+    video: {
+      type: 'video',
+      content: '',
+      width: 400,
+      height: 225,
+      style: {
+        backgroundColor: '#1f2937',
+        border: '2px solid #374151',
+        borderRadius: '12px',
+        objectFit: 'cover'
+      },
+      videoUrl: '',
+      autoplay: false,
+      muted: true,
+      controls: true,
+      loop: false
+    },
     form: {
       type: 'form',
       content: 'טופס יצירת קשר',
@@ -256,6 +273,32 @@ body {
             .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}`)
             .join('; ');
           
+          if (el.type === 'video' && el.videoUrl) {
+            const embedUrl = getYouTubeEmbedUrl(el.videoUrl);
+            if (embedUrl.includes('youtube.com') || embedUrl.includes('vimeo.com')) {
+              return `<iframe src="${embedUrl}" style="
+                left: ${el.x}px;
+                top: ${el.y}px;
+                width: ${el.width}px;
+                height: ${el.height}px;
+                z-index: ${el.zIndex};
+                position: absolute;
+                border: none;
+                border-radius: ${el.style.borderRadius};
+              " frameborder="0" allowfullscreen></iframe>`;
+            } else {
+              return `<video src="${el.videoUrl}" style="
+                left: ${el.x}px;
+                top: ${el.y}px;
+                width: ${el.width}px;
+                height: ${el.height}px;
+                z-index: ${el.zIndex};
+                position: absolute;
+                ${styleString};
+              " ${el.controls ? 'controls' : ''} ${el.autoplay ? 'autoplay' : ''} ${el.muted ? 'muted' : ''} ${el.loop ? 'loop' : ''}></video>`;
+            }
+          }
+          
           return `<div class="element" style="
             left: ${el.x}px;
             top: ${el.y}px;
@@ -280,7 +323,28 @@ body {
     URL.revokeObjectURL(url);
   }, [elements, viewport]);
 
-  const exportProject = useCallback(() => {
+    const getYouTubeEmbedUrl = (url) => {
+      if (!url) return '';
+      
+      // YouTube regular URL
+      const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+      const match = url.match(youtubeRegex);
+      
+      if (match) {
+        return `https://www.youtube.com/embed/${match[1]}`;
+      }
+      
+      // Vimeo URL
+      const vimeoRegex = /vimeo\.com\/(\d+)/;
+      const vimeoMatch = url.match(vimeoRegex);
+      
+      if (vimeoMatch) {
+        return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+      }
+      
+      // Direct video URL
+      return url;
+    };
     const projectData = {
       version: '1.0.0',
       created: new Date().toISOString(),
@@ -322,13 +386,14 @@ body {
             🛠️ כלי עיצוב
           </h3>
           
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {Object.entries(elementTemplates).map(([key, template]) => {
               const icons = {
                 text: '📝',
                 paragraph: '📄',
                 button: '🔘',
                 image: '🖼️',
+                video: '🎬',
                 form: '📋'
               };
               
@@ -337,6 +402,7 @@ body {
                 paragraph: 'פסקה',
                 button: 'כפתור',
                 image: 'תמונה',
+                video: 'וידאו',
                 form: 'טופס'
               };
 
@@ -365,7 +431,7 @@ body {
           {selectedElement ? (
             <div className="space-y-4">
               {/* Content */}
-              {selectedElement.type !== 'image' && (
+              {selectedElement.type !== 'image' && selectedElement.type !== 'video' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">תוכן</label>
                   {selectedElement.type === 'paragraph' ? (
@@ -383,6 +449,64 @@ body {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                     />
                   )}
+                </div>
+              )}
+
+              {/* Video URL */}
+              {selectedElement.type === 'video' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">URL וידאו</label>
+                  <input
+                    type="url"
+                    value={selectedElement.videoUrl || ''}
+                    onChange={(e) => updateElement(selectedElement.id, { videoUrl: e.target.value })}
+                    placeholder="https://www.youtube.com/watch?v=... או URL ישיר"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">תומך ב-YouTube, Vimeo או קבצי וידאו ישירים</p>
+                  
+                  {/* Video Controls */}
+                  <div className="mt-3 space-y-2">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedElement.autoplay || false}
+                        onChange={(e) => updateElement(selectedElement.id, { autoplay: e.target.checked })}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-gray-700">הפעלה אוטומטית</span>
+                    </label>
+                    
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedElement.muted || false}
+                        onChange={(e) => updateElement(selectedElement.id, { muted: e.target.checked })}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-gray-700">השתק</span>
+                    </label>
+                    
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedElement.controls !== false}
+                        onChange={(e) => updateElement(selectedElement.id, { controls: e.target.checked })}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-gray-700">הצג פקדים</span>
+                    </label>
+                    
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedElement.loop || false}
+                        onChange={(e) => updateElement(selectedElement.id, { loop: e.target.checked })}
+                        className="rounded"
+                      />
+                      <span className="text-sm text-gray-700">חזרה בלולאה</span>
+                    </label>
+                  </div>
                 </div>
               )}
 
@@ -440,7 +564,7 @@ body {
                   />
                 </div>
 
-                {selectedElement.type !== 'image' && (
+                {selectedElement.type !== 'image' && selectedElement.type !== 'video' && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">צבע טקסט</label>
                     <input
@@ -632,6 +756,37 @@ body {
                           <div className="text-2xl mb-2">🖼️</div>
                           <p className="text-sm">תמונה</p>
                         </div>
+                      </div>
+                    ) : element.type === 'video' ? (
+                      <div className="w-full h-full rounded overflow-hidden">
+                        {element.videoUrl ? (
+                          getYouTubeEmbedUrl(element.videoUrl).includes('youtube.com') || getYouTubeEmbedUrl(element.videoUrl).includes('vimeo.com') ? (
+                            <iframe
+                              src={getYouTubeEmbedUrl(element.videoUrl)}
+                              className="w-full h-full"
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          ) : (
+                            <video
+                              src={element.videoUrl}
+                              className="w-full h-full object-cover"
+                              controls={element.controls}
+                              autoPlay={element.autoplay}
+                              muted={element.muted}
+                              loop={element.loop}
+                            />
+                          )
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-800 rounded">
+                            <div className="text-center text-white">
+                              <div className="text-3xl mb-2">🎬</div>
+                              <p className="text-sm">הוסף URL וידאו</p>
+                              <p className="text-xs mt-1">YouTube, Vimeo או קובץ ישיר</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : element.type === 'form' ? (
                       <div className="w-full h-full p-4">
