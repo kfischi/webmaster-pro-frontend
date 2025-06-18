@@ -5,84 +5,116 @@ import Link from 'next/link';
 export default function BusinessDemo() {
   return (
     <div className="min-h-screen bg-gray-50 rtl">
-      {/* Navigation - IMPROVED */}
-      <nav className="bg-white/90 backdrop-blur-md shadow-lg border-b sticky top-0 z-40">
+      {/* Navigation */}
+      <nav className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-reverse space-x-4">
               <Link 
                 href="/"
-                className="flex items-center text-blue-600 hover:text-blue-800 transition-colors group"
+                className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
               >
-                <span className="mr-2 group-hover:translate-x-1 transition-transform">←</span>
+                <span className="mr-2">←</span>
                 חזרה לגלריה
               </Link>
               <span className="text-gray-300">|</span>
-              <div className="flex items-center space-x-reverse space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold text-lg">ט</span>
-                </div>
-                <div>
-                  <div className="text-xl font-bold text-gray-900">טכנולוגיה מתקדמת</div>
-                  <div className="text-xs text-gray-500">Enterprise Solutions</div>
-                </div>
-              </div>
+              <span className="text-gray-600 font-medium">דמו עסק מקומי</span>
             </div>
-            <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              <span className="mr-2">🚀</span>
-              התחילו פרויקט
-            </button>
+            <div className="flex items-center space-x-reverse space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold">ט</span>
+              </div>
+              <span className="text-xl font-bold text-gray-900">
+                טכנולוגיה מתקדמת בע"ם
+              </span>
+            </div>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section - SAME AS BEFORE */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              טכנולוגיה מתקדמת בע"ם
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 opacity-90">
-              פתרונות טכנולוגיים מתקדמים ברמה של Silicon Valley
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-medium hover:shadow-lg transition-all transform hover:scale-105">
-                🚀 קבלו הצעת מחיר
-              </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-medium hover:bg-white hover:text-blue-600 transition-all">
-                📱 הורידו קטלוג
-              </button>
-            </div>
+      {/* 🔥 NEW HERO SECTION - MUCH MORE IMPRESSIVE! */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-black">
+          {/* Moving Stars */}
+          <div className="absolute inset-0">
+            {[...Array(100)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  animationDuration: `${1 + Math.random() * 2}s`
+                }}
+              />
+            ))}
           </div>
         </div>
-      </section>
 
-      {/* Stats Section - SAME AS BEFORE */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero Content */}
+        <div className="relative z-20 text-center text-white px-4 max-w-6xl mx-auto">
+          {/* Live Badge */}
+          <div className="mb-8">
+            <div className="inline-flex items-center bg-red-600 rounded-full px-6 py-3 mb-6 shadow-2xl animate-pulse">
+              <div className="w-3 h-3 bg-white rounded-full mr-3 animate-ping"></div>
+              <span className="text-sm font-bold">🔴 LIVE: 1,247 גולשים פעילים עכשיו!</span>
+            </div>
+          </div>
+
+          {/* Giant Title */}
+          <h1 className="text-8xl md:text-9xl font-black mb-8 animate-pulse">
+            <span className="bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-clip-text text-transparent">
+              טכנולוגיה
+            </span>
+            <br />
+            <span className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
+              מתקדמת
+            </span>
+          </h1>
+
+          <p className="text-4xl md:text-5xl font-bold mb-6 text-yellow-400 animate-bounce">
+            🚀 בע"ם 🚀
+          </p>
+
+          <p className="text-2xl md:text-3xl mb-12 text-cyan-300 animate-pulse">
+            💎 פתרונות ברמה של Apple, Google, Microsoft! 💎
+          </p>
+
+          {/* Giant Buttons */}
+          <div className="flex flex-col sm:flex-row gap-8 justify-center mb-16">
+            <button className="bg-gradient-to-r from-red-500 to-yellow-500 text-white px-16 py-8 rounded-3xl text-3xl font-black hover:shadow-2xl transition-all duration-300 transform hover:scale-110 animate-pulse">
+              🔥 קבלו הצעה עכשיו! 🔥
+            </button>
+            <button className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-16 py-8 rounded-3xl text-3xl font-black hover:shadow-2xl transition-all duration-300 transform hover:scale-110">
+              💰 ₪2,999 בלבד! 💰
+            </button>
+          </div>
+
+          {/* Mega Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">500+</div>
-              <div className="text-gray-600 font-medium">פרויקטים מוצלחים</div>
+            <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-3xl p-8 shadow-2xl transform hover:scale-105 transition-all">
+              <div className="text-6xl font-black text-white mb-2">🔥 500+</div>
+              <div className="text-xl text-white font-bold">פרויקטים מטורפים!</div>
             </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">99.9%</div>
-              <div className="text-gray-600 font-medium">זמינות מערכות</div>
+            <div className="bg-gradient-to-r from-green-500 to-blue-500 rounded-3xl p-8 shadow-2xl transform hover:scale-105 transition-all">
+              <div className="text-6xl font-black text-white mb-2">⚡ 99.9%</div>
+              <div className="text-xl text-white font-bold">זמינות מושלמת!</div>
             </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">24/7</div>
-              <div className="text-gray-600 font-medium">תמיכה טכנית</div>
+            <div className="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-3xl p-8 shadow-2xl transform hover:scale-105 transition-all">
+              <div className="text-6xl font-black text-white mb-2">🚀 24/7</div>
+              <div className="text-xl text-white font-bold">תמיכה מהירה!</div>
             </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">150+</div>
-              <div className="text-gray-600 font-medium">מהנדסים מנוסים</div>
+            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-3xl p-8 shadow-2xl transform hover:scale-105 transition-all">
+              <div className="text-6xl font-black text-white mb-2">💎 150+</div>
+              <div className="text-xl text-white font-bold">מומחים טובים!</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Section - SAME AS BEFORE */}
+      {/* Services Section - Same as before */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -166,7 +198,7 @@ export default function BusinessDemo() {
         </div>
       </section>
 
-      {/* CTA Footer - SAME AS BEFORE */}
+      {/* CTA Footer */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-12">
         <div className="max-w-4xl mx-auto text-center px-4">
           <h3 className="text-3xl font-bold mb-4">מעוניינים לקבל אתר כזה לעסק שלכם?</h3>
