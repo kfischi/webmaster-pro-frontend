@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebMaster Pro - אדיטור מתקדם</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #f8fafc;
+            overflow: hidden;
+        }
+
+        /* Editor Layout */
+        .editor-container {
+            height: 100vh;
+            display: grid;
+            grid-template-areas: 
+                "header header header"
+                "sidebar canvas properties";
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: 60px 1fr;
+        }
+
+        /* Header */
+        .editor-header {
+            grid-area: header;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .template-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background: #f7fafc;
+            border-radius: 20px;
+        }
+
+        .template-icon {
+            font-size: 1.2rem;
+        }
+
+        .template-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f7fafc;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .component-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .component-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .component-item:hover {
+            background: #edf2f7;
+            border-color: #667eea;
+            transform: translateX(-2px);
+        }
+
+        .component-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .component-name {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        /* Canvas */
+        .canvas-container {
+            grid-area: canvas;
+            background: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .canvas-toolbar {
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .device-switcher {
+            display: flex;
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 3px;
+        }
+
+        .device-btn {
+            padding: 8px 15px;
+            border: none;
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .device-btn.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .zoom-level {
+            font-size: 0.9rem;
+            color: #4a5568;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .canvas-frame {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            overflow: auto;
+        }
+
+        .website-preview {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-desktop {
+            width: 1200px;
+            height: 800px;
+        }
+
+        .preview-tablet {
+            width: 768px;
+            height: 1024px;
+        }
+
+        .preview-mobile {
+            width: 375px;
+            height: 667px;
+        }
+
+        .preview-content {
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        /* Properties Panel */
+        .properties-panel {
+            grid-area: properties;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.05);
+        }
+
+        .properties-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f7fafc;
+        }
+
+        .properties-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .properties-subtitle {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .property-group {
+            padding: 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .property-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .property-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .property-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .color-picker {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-option.active {
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .font-selector {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .font-option {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .font-option:hover,
+        .font-option.active {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        /* Selected Element Highlight */
+        .selected-element {
+            outline: 2px solid #667eea !important;
+            outline-offset: 2px;
+            position: relative;
+        }
+
+        .selected-element::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 16px;
+            height: 16px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: #718096;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Messages */
+        .success-message {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            z-index: 9999;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .success-message.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .editor-container {
+                grid-template-columns: 250px 1fr 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .editor-container {
+                grid-template-areas: 
+                    "header"
+                    "canvas";
+                grid-template-columns: 1fr;
+                grid-template-rows: 60px 1fr;
+            }
+            
+            .sidebar,
+            .properties-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <!-- Header -->
+        <header class="editor-header">
+            <div class="logo-section">
+                <div class="logo">🚀 WebMaster Pro</div>
+                <div class="template-info">
+                    <span class="template-icon" id="templateIcon">✂️</span>
+                    <span class="template-name" id="templateName">מספרה מודרנית</span>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button class="action-btn btn-secondary" onclick="previewSite()">
+                    👁️ תצוגה מקדימה
+                </button>
+                <button class="action-btn btn-secondary" onclick="saveDraft()">
+                    💾 שמירה
+                </button>
+                <button class="action-btn btn-primary" onclick="publishSite()">
+                    🚀 פרסום
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">רכיבים</div>
+                <div class="sidebar-subtitle">גרור רכיבים לתוך האתר</div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">רכיבים בסיסיים</div>
+                <div class="component-list">
+                    <div class="component-item" draggable="true" data-component="text">
+                        <span class="component-icon">📝</span>
+                        <span class="component-name">טקסט</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-component="image">
+                        <span class="component-icon">🖼️</span>
+                        <span class="component-name">תמונה</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-component="button">
+                        <span class="component-icon">🔘</span>
+                        <span class="component-name">כפתור</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-component="video">
+                        <span class="component-icon">🎥</span>
+                        <span class="component-name">וידאו</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">אלמנטים מתקדמים</div>
+                <div class="component-list">
+                    <div class="component-item" draggable="true" data-component="form">
+                        <span class="component-icon">📋</span>
+                        <span class="component-name">טופס יצירת קשר</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-component="gallery">
+                        <span class="component-icon">🖼️</span>
+                        <span class="component-name">גלריה</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-component="map">
+                        <span class="component-icon">🗺️</span>
+                        <span class="component-name">מפה</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-component="calendar">
+                        <span class="component-icon">📅</span>
+                        <span class="component-name">לוח שנה</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">רכיבים עסקיים</div>
+                <div class="component-list">
+                    <div class="component-item" draggable="true" data-component="pricing">
+                        <span class="component-icon">💰</span>
+                        <span class="component-name">מחירון</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-component="testimonials">
+                        <span class="component-icon">⭐</span>
+                        <span class="component-name">המלצות</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-component="team">
+                        <span class="component-icon">👥</span>
+                        <span class="component-name">צוות</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-component="whatsapp">
+                        <span class="component-icon">💬</span>
+                        <span class="component-name">WhatsApp</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas -->
+        <main class="canvas-container">
+            <div class="canvas-toolbar">
+                <div class="device-switcher">
+                    <button class="device-btn active" data-device="desktop" onclick="switchDevice('desktop')">
+                        🖥️ דסקטופ
+                    </button>
+                    <button class="device-btn" data-device="tablet" onclick="switchDevice('tablet')">
+                        📱 טאבלט
+                    </button>
+                    <button class="device-btn" data-device="mobile" onclick="switchDevice('mobile')">
+                        📱 נייד
+                    </button>
+                </div>
+                
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="zoomOut()">−</button>
+                    <span class="zoom-level" id="zoomLevel">100%</span>
+                    <button class="zoom-btn" onclick="zoomIn()">+</button>
+                </div>
+            </div>
+            
+            <div class="canvas-frame">
+                <div class="website-preview preview-desktop" id="websitePreview">
+                    <div class="preview-content" id="previewContent">
+                        <!-- Content will be loaded here -->
+                        <div class="loading">
+                            טוען תבנית...
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Properties Panel -->
+        <aside class="properties-panel">
+            <div class="properties-header">
+                <div class="properties-title">מאפיינים</div>
+                <div class="properties-subtitle">ערוך את הרכיב הנבחר</div>
+            </div>
+            
+            <div id="propertiesContent">
+                <div class="property-group">
+                    <div style="text-align: center; padding: 40px 20px; color: #718096;">
+                        <div style="font-size: 2rem; margin-bottom: 15px;">🎨</div>
+                        <div>בחר רכיב לעריכה</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message" id="successMessage">
+        <span id="successText">הפעולה הושלמה בהצלחה!</span>
+    </div>
+
+    <script>
+        // Global state
+        let currentDevice = 'desktop';
+        let currentZoom = 100;
+        let selectedElement = null;
+        let currentTemplate = 'barber';
+
+        // Template configurations
+        const templates = {
+            barber: {
+                name: 'מספרה מודרנית',
+                icon: '✂️',
+                content: `
+                    <div style="background: linear-gradient(135deg, #d69e2e, #ecc94b); color: white; padding: 80px 40px; text-align: center;">
+                        <h1 style="font-size: 3rem; margin-bottom: 20px; font-weight: 300;">סלון עופר - מספרה מודרנית</h1>
+                        <p style="font-size: 1.3rem; margin-bottom: 30px;">החוויה הכי מקצועית בעיר</p>
+                        <button style="background: white; color: #d69e2e; padding: 15px 30px; border: none; border-radius: 25px; font-weight: 600; cursor: pointer;">📞 הזמן תור עכשיו</button>
+                    </div>
+                    
+                    <div style="padding: 60px 40px; text-align: center;">
+                        <h2 style="font-size: 2.5rem; margin-bottom: 40px; color: #2d3748;">השירותים שלנו</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                                <div style="font-size: 2rem; margin-bottom: 15px;">✂️</div>
+                                <h3 style="margin-bottom: 10px;">תספורת גברים</h3>
+                                <p style="color: #718096;">תספורת מקצועית עם היעוץ הטוב ביותר</p>
+                                <div style="font-weight: 600; color: #d69e2e; margin-top: 15px;">₪80</div>
+                            </div>
+                            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                                <div style="font-size: 2rem; margin-bottom: 15px;">🧔</div>
+                                <h3 style="margin-bottom: 10px;">עיצוב זקן</h3>
+                                <p style="color: #718096;">עיצוב מקצועי לזקן מושלם</p>
+                                <div style="font-weight: 600; color: #d69e2e; margin-top: 15px;">₪60</div>
+                            </div>
+                            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                                <div style="font-size: 2rem; margin-bottom: 15px;">💆‍♂️</div>
+                                <h3 style="margin-bottom: 10px;">טיפוח מלא</h3>
+                                <p style="color: #718096;">חבילת טיפוח מקיפה</p>
+                                <div style="font-weight: 600; color: #d69e2e; margin-top: 15px;">₪120</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f7fafc; padding: 60px 40px; text-align: center;">
+                        <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: #2d3748;">צור קשר</h2>
+                        <p style="font-size: 1.2rem; color: #718096; margin-bottom: 30px;">בואו לקבוע תור או לשאול שאלות</p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 600px; margin: 0 auto;">
+                            <div style="background: white; padding: 20px; border-radius: 10px;">
+                                <div style="font-size: 1.5rem; margin-bottom: 10px;">📞</div>
+                                <div style="font-weight: 600;">054-123-4567</div>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 10px;">
+                                <div style="font-size: 1.5rem; margin-bottom: 10px;">📍</div>
+                                <div style="font-weight: 600;">רחוב הרצל 25, תל אביב</div>
+                            </div>
+                            <div style="background: white; padding: 20px; border-radius: 10px;">
+                                <div style="font-size: 1.5rem; margin-bottom: 10px;">🕐</div>
+                                <div style="font-weight: 600;">א'-ו' 9:00-20:00</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            trainer: {
+                name: 'מאמן כושר אישי',
+                icon: '💪',
+                content: `
+                    <div style="background: linear-gradient(135deg, #f56500, #ff8c00); color: white; padding: 80px 40px; text-align: center;">
+                        <h1 style="font-size: 3rem; margin-bottom: 20px; font-weight: 300;">דני פיט - מאמן כושר אישי</h1>
+                        <p style="font-size: 1.3rem; margin-bottom: 30px;">הגעת למקום הנכון להשיג את המטרות שלך!</p>
+                        <button style="background: white; color: #f56500; padding: 15px 30px; border: none; border-radius: 25px; font-weight: 600; cursor: pointer;">💪 התחל היום</button>
+                    </div>
+                `
+            }
+        };
+
+        // Initialize editor
+        function initializeEditor() {
+            loadTemplate(currentTemplate);
+            setupDragAndDrop();
+            setupElementSelection();
+        }
+
+        // Load template content
+        function loadTemplate(templateName) {
+            const template = templates[templateName];
+            if (template) {
+                document.getElementById('templateName').textContent = template.name;
+                document.getElementById('templateIcon').textContent = template.icon;
+                
+                setTimeout(() => {
+                    document.getElementById('previewContent').innerHTML = template.content;
+                    setupElementSelection();
+                }, 1000);
+            }
+        }
+
+        // Device switching
+        function switchDevice(device) {
+            currentDevice = device;
+            
+            // Update active button
+            document.querySelectorAll('.device-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-device="${device}"]`).classList.add('active');
+            
+            // Update preview size
+            const preview = document.getElementById('websitePreview');
+            preview.className = `website-preview preview-${device}`;
+            
+            showSuccess(`עברת לתצוגת ${device === 'desktop' ? 'דסקטופ' : device === 'tablet' ? 'טאבלט' : 'נייד'}`);
+        }
+
+        // Zoom controls
+        function zoomIn() {
+            if (currentZoom < 200) {
+                currentZoom += 10;
+                updateZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoom > 50) {
+                currentZoom -= 10;
+                updateZoom();
+            }
+        }
+
+        function updateZoom() {
+            document.getElementById('zoomLevel').textContent = currentZoom + '%';
+            document.getElementById('websitePreview').style.transform = `scale(${currentZoom / 100})`;
+        }
+
+        // Drag and drop functionality
+        function setupDragAndDrop() {
+            const components = document.querySelectorAll('.component-item');
+            const previewContent = document.getElementById('previewContent');
+            
+            components.forEach(component => {
+                component.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', component.dataset.component);
+                });
+            });
+            
+            previewContent.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                previewContent.style.background = 'rgba(102,
