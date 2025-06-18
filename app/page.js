@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import Link from 'next/link';
 
@@ -90,6 +89,9 @@ export default function HomePage() {
               <a href="#templates" className="text-gray-700 hover:text-blue-600 transition-colors">תבניות</a>
               <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors">מחירים</a>
               <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">צור קשר</a>
+              <Link href="/editor" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                🎨 אדיטור
+              </Link>
             </nav>
           </div>
         </div>
@@ -111,12 +113,12 @@ export default function HomePage() {
             >
               התחל עכשיו
             </a>
-            <a 
-              href="#pricing" 
+            <Link 
+              href="/editor" 
               className="bg-white text-gray-700 px-8 py-4 rounded-xl text-lg font-medium border-2 border-gray-200 hover:border-blue-300 transition-all"
             >
-              צפה במחירים
-            </a>
+              🎨 נסה את האדיטור
+            </Link>
           </div>
         </div>
       </section>
@@ -190,69 +192,6 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            מחירים שקופים
-          </h2>
-          <p className="text-xl text-gray-600 mb-12">
-            ללא עלויות נסתרות, ללא מנויים חודשיים
-          </p>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-gray-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">חבילה בסיסית</h3>
-              <div className="text-4xl font-bold text-blue-600 mb-6">₪2,500 - ₪3,000</div>
-              <ul className="text-right space-y-3 text-gray-600">
-                <li className="flex items-center">
-                  <span className="text-green-500 ml-2">✓</span>
-                  עיצוב מקצועי ורספונסיבי
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 ml-2">✓</span>
-                  אופטימיזציה למנועי חיפוש
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 ml-2">✓</span>
-                  טופס יצירת קשר
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 ml-2">✓</span>
-                  חיבור לרשתות חברתיות
-                </li>
-              </ul>
-            </div>
-            
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-              <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-bold">
-                מומלץ
-              </div>
-              <h3 className="text-2xl font-bold mb-4">חבילה מתקדמת</h3>
-              <div className="text-4xl font-bold mb-6">₪3,500 - ₪4,000</div>
-              <ul className="text-right space-y-3">
-                <li className="flex items-center">
-                  <span className="text-green-300 ml-2">✓</span>
-                  כל מה שיש בחבילה הבסיסית
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-300 ml-2">✓</span>
-                  מערכת ניהול תוכן
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-300 ml-2">✓</span>
-                  אינטגרציה עם מערכות CRM
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-300 ml-2">✓</span>
-                  תמיכה טכנית 6 חודשים
-                </li>
-              </ul>
-            </div>
           </div>
         </div>
       </section>
@@ -332,13 +271,4 @@ export default function HomePage() {
       </footer>
     </div>
   );
-}
-import Editor from '../components/editor/Editor'
-
-export default function HomePage() {
-  return (
-    <main className="h-screen">
-      <Editor />
-    </main>
-  )
 }
