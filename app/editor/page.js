@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
+// ✅ Export מפורש למניעת בעיות routing
 export default function EditorPage() {
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
@@ -159,7 +160,7 @@ export default function EditorPage() {
                 <label className="block text-sm font-medium mb-2">טקסט</label>
                 <textarea
                   className="w-full p-2 border rounded"
-                  rows="3"
+                  rows={3}
                   value={elements.find(el => el.id === selectedElement)?.content || ''}
                   onChange={(e) => updateElement(selectedElement, { content: e.target.value })}
                   placeholder="הקלד טקסט..."
