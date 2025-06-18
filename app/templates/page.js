@@ -1,5 +1,4 @@
-'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export default function TemplatesGallery() {
   const [selectedCategory, setSelectedCategory] = useState('all');
