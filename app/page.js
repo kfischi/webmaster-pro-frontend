@@ -333,3 +333,12 @@ export default function HomePage() {
     </div>
   );
 }
+import Editor from '../components/editor/Editor'
+
+export default function HomePage() {
+  return (
+    <main className="h-screen">
+      <Editor />
+    </main>
+  )
+}
