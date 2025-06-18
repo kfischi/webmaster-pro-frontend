@@ -1,6 +1,3 @@
-// WebMaster Pro - Clean Editor Version (Full Support)
-// 📦 תומך בטקסט, תמונה, וידאו, טופס, רספונסיביות, גריד, ואנימציות
-
 import { useState, useEffect } from 'react'
 import { Rnd } from 'react-rnd'
 import { v4 as uuidv4 } from 'uuid'
