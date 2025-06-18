@@ -117,8 +117,30 @@ export default function EditorPage() {
   };
 
   const generateId = () => `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
   const snapToGrid = (value) => Math.round(value / 10) * 10;
+
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return '';
+    
+    // YouTube regular URL
+    const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+    const match = url.match(youtubeRegex);
+    
+    if (match) {
+      return `https://www.youtube.com/embed/${match[1]}`;
+    }
+    
+    // Vimeo URL
+    const vimeoRegex = /vimeo\.com\/(\d+)/;
+    const vimeoMatch = url.match(vimeoRegex);
+    
+    if (vimeoMatch) {
+      return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+    }
+    
+    // Direct video URL
+    return url;
+  };
 
   const saveToHistory = useCallback(() => {
     const newHistory = history.slice(0, historyIndex + 1);
@@ -229,6 +251,25 @@ export default function EditorPage() {
     }
   }, [isDragging, saveToHistory]);
 
+  const exportProject = useCallback(() => {
+    const projectData = {
+      version: '1.0.0',
+      created: new Date().toISOString(),
+      viewport,
+      elements
+    };
+
+    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `webmaster-project-${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [elements, viewport]);
+
   const exportHTML = useCallback(() => {
     const viewportConfig = viewports[viewport];
     
@@ -317,46 +358,6 @@ body {
     const a = document.createElement('a');
     a.href = url;
     a.download = `website-${Date.now()}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, [elements, viewport]);
-
-    const getYouTubeEmbedUrl = (url) => {
-      if (!url) return '';
-      
-      // YouTube regular URL
-      const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
-      const match = url.match(youtubeRegex);
-      
-      if (match) {
-        return `https://www.youtube.com/embed/${match[1]}`;
-      }
-      
-      // Vimeo URL
-      const vimeoRegex = /vimeo\.com\/(\d+)/;
-      const vimeoMatch = url.match(vimeoRegex);
-      
-      if (vimeoMatch) {
-        return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-      }
-      
-      // Direct video URL
-      return url;
-    };
-    const projectData = {
-      version: '1.0.0',
-      created: new Date().toISOString(),
-      viewport,
-      elements
-    };
-
-    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `webmaster-project-${Date.now()}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -714,101 +715,4 @@ body {
               onMouseLeave={handleMouseUp}
             >
               {elements.length === 0 && (
-                <div className="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none">
-                  <div className="text-center">
-                    <div className="text-8xl mb-6">🎨</div>
-                    <h3 className="text-2xl font-bold mb-2">התחל ליצור!</h3>
-                    <p className="text-lg">בחר כלי מהצד השמאלי ותתחיל לעצב</p>
-                    <div className="mt-6 text-sm text-gray-500">
-                      <p>💡 טיפים מהירים:</p>
-                      <p>• גרור אלמנטים להזזה</p>
-                      <p>• Ctrl+Z לביטול</p>
-                      <p>• Ctrl+D לשכפול</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {elements
-                .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
-                .map((element) => (
-                  <div
-                    key={element.id}
-                    className={`absolute cursor-move select-none transition-all duration-150 ${
-                      selectedElement?.id === element.id ? 'ring-2 ring-blue-500 ring-offset-2' : ''
-                    }`}
-                    style={{
-                      left: element.x,
-                      top: element.y,
-                      width: element.width,
-                      height: element.height,
-                      zIndex: element.zIndex || 0,
-                      ...element.style,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                    onMouseDown={(e) => handleMouseDown(e, element)}
-                  >
-                    {element.type === 'image' ? (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-300 rounded">
-                        <div className="text-center">
-                          <div className="text-2xl mb-2">🖼️</div>
-                          <p className="text-sm">תמונה</p>
-                        </div>
-                      </div>
-                    ) : element.type === 'video' ? (
-                      <div className="w-full h-full rounded overflow-hidden">
-                        {element.videoUrl ? (
-                          getYouTubeEmbedUrl(element.videoUrl).includes('youtube.com') || getYouTubeEmbedUrl(element.videoUrl).includes('vimeo.com') ? (
-                            <iframe
-                              src={getYouTubeEmbedUrl(element.videoUrl)}
-                              className="w-full h-full"
-                              frameBorder="0"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            />
-                          ) : (
-                            <video
-                              src={element.videoUrl}
-                              className="w-full h-full object-cover"
-                              controls={element.controls}
-                              autoPlay={element.autoplay}
-                              muted={element.muted}
-                              loop={element.loop}
-                            />
-                          )
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-800 rounded">
-                            <div className="text-center text-white">
-                              <div className="text-3xl mb-2">🎬</div>
-                              <p className="text-sm">הוסף URL וידאו</p>
-                              <p className="text-xs mt-1">YouTube, Vimeo או קובץ ישיר</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ) : element.type === 'form' ? (
-                      <div className="w-full h-full p-4">
-                        <h3 className="font-semibold mb-4">{element.content}</h3>
-                        <div className="space-y-3">
-                          <input type="text" placeholder="שם מלא" className="w-full p-2 border rounded text-sm" readOnly />
-                          <input type="email" placeholder="אימייל" className="w-full p-2 border rounded text-sm" readOnly />
-                          <textarea placeholder="הודעה" className="w-full p-2 border rounded text-sm h-16 resize-none" readOnly />
-                          <button className="w-full p-2 bg-blue-500 text-white rounded text-sm">שלח</button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center px-2 text-center">
-                        {element.content}
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+                <div className="absolute inset-0
