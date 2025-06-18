@@ -40,3 +40,34 @@ module.exports = {
     require('@tailwindcss/forms'),
   ],
 }
+module.exports = {
+  theme: {
+    extend: {
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideInLeft: {
+          '0%': { transform: 'translateX(-100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        slideInRight: {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        zoomIn: {
+          '0%': { transform: 'scale(0)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+      },
+      animation: {
+        fadeIn: 'fadeIn 0.5s ease forwards',
+        slideInLeft: 'slideInLeft 0.5s ease forwards',
+        slideInRight: 'slideInRight 0.5s ease forwards',
+        zoomIn: 'zoomIn 0.5s ease forwards',
+      },
+    },
+  },
+  plugins: [],
+}
