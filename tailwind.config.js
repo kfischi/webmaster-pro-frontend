@@ -20,11 +20,8 @@ module.exports = {
           600: '#16a34a',
         }
       },
-      animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'slide-up': 'slideUp 0.3s ease-out',
-      },
       keyframes: {
+        // אנימציות קיימות
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
@@ -33,21 +30,7 @@ module.exports = {
           '0%': { transform: 'translateY(10px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
-      },
-    },
-  },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
-}
-module.exports = {
-  theme: {
-    extend: {
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
+        // אנימציות חדשות לאדיטור
         slideInLeft: {
           '0%': { transform: 'translateX(-100%)', opacity: '0' },
           '100%': { transform: 'translateX(0)', opacity: '1' },
@@ -62,12 +45,18 @@ module.exports = {
         },
       },
       animation: {
-        fadeIn: 'fadeIn 0.5s ease forwards',
-        slideInLeft: 'slideInLeft 0.5s ease forwards',
-        slideInRight: 'slideInRight 0.5s ease forwards',
-        zoomIn: 'zoomIn 0.5s ease forwards',
+        // אנימציות קיימות
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        // אנימציות חדשות לאדיטור
+        'fadeIn': 'fadeIn 0.5s ease forwards',
+        'slideInLeft': 'slideInLeft 0.5s ease forwards',
+        'slideInRight': 'slideInRight 0.5s ease forwards',
+        'zoomIn': 'zoomIn 0.5s ease forwards',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 }
