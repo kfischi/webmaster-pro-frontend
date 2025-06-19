@@ -1,1702 +1,518 @@
 'use client';
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef } from 'react';
 
-export default function WebMasterProUltimate() {
-  // ============================================
-  // CORE STATE MANAGEMENT
-  // ============================================
-  
-  const [project, setProject] = useState({
-    id: 'project-1',
-    name: 'אתר חדש',
-    settings: {
-      colors: {
-        primary: '#667eea',
-        secondary: '#764ba2',
-        text: '#1a202c',
-        background: '#ffffff'
-      },
-      fonts: {
-        heading: 'Heebo',
-        body: 'Assistant'
-      }
-    }
-  });
-
-  const [pages, setPages] = useState([
-    {
-      id: 'page-home',
-      name: 'דף הבית',
-      url: '/',
-      elements: []
-    },
-    {
-      id: 'page-about',
-      name: 'אודותינו',
-      url: '/about',
-      elements: []
-    }
-  ]);
-
-  const [currentPageId, setCurrentPageId] = useState('page-home');
+export default function FixedEditor() {
+  const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
-  const [currentDevice, setCurrentDevice] = useState('desktop');
-  const [currentZoom, setCurrentZoom] = useState(100);
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const [activePanel, setActivePanel] = useState('pages');
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [history, setHistory] = useState([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const [dragState, setDragState] = useState({ isDragging: false, startPos: null, elementId: null });
+  const [viewMode, setViewMode] = useState('desktop');
+  const canvasRef = useRef();
 
-  const canvasRef = useRef(null);
-
-  // ============================================
-  // DESIGN SYSTEM
-  // ============================================
-
-  const googleFonts = [
-    { name: 'Heebo', hebrew: true },
-    { name: 'Assistant', hebrew: true },
-    { name: 'Rubik', hebrew: true },
-    { name: 'Open Sans', hebrew: false },
-    { name: 'Roboto', hebrew: false },
-    { name: 'Inter', hebrew: false },
-    { name: 'Poppins', hebrew: false },
-    { name: 'Montserrat', hebrew: false }
-  ];
-
-  const devices = {
-    mobile: { name: 'Mobile', width: 375, icon: '📱' },
-    tablet: { name: 'Tablet', width: 768, icon: '📱' },
-    desktop: { name: 'Desktop', width: 1024, icon: '🖥️' },
-    large: { name: 'Large', width: 1440, icon: '🖥️' }
+  // Viewport sizes
+  const viewportSizes = {
+    desktop: { width: '100%', maxWidth: '1200px' },
+    tablet: { width: '768px', maxWidth: '768px' },
+    mobile: { width: '375px', maxWidth: '375px' }
   };
 
-  const componentLibrary = {
-    text: [
-      { id: 'heading-1', name: 'כותרת ראשית', icon: '📝', tag: 'h1' },
-      { id: 'heading-2', name: 'כותרת משנה', icon: '📝', tag: 'h2' },
-      { id: 'heading-3', name: 'כותרת קטנה', icon: '📝', tag: 'h3' },
-      { id: 'paragraph', name: 'פסקה', icon: '📄', tag: 'p' },
-      { id: 'quote', name: 'ציטוט', icon: '💬', tag: 'blockquote' }
-    ],
-    media: [
-      { id: 'image', name: 'תמונה', icon: '🖼️', tag: 'img' },
-      { id: 'video-youtube', name: 'YouTube', icon: '🎬', tag: 'iframe' },
-      { id: 'video-vimeo', name: 'Vimeo', icon: '🎬', tag: 'iframe' },
-      { id: 'gallery', name: 'גלריה', icon: '🖼️', tag: 'div' }
-    ],
-    layout: [
-      { id: 'container', name: 'מכולה', icon: '📦', tag: 'div' },
-      { id: 'section', name: 'סקשן', icon: '📐', tag: 'section' },
-      { id: 'spacer', name: 'רווח', icon: '↕️', tag: 'div' },
-      { id: 'divider', name: 'מפריד', icon: '➖', tag: 'hr' }
-    ],
-    interactive: [
-      { id: 'button', name: 'כפתור', icon: '🔘', tag: 'button' },
-      { id: 'link', name: 'קישור', icon: '🔗', tag: 'a' },
-      { id: 'form', name: 'טופס', icon: '📝', tag: 'form' },
-      { id: 'input', name: 'שדה טקסט', icon: '📝', tag: 'input' }
-    ],
-    business: [
-      { id: 'hero', name: 'Hero Section', icon: '🎯', tag: 'section' },
-      { id: 'testimonial', name: 'המלצה', icon: '⭐', tag: 'div' },
-      { id: 'team-card', name: 'כרטיס צוות', icon: '👤', tag: 'div' },
-      { id: 'service-card', name: 'כרטיס שירות', icon: '💼', tag: 'div' },
-      { id: 'stats', name: 'סטטיסטיקות', icon: '📊', tag: 'div' }
-    ]
-  };
-
-  // ============================================
-  // HELPER FUNCTIONS
-  // ============================================
-  
-  const showToastMessage = useCallback((message) => {
-    setToastMessage(message);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-  }, []);
-
-  const getCurrentPage = useCallback(() => {
-    return pages.find(page => page.id === currentPageId);
-  }, [pages, currentPageId]);
-
-  const generateId = useCallback(() => {
-    return 'el-' + Math.random().toString(36).substr(2, 9);
-  }, []);
-
-  const saveToHistory = useCallback(() => {
-    const newState = { pages, project };
-    const newHistory = history.slice(0, historyIndex + 1);
-    newHistory.push(JSON.parse(JSON.stringify(newState)));
-    setHistory(newHistory);
-    setHistoryIndex(newHistory.length - 1);
-  }, [pages, project, history, historyIndex]);
-
-  const undo = useCallback(() => {
-    if (historyIndex > 0) {
-      const prevState = history[historyIndex - 1];
-      setPages(prevState.pages);
-      setProject(prevState.project);
-      setHistoryIndex(historyIndex - 1);
-      showToastMessage('צעד אחורה בוצע');
-    }
-  }, [history, historyIndex, showToastMessage]);
-
-  const redo = useCallback(() => {
-    if (historyIndex < history.length - 1) {
-      const nextState = history[historyIndex + 1];
-      setPages(nextState.pages);
-      setProject(nextState.project);
-      setHistoryIndex(historyIndex + 1);
-      showToastMessage('צעד קדימה בוצע');
-    }
-  }, [history, historyIndex, showToastMessage]);
-
-  // ============================================
-  // PAGE MANAGEMENT
-  // ============================================
-  
-  const createPage = useCallback((name = 'דף חדש') => {
-    const newPage = {
-      id: `page-${Date.now()}`,
-      name,
-      url: `/${name.replace(/\s+/g, '-').toLowerCase()}`,
-      elements: []
-    };
+  // Add new element
+  const addElement = (type) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
     
-    setPages(prev => [...prev, newPage]);
-    setCurrentPageId(newPage.id);
-    saveToHistory();
-    showToastMessage(`דף "${name}" נוצר בהצלחה!`);
-  }, [saveToHistory, showToastMessage]);
-
-  const deletePage = useCallback((pageId) => {
-    if (pages.length <= 1) {
-      showToastMessage('חייב להישאר לפחות דף אחד!');
-      return;
-    }
-    
-    setPages(prev => prev.filter(p => p.id !== pageId));
-    if (currentPageId === pageId) {
-      setCurrentPageId(pages[0].id);
-    }
-    saveToHistory();
-    showToastMessage('הדף נמחק בהצלחה!');
-  }, [pages, currentPageId, saveToHistory, showToastMessage]);
-
-  // ============================================
-  // ELEMENT MANAGEMENT
-  // ============================================
-  
-  const createElement = useCallback((componentType) => {
-    const component = Object.values(componentLibrary)
-      .flat()
-      .find(comp => comp.id === componentType);
-    
-    if (!component) return;
-
-    const elementId = generateId();
     const newElement = {
-      id: elementId,
-      type: componentType,
-      tag: component.tag,
-      content: getDefaultContent(componentType),
-      styles: getDefaultStyles(componentType),
-      position: { 
-        x: 50 + Math.random() * 100, 
-        y: 50 + Math.random() * 100 
-      }
-    };
-
-    setPages(prev => prev.map(page => 
-      page.id === currentPageId 
-        ? { ...page, elements: [...page.elements, newElement] }
-        : page
-    ));
-
-    setSelectedElement(newElement);
-    saveToHistory();
-    showToastMessage(`${component.name} נוסף בהצלחה!`);
-  }, [currentPageId, generateId, saveToHistory, showToastMessage]);
-
-  const updateElement = useCallback((elementId, updates) => {
-    setPages(prev => prev.map(page => 
-      page.id === currentPageId 
-        ? {
-            ...page,
-            elements: page.elements.map(el => 
-              el.id === elementId ? { ...el, ...updates } : el
-            )
-          }
-        : page
-    ));
-
-    if (selectedElement?.id === elementId) {
-      setSelectedElement(prev => ({ ...prev, ...updates }));
-    }
-  }, [currentPageId, selectedElement]);
-
-  const deleteElement = useCallback((elementId) => {
-    setPages(prev => prev.map(page => 
-      page.id === currentPageId 
-        ? { ...page, elements: page.elements.filter(el => el.id !== elementId) }
-        : page
-    ));
-    
-    if (selectedElement?.id === elementId) {
-      setSelectedElement(null);
-    }
-    
-    saveToHistory();
-    showToastMessage('האלמנט נמחק בהצלחה!');
-  }, [currentPageId, selectedElement, saveToHistory, showToastMessage]);
-
-  const duplicateElement = useCallback((elementId) => {
-    const currentPage = getCurrentPage();
-    const element = currentPage?.elements.find(el => el.id === elementId);
-    
-    if (element) {
-      const newElement = {
-        ...element,
-        id: generateId(),
-        position: {
-          x: element.position.x + 20,
-          y: element.position.y + 20
-        }
-      };
-      
-      setPages(prev => prev.map(page => 
-        page.id === currentPageId 
-          ? { ...page, elements: [...page.elements, newElement] }
-          : page
-      ));
-      
-      saveToHistory();
-      showToastMessage('האלמנט שוכפל בהצלחה!');
-    }
-  }, [currentPageId, getCurrentPage, generateId, saveToHistory, showToastMessage]);
-
-  // ============================================
-  // DEFAULT CONTENT & STYLES
-  // ============================================
-  
-  const getDefaultContent = useCallback((type) => {
-    const defaults = {
-      'heading-1': 'כותרת ראשית',
-      'heading-2': 'כותרת משנה',
-      'heading-3': 'כותרת קטנה',
-      'paragraph': 'זהו טקסט לדוגמה. לחץ כדי לערוך את התוכן.',
-      'quote': 'זהו ציטוט מעורר השראה.',
-      'button': 'לחץ כאן',
-      'link': 'קישור',
-      'hero': 'ברוכים הבאים לעסק שלנו\nאנחנו מספקים שירותים מעולים',
-      'testimonial': '"שירות מעולה! אני ממליץ בחום."\n- לקוח מרוצה',
-      'team-card': 'ישראל ישראלי\nמנהל פרויקטים',
-      'service-card': 'השירות שלנו\nתיאור קצר של השירות המעולה שאנו מספקים.',
-      'stats': '500+\nלקוחות מרוצים'
-    };
-    return defaults[type] || 'תוכן חדש';
-  }, []);
-
-  const getDefaultStyles = useCallback((type) => {
-    const baseStyles = {
-      'heading-1': {
-        fontSize: '3rem',
-        fontWeight: '700',
-        color: project.settings.colors.text,
-        fontFamily: project.settings.fonts.heading,
-        lineHeight: '1.2',
+      id: Date.now(),
+      type,
+      x: 50,
+      y: 50,
+      width: type === 'text' ? 200 : type === 'button' ? 150 : type === 'video' ? 400 : 300,
+      height: type === 'text' ? 40 : type === 'button' ? 40 : type === 'video' ? 225 : 200,
+      content: type === 'text' ? 'טקסט חדש' : 
+               type === 'button' ? 'לחץ כאן' : 
+               type === 'video' ? '' : 
+               type === 'image' ? '' : 'תוכן',
+      style: {
+        backgroundColor: type === 'button' ? '#3498db' : 'transparent',
+        color: type === 'button' || type === 'text' ? '#ffffff' : '#000000',
+        fontSize: '16px',
+        fontFamily: 'Arial',
         textAlign: 'center',
-        marginBottom: '1rem'
+        borderRadius: type === 'button' ? '5px' : '0px',
+        border: type === 'image' || type === 'video' ? '2px dashed #ccc' : 'none'
       },
-      'heading-2': {
-        fontSize: '2.5rem',
-        fontWeight: '600',
-        color: project.settings.colors.text,
-        fontFamily: project.settings.fonts.heading,
-        lineHeight: '1.3',
-        marginBottom: '1rem'
-      },
-      'heading-3': {
-        fontSize: '2rem',
-        fontWeight: '500',
-        color: project.settings.colors.text,
-        fontFamily: project.settings.fonts.heading,
-        lineHeight: '1.4',
-        marginBottom: '0.75rem'
-      },
-      'paragraph': {
-        fontSize: '1.125rem',
-        lineHeight: '1.6',
-        color: project.settings.colors.text,
-        fontFamily: project.settings.fonts.body,
-        marginBottom: '1rem'
-      },
-      'quote': {
-        fontSize: '1.5rem',
-        fontStyle: 'italic',
-        color: project.settings.colors.text,
-        fontFamily: project.settings.fonts.body,
-        borderLeft: `4px solid ${project.settings.colors.primary}`,
-        paddingLeft: '1rem',
-        marginBottom: '1rem'
-      },
-      'button': {
-        backgroundColor: project.settings.colors.primary,
-        color: '#ffffff',
-        padding: '0.75rem 2rem',
-        borderRadius: '0.5rem',
-        border: 'none',
-        fontSize: '1rem',
-        fontWeight: '600',
-        cursor: 'pointer',
-        fontFamily: project.settings.fonts.body
-      },
-      'hero': {
-        background: `linear-gradient(135deg, ${project.settings.colors.primary}, ${project.settings.colors.secondary})`,
-        color: '#ffffff',
-        padding: '4rem 2rem',
-        textAlign: 'center',
-        fontSize: '2rem',
-        fontWeight: '700',
-        minHeight: '400px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column'
-      }
+      videoUrl: '',
+      imageUrl: ''
     };
+    
+    setElements([...elements, newElement]);
+    setSelectedElement(newElement.id);
+  };
 
-    return baseStyles[type] || {
-      color: project.settings.colors.text,
-      fontFamily: project.settings.fonts.body
+  // Mouse handlers for dragging
+  const handleMouseDown = (e, elementId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const element = elements.find(el => el.id === elementId);
+    if (!element) return;
+
+    setSelectedElement(elementId);
+    
+    const rect = canvasRef.current.getBoundingClientRect();
+    const startPos = {
+      x: e.clientX - rect.left - element.x,
+      y: e.clientY - rect.top - element.y
     };
-  }, [project.settings]);
+    
+    setDragState({ isDragging: true, startPos, elementId });
+  };
 
-  // ============================================
-  // EXPORT FUNCTIONALITY
-  // ============================================
-  
-  const exportToHTML = useCallback(() => {
-    const currentPage = getCurrentPage();
-    if (!currentPage) return;
+  const handleMouseMove = (e) => {
+    if (!dragState.isDragging) return;
+    
+    const rect = canvasRef.current.getBoundingClientRect();
+    const newX = Math.max(0, e.clientX - rect.left - dragState.startPos.x);
+    const newY = Math.max(0, e.clientY - rect.top - dragState.startPos.y);
+    
+    setElements(elements.map(el => 
+      el.id === dragState.elementId 
+        ? { ...el, x: newX, y: newY }
+        : el
+    ));
+  };
 
-    const htmlContent = `<!DOCTYPE html>
-<html lang="he" dir="rtl">
+  const handleMouseUp = () => {
+    setDragState({ isDragging: false, startPos: null, elementId: null });
+  };
+
+  // Update element properties
+  const updateElement = (id, updates) => {
+    setElements(elements.map(el => el.id === id ? { ...el, ...updates } : el));
+  };
+
+  const updateElementStyle = (id, styleUpdates) => {
+    setElements(elements.map(el => 
+      el.id === id ? { ...el, style: { ...el.style, ...styleUpdates } } : el
+    ));
+  };
+
+  // Delete element
+  const deleteElement = (id) => {
+    setElements(elements.filter(el => el.id !== id));
+    setSelectedElement(null);
+  };
+
+  // Export HTML
+  const exportHTML = () => {
+    const html = `<!DOCTYPE html>
+<html dir="rtl" lang="he">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${currentPage.name}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@200;300;400;500;600;700;800&family=Assistant:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>האתר שלי</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-          font-family: 'Assistant', sans-serif; 
-          line-height: 1.6; 
-          color: ${project.settings.colors.text};
-          background: ${project.settings.colors.background};
-        }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; position: relative; min-height: 100vh; }
-        @media (max-width: 768px) { .container { padding: 0 0.5rem; } }
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; min-height: 500px; position: relative; }
+        ${elements.map(el => `
+        .element-${el.id} {
+            position: absolute;
+            left: ${el.x}px;
+            top: ${el.y}px;
+            width: ${el.width}px;
+            height: ${el.height}px;
+            background-color: ${el.style.backgroundColor};
+            color: ${el.style.color};
+            font-size: ${el.style.fontSize};
+            font-family: ${el.style.fontFamily};
+            text-align: ${el.style.textAlign};
+            border-radius: ${el.style.borderRadius};
+            border: ${el.style.border};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            ${el.type === 'button' ? 'cursor: pointer;' : ''}
+        }`).join('')}
     </style>
 </head>
 <body>
     <div class="container">
-        ${currentPage.elements.map(element => {
-          const styles = Object.entries(element.styles)
-            .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}`)
-            .join('; ');
-          
-          return `<${element.tag} style="position: absolute; left: ${element.position.x}px; top: ${element.position.y}px; ${styles}">${element.content}</${element.tag}>`;
-        }).join('\n')}
+        ${elements.map(el => {
+          if (el.type === 'video' && el.videoUrl) {
+            const videoId = el.videoUrl.includes('youtube.com') || el.videoUrl.includes('youtu.be') 
+              ? el.videoUrl.split('v=')[1]?.split('&')[0] || el.videoUrl.split('/').pop()
+              : null;
+            
+            if (videoId) {
+              return `<iframe class="element-${el.id}" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+            }
+          }
+          if (el.type === 'image' && el.imageUrl) {
+            return `<img class="element-${el.id}" src="${el.imageUrl}" alt="תמונה" style="object-fit: cover;" />`;
+          }
+          return `<div class="element-${el.id}">${el.content}</div>`;
+        }).join('')}
     </div>
 </body>
 </html>`;
 
-    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const blob = new Blob([html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${project.name}.html`;
+    a.download = 'my-website.html';
     a.click();
-    URL.revokeObjectURL(url);
-    showToastMessage('האתר יוצא בהצלחה!');
-  }, [project, getCurrentPage, showToastMessage]);
-
-  // ============================================
-  // KEYBOARD SHORTCUTS
-  // ============================================
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.ctrlKey || e.metaKey) {
-        switch (e.key) {
-          case 'z':
-            e.preventDefault();
-            if (e.shiftKey) {
-              redo();
-            } else {
-              undo();
-            }
-            break;
-          case 's':
-            e.preventDefault();
-            showToastMessage('פרויקט נשמר אוטומטית!');
-            break;
-          case 'd':
-            e.preventDefault();
-            if (selectedElement) {
-              duplicateElement(selectedElement.id);
-            }
-            break;
-        }
-      }
-      
-      if (e.key === 'Delete' && selectedElement) {
-        deleteElement(selectedElement.id);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, selectedElement, duplicateElement, deleteElement, showToastMessage]);
-
-  // ============================================
-  // RENDER COMPONENTS
-  // ============================================
-
-  const Toast = () => (
-    showToast && (
-      <div style={{
-        position: 'fixed',
-        top: '24px',
-        right: '24px',
-        background: isDarkMode ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(40px)',
-        padding: '16px 24px',
-        borderRadius: '12px',
-        border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-        color: isDarkMode ? '#e2e8f0' : '#1a202c',
-        zIndex: 10000,
-        boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            background: 'linear-gradient(135deg, #667eea, #764ba2)',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '12px'
-          }}>
-            ✓
-          </div>
-          {toastMessage}
-        </div>
-      </div>
-    )
-  );
-
-  const PropertiesPanel = () => {
-    if (!selectedElement) return null;
-
-    return (
-      <div style={{
-        width: '320px',
-        background: isDarkMode 
-          ? 'rgba(15, 23, 42, 0.8)' 
-          : 'rgba(255, 255, 255, 0.8)',
-        backdropFilter: 'blur(40px)',
-        borderLeft: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-        padding: '20px',
-        overflowY: 'auto',
-        maxHeight: 'calc(100vh - 73px)'
-      }}>
-        <h3 style={{
-          color: isDarkMode ? '#e2e8f0' : '#1a202c',
-          fontSize: '1.1rem',
-          fontWeight: '600',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          🎨 מאפיינים
-          <button
-            onClick={() => deleteElement(selectedElement.id)}
-            style={{
-              marginLeft: 'auto',
-              background: 'none',
-              border: 'none',
-              color: '#ef4444',
-              cursor: 'pointer',
-              fontSize: '1.2rem'
-            }}
-            title="מחק אלמנט"
-          >
-            🗑️
-          </button>
-        </h3>
-
-        {/* Content Editor */}
-        <div style={{ marginBottom: '24px' }}>
-          <label style={{
-            display: 'block',
-            marginBottom: '8px',
-            color: isDarkMode ? '#e2e8f0' : '#1a202c',
-            fontWeight: '500',
-            fontSize: '0.9rem'
-          }}>
-            📝 תוכן
-          </label>
-          <textarea
-            value={selectedElement.content}
-            onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })}
-            style={{
-              width: '100%',
-              padding: '12px',
-              border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-              borderRadius: '8px',
-              background: isDarkMode 
-                ? 'rgba(255,255,255,0.05)' 
-                : 'rgba(255,255,255,0.9)',
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              fontSize: '0.9rem',
-              fontFamily: 'inherit',
-              resize: 'vertical',
-              minHeight: '80px'
-            }}
-            placeholder="הכנס תוכן..."
-          />
-        </div>
-
-        {/* Font Controls */}
-        <div style={{ marginBottom: '24px' }}>
-          <h4 style={{
-            color: isDarkMode ? '#cbd5e1' : '#475569',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            marginBottom: '16px'
-          }}>
-            🔤 טיפוגרפיה
-          </h4>
-
-          {/* Font Family */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '6px',
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              fontSize: '0.8rem'
-            }}>
-              גופן
-            </label>
-            <select
-              value={selectedElement.styles?.fontFamily || project.settings.fonts.body}
-              onChange={(e) => updateElement(selectedElement.id, {
-                styles: { ...selectedElement.styles, fontFamily: e.target.value }
-              })}
-              style={{
-                width: '100%',
-                padding: '8px',
-                borderRadius: '6px',
-                border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
-                color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                fontSize: '0.9rem'
-              }}
-            >
-              {googleFonts.map(font => (
-                <option key={font.name} value={font.name}>
-                  {font.name} {font.hebrew ? '(עברית)' : ''}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Font Size */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '6px',
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              fontSize: '0.8rem'
-            }}>
-              גודל גופן
-            </label>
-            <input
-              type="range"
-              min="12"
-              max="120"
-              value={parseInt(selectedElement.styles?.fontSize) || 16}
-              onChange={(e) => updateElement(selectedElement.id, {
-                styles: { ...selectedElement.styles, fontSize: `${e.target.value}px` }
-              })}
-              style={{ width: '100%' }}
-            />
-            <div style={{ 
-              fontSize: '0.8rem', 
-              color: isDarkMode ? '#94a3b8' : '#64748b',
-              marginTop: '4px'
-            }}>
-              {selectedElement.styles?.fontSize || '16px'}
-            </div>
-          </div>
-
-          {/* Font Weight */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '6px',
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              fontSize: '0.8rem'
-            }}>
-              משקל גופן
-            </label>
-            <select
-              value={selectedElement.styles?.fontWeight || '400'}
-              onChange={(e) => updateElement(selectedElement.id, {
-                styles: { ...selectedElement.styles, fontWeight: e.target.value }
-              })}
-              style={{
-                width: '100%',
-                padding: '8px',
-                borderRadius: '6px',
-                border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
-                color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                fontSize: '0.9rem'
-              }}
-            >
-              <option value="300">Light (300)</option>
-              <option value="400">Regular (400)</option>
-              <option value="500">Medium (500)</option>
-              <option value="600">Semi Bold (600)</option>
-              <option value="700">Bold (700)</option>
-              <option value="800">Extra Bold (800)</option>
-            </select>
-          </div>
-
-          {/* Text Align */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              fontSize: '0.8rem'
-            }}>
-              יישור טקסט
-            </label>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {[
-                { value: 'left', label: 'שמאל' },
-                { value: 'center', label: 'מרכז' },
-                { value: 'right', label: 'ימין' }
-              ].map(align => (
-                <button
-                  key={align.value}
-                  onClick={() => updateElement(selectedElement.id, {
-                    styles: { ...selectedElement.styles, textAlign: align.value }
-                  })}
-                  style={{
-                    flex: 1,
-                    padding: '8px',
-                    border: 'none',
-                    borderRadius: '6px',
-                    background: selectedElement.styles?.textAlign === align.value
-                      ? 'linear-gradient(135deg, #667eea, #764ba2)'
-                      : (isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.7)'),
-                    color: selectedElement.styles?.textAlign === align.value
-                      ? 'white'
-                      : (isDarkMode ? '#e2e8f0' : '#1a202c'),
-                    cursor: 'pointer',
-                    fontSize: '0.8rem'
-                  }}
-                >
-                  {align.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Color Controls */}
-        <div style={{ marginBottom: '24px' }}>
-          <h4 style={{
-            color: isDarkMode ? '#cbd5e1' : '#475569',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            marginBottom: '16px'
-          }}>
-            🎨 צבעים
-          </h4>
-
-          {/* Text Color */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              fontSize: '0.8rem'
-            }}>
-              צבע טקסט
-            </label>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <input
-                type="color"
-                value={selectedElement.styles?.color || project.settings.colors.text}
-                onChange={(e) => updateElement(selectedElement.id, {
-                  styles: { ...selectedElement.styles, color: e.target.value }
-                })}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer'
-                }}
-              />
-              <input
-                type="text"
-                value={selectedElement.styles?.color || project.settings.colors.text}
-                onChange={(e) => updateElement(selectedElement.id, {
-                  styles: { ...selectedElement.styles, color: e.target.value }
-                })}
-                style={{
-                  flex: 1,
-                  padding: '8px',
-                  borderRadius: '6px',
-                  border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                  background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                  fontSize: '0.8rem'
-                }}
-                placeholder="#000000"
-              />
-            </div>
-          </div>
-
-          {/* Background Color */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              fontSize: '0.8rem'
-            }}>
-              צבע רקע
-            </label>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <input
-                type="color"
-                value={selectedElement.styles?.backgroundColor || '#ffffff'}
-                onChange={(e) => updateElement(selectedElement.id, {
-                  styles: { ...selectedElement.styles, backgroundColor: e.target.value }
-                })}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer'
-                }}
-              />
-              <input
-                type="text"
-                value={selectedElement.styles?.backgroundColor || ''}
-                onChange={(e) => updateElement(selectedElement.id, {
-                  styles: { ...selectedElement.styles, backgroundColor: e.target.value }
-                })}
-                style={{
-                  flex: 1,
-                  padding: '8px',
-                  borderRadius: '6px',
-                  border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                  background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                  fontSize: '0.8rem'
-                }}
-                placeholder="transparent"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Position Controls */}
-        <div style={{ marginBottom: '24px' }}>
-          <h4 style={{
-            color: isDarkMode ? '#cbd5e1' : '#475569',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            marginBottom: '16px'
-          }}>
-            📐 מיקום
-          </h4>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <div>
-              <label style={{ 
-                fontSize: '0.7rem', 
-                color: isDarkMode ? '#94a3b8' : '#64748b',
-                display: 'block',
-                marginBottom: '4px'
-              }}>X</label>
-              <input
-                type="number"
-                value={selectedElement.position?.x || 0}
-                onChange={(e) => updateElement(selectedElement.id, {
-                  position: { ...selectedElement.position, x: parseInt(e.target.value) }
-                })}
-                style={{
-                  width: '100%',
-                  padding: '6px',
-                  borderRadius: '4px',
-                  border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                  background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                  fontSize: '0.8rem'
-                }}
-              />
-            </div>
-            <div>
-              <label style={{ 
-                fontSize: '0.7rem', 
-                color: isDarkMode ? '#94a3b8' : '#64748b',
-                display: 'block',
-                marginBottom: '4px'
-              }}>Y</label>
-              <input
-                type="number"
-                value={selectedElement.position?.y || 0}
-                onChange={(e) => updateElement(selectedElement.id, {
-                  position: { ...selectedElement.position, y: parseInt(e.target.value) }
-                })}
-                style={{
-                  width: '100%',
-                  padding: '6px',
-                  borderRadius: '4px',
-                  border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                  background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                  fontSize: '0.8rem'
-                }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-          <button
-            onClick={() => duplicateElement(selectedElement.id)}
-            style={{
-              flex: 1,
-              padding: '8px',
-              background: 'linear-gradient(135deg, #06d6a0, #0891b2)',
-              border: 'none',
-              borderRadius: '6px',
-              color: 'white',
-              fontWeight: '500',
-              cursor: 'pointer',
-              fontSize: '0.8rem'
-            }}
-          >
-            📋 שכפל
-          </button>
-          <button
-            onClick={() => setSelectedElement(null)}
-            style={{
-              flex: 1,
-              padding: '8px',
-              background: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.7)',
-              border: 'none',
-              borderRadius: '6px',
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              fontWeight: '500',
-              cursor: 'pointer',
-              fontSize: '0.8rem'
-            }}
-          >
-            ✖️ סגור
-          </button>
-        </div>
-      </div>
-    );
   };
 
-  // ============================================
-  // MAIN RENDER
-  // ============================================
+  const selectedEl = elements.find(el => el.id === selectedElement);
 
   return (
-    <div style={{
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      height: '100vh',
-      background: isDarkMode 
-        ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)'
-        : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-
-      <style jsx global>{`
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-        }
-        
-        .element-selected {
-          outline: 3px solid #667eea !important;
-          outline-offset: 2px;
-          position: relative;
-          z-index: 1000;
-        }
-        
-        .element-selected::after {
-          content: '✏️';
-          position: absolute;
-          top: -12px;
-          right: -12px;
-          background: #667eea;
-          color: white;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          border: 2px solid white;
-          z-index: 1001;
-        }
-      `}</style>
-
-      <Toast />
-
+    <div style={{ fontFamily: 'Arial, sans-serif', direction: 'rtl', height: '100vh', display: 'flex', flexDirection: 'column', background: '#1a1a1a', color: 'white' }}>
+      
       {/* Header */}
-      <header style={{
-        background: isDarkMode 
-          ? 'rgba(15, 23, 42, 0.8)' 
-          : 'rgba(255, 255, 255, 0.8)',
-        backdropFilter: 'blur(40px)',
-        borderBottom: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-        padding: '16px 24px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        zIndex: 1000
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <div style={{
-            fontSize: '1.5rem',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #667eea, #764ba2)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}>
-            🚀 WebMaster Pro
-          </div>
-          
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            padding: '8px 16px',
-            background: isDarkMode 
-              ? 'rgba(255,255,255,0.05)' 
-              : 'rgba(255,255,255,0.7)',
-            borderRadius: '12px',
-            fontSize: '0.9rem',
-            fontWeight: '500',
-            color: isDarkMode ? '#e2e8f0' : '#1a202c'
-          }}>
-            📄 {getCurrentPage()?.name || 'טוען...'}
-          </div>
-
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <button
-              onClick={undo}
-              disabled={historyIndex <= 0}
-              style={{
-                padding: '6px 12px',
-                background: historyIndex > 0 
-                  ? (isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.7)')
-                  : 'rgba(128,128,128,0.2)',
-                border: 'none',
-                borderRadius: '6px',
-                color: historyIndex > 0 
-                  ? (isDarkMode ? '#e2e8f0' : '#1a202c')
-                  : '#888',
-                cursor: historyIndex > 0 ? 'pointer' : 'not-allowed',
-                fontSize: '0.8rem'
-              }}
-              title="Undo (Ctrl+Z)"
-            >
-              ↶
-            </button>
-            <button
-              onClick={redo}
-              disabled={historyIndex >= history.length - 1}
-              style={{
-                padding: '6px 12px',
-                background: historyIndex < history.length - 1
-                  ? (isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.7)')
-                  : 'rgba(128,128,128,0.2)',
-                border: 'none',
-                borderRadius: '6px',
-                color: historyIndex < history.length - 1
-                  ? (isDarkMode ? '#e2e8f0' : '#1a202c')
-                  : '#888',
-                cursor: historyIndex < history.length - 1 ? 'pointer' : 'not-allowed',
-                fontSize: '0.8rem'
-              }}
-              title="Redo (Ctrl+Shift+Z)"
-            >
-              ↷
-            </button>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          {/* Device Switcher */}
-          <div style={{
-            display: 'flex',
-            background: isDarkMode 
-              ? 'rgba(255,255,255,0.05)' 
-              : 'rgba(255,255,255,0.6)',
-            borderRadius: '12px',
-            padding: '4px'
-          }}>
-            {Object.entries(devices).map(([deviceKey, device]) => (
+      <header style={{ background: '#2d2d2d', padding: '15px 25px', borderBottom: '1px solid #444', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#ffffff' }}>🎨 אדיטור מקצועי</h1>
+        
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          {/* Viewport Controls */}
+          <div style={{ display: 'flex', gap: '10px' }}>
+            {Object.keys(viewportSizes).map(mode => (
               <button
-                key={deviceKey}
-                onClick={() => setCurrentDevice(deviceKey)}
+                key={mode}
+                onClick={() => setViewMode(mode)}
                 style={{
-                  padding: '8px 12px',
+                  padding: '8px 15px',
                   border: 'none',
-                  background: currentDevice === deviceKey
-                    ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)')
-                    : 'transparent',
-                  borderRadius: '8px',
+                  borderRadius: '5px',
+                  background: viewMode === mode ? '#667eea' : '#444',
+                  color: 'white',
                   cursor: 'pointer',
-                  color: currentDevice === deviceKey
-                    ? (isDarkMode ? '#ffffff' : '#1a202c')
-                    : (isDarkMode ? '#94a3b8' : '#64748b'),
-                  fontSize: '0.8rem'
+                  fontSize: '0.9rem'
                 }}
               >
-                {device.icon} {device.name}
+                {mode === 'desktop' ? '🖥️ Desktop' : mode === 'tablet' ? '📱 Tablet' : '📱 Mobile'}
               </button>
             ))}
           </div>
-
-          {/* Zoom Control */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '6px 12px',
-            background: isDarkMode 
-              ? 'rgba(255,255,255,0.05)' 
-              : 'rgba(255,255,255,0.7)',
-            borderRadius: '8px',
-            fontSize: '0.8rem',
-            color: isDarkMode ? '#e2e8f0' : '#1a202c'
-          }}>
-            <button
-              onClick={() => setCurrentZoom(Math.max(25, currentZoom - 25))}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'inherit',
-                cursor: 'pointer',
-                fontSize: '0.9rem'
-              }}
-            >
-              ➖
-            </button>
-            <span style={{ minWidth: '40px', textAlign: 'center' }}>{currentZoom}%</span>
-            <button
-              onClick={() => setCurrentZoom(Math.min(200, currentZoom + 25))}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'inherit',
-                cursor: 'pointer',
-                fontSize: '0.9rem'
-              }}
-            >
-              ➕
-            </button>
-          </div>
-
-          {/* Action Buttons */}
+          
           <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
+            onClick={exportHTML}
             style={{
-              padding: '8px 12px',
-              background: isDarkMode 
-                ? 'rgba(255,255,255,0.08)' 
-                : 'rgba(255,255,255,0.7)',
+              padding: '10px 20px',
               border: 'none',
-              borderRadius: '8px',
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              cursor: 'pointer',
-              fontSize: '0.8rem'
-            }}
-          >
-            {isDarkMode ? '☀️' : '🌙'}
-          </button>
-
-          <button
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            style={{
-              padding: '8px 16px',
-              background: isPreviewMode 
-                ? 'linear-gradient(135deg, #06d6a0, #0891b2)' 
-                : (isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.7)'),
-              border: 'none',
-              borderRadius: '8px',
-              color: isPreviewMode ? 'white' : (isDarkMode ? '#e2e8f0' : '#1a202c'),
-              cursor: 'pointer',
-              fontSize: '0.8rem',
-              fontWeight: '500'
-            }}
-          >
-            {isPreviewMode ? '✏️ Edit' : '👁️ Preview'}
-          </button>
-
-          <button
-            onClick={exportToHTML}
-            style={{
-              padding: '8px 16px',
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              border: 'none',
-              borderRadius: '8px',
+              borderRadius: '5px',
+              background: '#27ae60',
               color: 'white',
-              fontWeight: '600',
               cursor: 'pointer',
-              fontSize: '0.8rem'
+              fontSize: '1rem',
+              fontWeight: 'bold'
             }}
           >
-            💾 Export
+            📤 ייצא HTML
           </button>
         </div>
       </header>
 
-      {/* Main Layout */}
-      <div style={{ display: 'flex', height: 'calc(100vh - 73px)' }}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         
-        {/* Left Sidebar */}
-        {!isPreviewMode && (
-          <div style={{
-            width: '320px',
-            background: isDarkMode 
-              ? 'rgba(15, 23, 42, 0.7)' 
-              : 'rgba(255, 255, 255, 0.7)',
-            backdropFilter: 'blur(40px)',
-            borderRight: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            
-            {/* Panel Tabs */}
-            <div style={{
-              display: 'flex',
-              padding: '16px 16px 0 16px',
-              gap: '4px'
-            }}>
-              {[
-                { id: 'pages', label: 'דפים', icon: '📄' },
-                { id: 'elements', label: 'רכיבים', icon: '🧩' },
-                { id: 'design', label: 'עיצוב', icon: '🎨' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActivePanel(tab.id)}
-                  style={{
-                    flex: 1,
-                    padding: '12px 8px',
-                    background: activePanel === tab.id
-                      ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)')
-                      : 'transparent',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: activePanel === tab.id
-                      ? (isDarkMode ? '#ffffff' : '#1a202c')
-                      : (isDarkMode ? '#94a3b8' : '#64748b'),
-                    cursor: 'pointer',
-                    fontSize: '0.8rem',
-                    fontWeight: activePanel === tab.id ? '600' : '500',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <span>{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Panel Content */}
-            <div style={{ flex: 1, padding: '16px', overflowY: 'auto' }}>
-              
-              {/* Pages Panel */}
-              {activePanel === 'pages' && (
-                <div>
-                  <h3 style={{
-                    color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
-                    marginBottom: '16px'
-                  }}>
-                    📄 ניהול דפים
-                  </h3>
-
-                  <button
-                    onClick={() => createPage('דף חדש')}
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: 'white',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      marginBottom: '16px',
-                      fontSize: '0.9rem'
-                    }}
-                  >
-                    ➕ הוסף דף חדש
-                  </button>
-
-                  <div style={{ display: 'grid', gap: '8px' }}>
-                    {pages.map((page) => (
-                      <div
-                        key={page.id}
-                        onClick={() => setCurrentPageId(page.id)}
-                        style={{
-                          padding: '12px',
-                          background: currentPageId === page.id
-                            ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(103, 126, 234, 0.1)')
-                            : (isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.6)'),
-                          borderRadius: '8px',
-                          cursor: 'pointer',
-                          border: currentPageId === page.id
-                            ? '2px solid #667eea'
-                            : `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.8)'}`
-                        }}
-                      >
-                        <div style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center'
-                        }}>
-                          <div>
-                            <div style={{
-                              fontWeight: '600',
-                              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                              fontSize: '0.9rem'
-                            }}>
-                              {page.name}
-                            </div>
-                            <div style={{
-                              fontSize: '0.75rem',
-                              color: isDarkMode ? '#94a3b8' : '#64748b'
-                            }}>
-                              {page.url}
-                            </div>
-                          </div>
-                          {pages.length > 1 && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deletePage(page.id);
-                              }}
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                color: '#ef4444',
-                                cursor: 'pointer',
-                                fontSize: '0.8rem'
-                              }}
-                            >
-                              🗑️
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Elements Panel */}
-              {activePanel === 'elements' && (
-                <div>
-                  <h3 style={{
-                    color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
-                    marginBottom: '16px'
-                  }}>
-                    🧩 רכיבים
-                  </h3>
-
-                  {Object.entries(componentLibrary).map(([category, components]) => (
-                    <div key={category} style={{ marginBottom: '24px' }}>
-                      <h4 style={{
-                        color: isDarkMode ? '#cbd5e1' : '#475569',
-                        fontSize: '0.9rem',
-                        fontWeight: '600',
-                        marginBottom: '12px'
-                      }}>
-                        {category === 'text' && '📝 טקסט'}
-                        {category === 'media' && '🎬 מדיה'}
-                        {category === 'layout' && '📐 פריסה'}
-                        {category === 'interactive' && '🔘 אינטראקטיבי'}
-                        {category === 'business' && '💼 עסקי'}
-                      </h4>
-                      
-                      <div style={{ display: 'grid', gap: '8px' }}>
-                        {components.map((component) => (
-                          <div
-                            key={component.id}
-                            onClick={() => createElement(component.id)}
-                            style={{
-                              padding: '12px',
-                              background: isDarkMode 
-                                ? 'rgba(255,255,255,0.04)' 
-                                : 'rgba(255,255,255,0.6)',
-                              borderRadius: '8px',
-                              cursor: 'pointer',
-                              border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.8)'}`,
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '12px',
-                              transition: 'all 0.2s ease'
-                            }}
-                          >
-                            <div style={{
-                              width: '32px',
-                              height: '32px',
-                              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                              borderRadius: '8px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '1rem'
-                            }}>
-                              {component.icon}
-                            </div>
-                            <div style={{
-                              fontWeight: '600',
-                              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                              fontSize: '0.9rem'
-                            }}>
-                              {component.name}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Global Design Panel */}
-              {activePanel === 'design' && !selectedElement && (
-                <div>
-                  <h3 style={{
-                    color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
-                    marginBottom: '16px'
-                  }}>
-                    🎨 עיצוב גלובלי
-                  </h3>
-
-                  <div style={{ marginBottom: '24px' }}>
-                    <h4 style={{
-                      color: isDarkMode ? '#cbd5e1' : '#475569',
-                      fontSize: '0.9rem',
-                      fontWeight: '600',
-                      marginBottom: '12px'
-                    }}>
-                      צבעי המותג
-                    </h4>
-
-                    <div style={{ display: 'grid', gap: '12px' }}>
-                      <div>
-                        <label style={{
-                          display: 'block',
-                          marginBottom: '6px',
-                          fontSize: '0.8rem',
-                          color: isDarkMode ? '#e2e8f0' : '#1a202c'
-                        }}>
-                          צבע ראשי
-                        </label>
-                        <input
-                          type="color"
-                          value={project.settings.colors.primary}
-                          onChange={(e) => setProject(prev => ({
-                            ...prev,
-                            settings: {
-                              ...prev.settings,
-                              colors: { ...prev.settings.colors, primary: e.target.value }
-                            }
-                          }))}
-                          style={{
-                            width: '100%',
-                            height: '40px',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer'
-                          }}
-                        />
-                      </div>
-
-                      <div>
-                        <label style={{
-                          display: 'block',
-                          marginBottom: '6px',
-                          fontSize: '0.8rem',
-                          color: isDarkMode ? '#e2e8f0' : '#1a202c'
-                        }}>
-                          צבע משני
-                        </label>
-                        <input
-                          type="color"
-                          value={project.settings.colors.secondary}
-                          onChange={(e) => setProject(prev => ({
-                            ...prev,
-                            settings: {
-                              ...prev.settings,
-                              colors: { ...prev.settings.colors, secondary: e.target.value }
-                            }
-                          }))}
-                          style={{
-                            width: '100%',
-                            height: '40px',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer'
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: '24px' }}>
-                    <h4 style={{
-                      color: isDarkMode ? '#cbd5e1' : '#475569',
-                      fontSize: '0.9rem',
-                      fontWeight: '600',
-                      marginBottom: '12px'
-                    }}>
-                      גופנים גלובליים
-                    </h4>
-
-                    <div style={{ display: 'grid', gap: '12px' }}>
-                      <div>
-                        <label style={{
-                          display: 'block',
-                          marginBottom: '6px',
-                          fontSize: '0.8rem',
-                          color: isDarkMode ? '#e2e8f0' : '#1a202c'
-                        }}>
-                          גופן כותרות
-                        </label>
-                        <select
-                          value={project.settings.fonts.heading}
-                          onChange={(e) => setProject(prev => ({
-                            ...prev,
-                            settings: {
-                              ...prev.settings,
-                              fonts: { ...prev.settings.fonts, heading: e.target.value }
-                            }
-                          }))}
-                          style={{
-                            width: '100%',
-                            padding: '8px',
-                            borderRadius: '6px',
-                            border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                            background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
-                            color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                            fontSize: '0.9rem'
-                          }}
-                        >
-                          {googleFonts.map(font => (
-                            <option key={font.name} value={font.name}>
-                              {font.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label style={{
-                          display: 'block',
-                          marginBottom: '6px',
-                          fontSize: '0.8rem',
-                          color: isDarkMode ? '#e2e8f0' : '#1a202c'
-                        }}>
-                        </label>
-                        <select
-                          value={project.settings.fonts.body}
-                          onChange={(e) => setProject(prev => ({
-                            ...prev,
-                            settings: {
-                              ...prev.settings,
-                              fonts: { ...prev.settings.fonts, body: e.target.value }
-                            }
-                          }))}
-                          style={{
-                            width: '100%',
-                            padding: '8px',
-                            borderRadius: '6px',
-                            border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                            background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'white',
-                            color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                            fontSize: '0.9rem'
-                          }}
-                        >
-                          {googleFonts.map(font => (
-                            <option key={font.name} value={font.name}>
-                              {font.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Canvas Area */}
-        <div style={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column',
-          background: isDarkMode ? '#1e293b' : '#f1f5f9'
-        }}>
+        {/* Left Panel - Tools */}
+        <div style={{ width: '250px', background: '#2d2d2d', borderLeft: '1px solid #444', padding: '20px', overflowY: 'auto' }}>
+          <h3 style={{ margin: '0 0 20px 0', color: '#ffffff' }}>🛠️ כלים</h3>
           
-          {/* Canvas Container */}
-          <div style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '40px',
-            overflow: 'auto'
-          }}>
-            <div
-              ref={canvasRef}
-              style={{
-                width: `${devices[currentDevice].width}px`,
-                minHeight: '600px',
-                background: '#ffffff',
-                borderRadius: '12px',
-                boxShadow: isDarkMode 
-                  ? '0 25px 50px rgba(0,0,0,0.5)' 
-                  : '0 25px 50px rgba(0,0,0,0.15)',
-                position: 'relative',
-                transform: `scale(${currentZoom / 100})`,
-                transformOrigin: 'center top',
-                transition: 'all 0.3s ease'
-              }}
-              onClick={(e) => {
-                if (e.target === canvasRef.current) {
-                  setSelectedElement(null);
-                }
-              }}
-            >
-              {getCurrentPage()?.elements.map(element => (
-                <div
-                  key={element.id}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedElement(element);
-                  }}
-                  className={selectedElement?.id === element.id ? 'element-selected' : ''}
-                  style={{
-                    position: 'absolute',
-                    left: `${element.position.x}px`,
-                    top: `${element.position.y}px`,
-                    ...element.styles,
-                    cursor: isPreviewMode ? 'default' : 'pointer',
-                    whiteSpace: 'pre-wrap'
-                  }}
-                  title={`${element.type} - לחץ לעריכה`}
-                >
-                  {element.content}
-                </div>
-              ))}
-
-              {/* Empty State */}
-              {getCurrentPage()?.elements.length === 0 && (
-                <div style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  textAlign: 'center',
-                  color: '#94a3b8',
-                  fontSize: '1.2rem'
-                }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🎨</div>
-                  <div style={{ fontWeight: '600', marginBottom: '8px' }}>
-                    התחל לבנות את האתר שלך
-                  </div>
-                  <div style={{ fontSize: '0.9rem' }}>
-                    לחץ על רכיב מהסיידבר כדי להתחיל
-                  </div>
-                </div>
-              )}
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button onClick={() => addElement('text')} style={{ padding: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              📝 טקסט
+            </button>
+            <button onClick={() => addElement('button')} style={{ padding: '12px', background: '#3498db', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              🔘 כפתור
+            </button>
+            <button onClick={() => addElement('image')} style={{ padding: '12px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              🖼️ תמונה
+            </button>
+            <button onClick={() => addElement('video')} style={{ padding: '12px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+              🎬 וידאו
+            </button>
           </div>
 
-          {/* Canvas Footer Info */}
-          <div style={{
-            padding: '12px 24px',
-            background: isDarkMode 
-              ? 'rgba(15, 23, 42, 0.7)' 
-              : 'rgba(255, 255, 255, 0.7)',
-            backdropFilter: 'blur(20px)',
-            borderTop: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: '0.8rem',
-            color: isDarkMode ? '#94a3b8' : '#64748b'
-          }}>
-            <div>
-              🎯 {getCurrentPage()?.elements.length || 0} אלמנטים
-            </div>
-            <div>
-              📐 {devices[currentDevice].width}px × {currentZoom}%
-            </div>
-            <div>
-              💾 נשמר אוטומטית
-            </div>
+          {/* Quick Templates */}
+          <div style={{ marginTop: '30px' }}>
+            <h4 style={{ margin: '0 0 15px 0', color: '#ffffff' }}>⚡ תבניות מהירות</h4>
+            <button 
+              onClick={() => {
+                const heroElements = [
+                  { ...{ id: Date.now() + 1, type: 'text', x: 50, y: 50, width: 400, height: 60, content: 'ברוכים הבאים לאתר שלנו', style: { backgroundColor: 'transparent', color: '#2c3e50', fontSize: '32px', fontFamily: 'Arial', textAlign: 'center' }}},
+                  { ...{ id: Date.now() + 2, type: 'text', x: 50, y: 120, width: 500, height: 40, content: 'אנחנו מציעים שירותים מקצועיים ואיכותיים', style: { backgroundColor: 'transparent', color: '#7f8c8d', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center' }}},
+                  { ...{ id: Date.now() + 3, type: 'button', x: 200, y: 180, width: 200, height: 50, content: 'צור קשר עכשיו', style: { backgroundColor: '#3498db', color: '#ffffff', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }}}
+                ];
+                setElements([...elements, ...heroElements]);
+              }}
+              style={{ padding: '10px', background: '#8e44ad', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}
+            >
+              🏠 Hero Section
+            </button>
           </div>
         </div>
 
-        {/* Right Properties Panel */}
-        {!isPreviewMode && selectedElement && <PropertiesPanel />}
+        {/* Center - Canvas */}
+        <div style={{ flex: 1, padding: '20px', background: '#f5f5f5', overflow: 'auto', display: 'flex', justifyContent: 'center' }}>
+          <div 
+            ref={canvasRef}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            style={{
+              width: viewportSizes[viewMode].width,
+              maxWidth: viewportSizes[viewMode].maxWidth,
+              minHeight: '600px',
+              background: 'white',
+              position: 'relative',
+              boxShadow: '0 0 20px rgba(0,0,0,0.1)',
+              borderRadius: '8px',
+              cursor: 'crosshair'
+            }}
+          >
+            {elements.length === 0 && (
+              <div style={{ 
+                position: 'absolute', 
+                top: '50%', 
+                left: '50%', 
+                transform: 'translate(-50%, -50%)', 
+                textAlign: 'center', 
+                color: '#bdc3c7',
+                fontSize: '1.2rem'
+              }}>
+                🎨 בחר כלי מהתפריט והתחל לעצב!
+              </div>
+            )}
+            
+            {elements.map(element => (
+              <div
+                key={element.id}
+                onMouseDown={(e) => handleMouseDown(e, element.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedElement(element.id);
+                }}
+                style={{
+                  position: 'absolute',
+                  left: element.x,
+                  top: element.y,
+                  width: element.width,
+                  height: element.height,
+                  backgroundColor: element.style.backgroundColor,
+                  color: element.style.color,
+                  fontSize: element.style.fontSize,
+                  fontFamily: element.style.fontFamily,
+                  textAlign: element.style.textAlign,
+                  borderRadius: element.style.borderRadius,
+                  border: selectedElement === element.id ? '2px solid #3498db' : element.style.border,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'move',
+                  userSelect: 'none',
+                  boxSizing: 'border-box'
+                }}
+              >
+                {element.type === 'video' && element.videoUrl ? (
+                  (() => {
+                    const videoId = element.videoUrl.includes('youtube.com') || element.videoUrl.includes('youtu.be') 
+                      ? element.videoUrl.split('v=')[1]?.split('&')[0] || element.videoUrl.split('/').pop()
+                      : null;
+                    
+                    return videoId ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        style={{ width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }}
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div style={{ color: '#e74c3c' }}>🔗 URL וידאו לא תקין</div>
+                    );
+                  })()
+                ) : element.type === 'image' && element.imageUrl ? (
+                  <img 
+                    src={element.imageUrl} 
+                    alt="תמונה" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
+                  />
+                ) : element.type === 'video' ? (
+                  <div style={{ color: '#95a5a6' }}>🎬 הוסף URL וידאו</div>
+                ) : element.type === 'image' ? (
+                  <div style={{ color: '#95a5a6' }}>🖼️ הוסף URL תמונה</div>
+                ) : (
+                  element.content
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Panel - Properties */}
+        <div style={{ width: '300px', background: '#2d2d2d', borderRight: '1px solid #444', padding: '20px', overflowY: 'auto' }}>
+          <h3 style={{ margin: '0 0 20px 0', color: '#ffffff' }}>⚙️ מאפיינים</h3>
+          
+          {selectedEl ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              
+              {/* Element Info */}
+              <div style={{ background: '#3d3d3d', padding: '15px', borderRadius: '8px' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '10px', color: '#ffffff' }}>
+                  {selectedEl.type === 'text' ? '📝 טקסט' : 
+                   selectedEl.type === 'button' ? '🔘 כפתור' : 
+                   selectedEl.type === 'image' ? '🖼️ תמונה' : 
+                   selectedEl.type === 'video' ? '🎬 וידאו' : 'אלמנט'}
+                </div>
+                
+                {/* Content */}
+                {(selectedEl.type === 'text' || selectedEl.type === 'button') && (
+                  <div style={{ marginBottom: '15px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>תוכן:</label>
+                    <input
+                      type="text"
+                      value={selectedEl.content}
+                      onChange={(e) => updateElement(selectedEl.id, { content: e.target.value })}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white' }}
+                    />
+                  </div>
+                )}
+                
+                {/* Video URL */}
+                {selectedEl.type === 'video' && (
+                  <div style={{ marginBottom: '15px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>URL וידאו (YouTube):</label>
+                    <input
+                      type="text"
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      value={selectedEl.videoUrl}
+                      onChange={(e) => updateElement(selectedEl.id, { videoUrl: e.target.value })}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white' }}
+                    />
+                  </div>
+                )}
+                
+                {/* Image URL */}
+                {selectedEl.type === 'image' && (
+                  <div style={{ marginBottom: '15px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>URL תמונה:</label>
+                    <input
+                      type="text"
+                      placeholder="https://example.com/image.jpg"
+                      value={selectedEl.imageUrl}
+                      onChange={(e) => updateElement(selectedEl.id, { imageUrl: e.target.value })}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white' }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Position & Size */}
+              <div style={{ background: '#3d3d3d', padding: '15px', borderRadius: '8px' }}>
+                <h4 style={{ margin: '0 0 15px 0', color: '#ffffff' }}>📐 מיקום וגודל</h4>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>X:</label>
+                    <input
+                      type="number"
+                      value={selectedEl.x}
+                      onChange={(e) => updateElement(selectedEl.id, { x: parseInt(e.target.value) })}
+                      style={{ width: '100%', padding: '6px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>Y:</label>
+                    <input
+                      type="number"
+                      value={selectedEl.y}
+                      onChange={(e) => updateElement(selectedEl.id, { y: parseInt(e.target.value) })}
+                      style={{ width: '100%', padding: '6px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>רוחב:</label>
+                    <input
+                      type="number"
+                      value={selectedEl.width}
+                      onChange={(e) => updateElement(selectedEl.id, { width: parseInt(e.target.value) })}
+                      style={{ width: '100%', padding: '6px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>גובה:</label>
+                    <input
+                      type="number"
+                      value={selectedEl.height}
+                      onChange={(e) => updateElement(selectedEl.id, { height: parseInt(e.target.value) })}
+                      style={{ width: '100%', padding: '6px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Style */}
+              <div style={{ background: '#3d3d3d', padding: '15px', borderRadius: '8px' }}>
+                <h4 style={{ margin: '0 0 15px 0', color: '#ffffff' }}>🎨 עיצוב</h4>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>צבע רקע:</label>
+                    <input
+                      type="color"
+                      value={selectedEl.style.backgroundColor === 'transparent' ? '#ffffff' : selectedEl.style.backgroundColor}
+                      onChange={(e) => updateElementStyle(selectedEl.id, { backgroundColor: e.target.value })}
+                      style={{ width: '100%', height: '40px', border: 'none', borderRadius: '4px' }}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>צבע טקסט:</label>
+                    <input
+                      type="color"
+                      value={selectedEl.style.color}
+                      onChange={(e) => updateElementStyle(selectedEl.id, { color: e.target.value })}
+                      style={{ width: '100%', height: '40px', border: 'none', borderRadius: '4px' }}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>גודל פונט:</label>
+                    <input
+                      type="range"
+                      min="12"
+                      max="48"
+                      value={parseInt(selectedEl.style.fontSize)}
+                      onChange={(e) => updateElementStyle(selectedEl.id, { fontSize: e.target.value + 'px' })}
+                      style={{ width: '100%' }}
+                    />
+                    <span style={{ color: '#bdc3c7', fontSize: '0.9rem' }}>{selectedEl.style.fontSize}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <button
+                onClick={() => deleteElement(selectedEl.id)}
+                style={{
+                  padding: '12px',
+                  background: '#e74c3c',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '1rem'
+                }}
+              >
+                🗑️ מחק אלמנט
+              </button>
+              
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', color: '#7f8c8d', padding: '40px 20px' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '20px' }}>👆</div>
+              <p>בחר אלמנט לעריכת המאפיינים שלו</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
