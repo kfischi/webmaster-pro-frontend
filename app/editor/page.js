@@ -1,371 +1,2083 @@
-'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
+::-webkit-scrollbar-thumb:hover {
+          background: ${isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'};
+        }
+      `}</style>
 
-export default function PremiumEditor() {
-  const [currentDevice, setCurrentDevice] = useState('desktop');
-  const [currentZoom, setCurrentZoom] = useState(100);
-  const [selectedElement, setSelectedElement] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const [activeTab, setActiveTab] = useState('elements');
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [canvasContent, setCanvasContent] = useState('');
-  const canvasRef = useRef(null);
-  const [history, setHistory] = useState([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
+      <Toast />
 
-  // Advanced state management
-  const [elementProperties, setElementProperties] = useState({
-    text: '',
-    fontSize: 16,
-    fontWeight: 400,
-    color: '#ffffff',
-    backgroundColor: 'transparent',
-    padding: 0,
-    margin: 0,
-    borderRadius: 0,
-    opacity: 100,
-    rotation: 0,
-    x: 0,
-    y: 0,
-    width: 'auto',
-    height: 'auto'
-  });
-
-  const premiumTemplate = `
-    <div class="hero-section" id="hero" style="
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    ">
-      <div class="hero-particles" style="
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
-        animation: float 6s ease-in-out infinite;
-      "></div>
-      
-      <div class="hero-content editable-container" style="
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(40px);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 32px;
-        padding: 80px 60px;
-        text-align: center;
-        max-width: 800px;
-        margin: 0 auto;
-        box-shadow: 0 32px 80px rgba(0,0,0,0.1);
-        position: relative;
-        z-index: 2;
-      ">
-        <h1 class="editable-text hero-title" style="
-          font-size: 4.5rem;
-          font-weight: 200;
-          color: #ffffff;
-          margin-bottom: 32px;
-          letter-spacing: -3px;
-          line-height: 1.1;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        " data-element-type="heading">
-          ✂️ סלון עופר המודרני
-        </h1>
-        
-        <p class="editable-text hero-subtitle" style="
-          font-size: 1.8rem;
-          color: rgba(255,255,255,0.9);
-          margin-bottom: 48px;
-          font-weight: 300;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        " data-element-type="text">
-          החוויה הכי מקצועית והכי מתקדמת בעיר
-        </p>
-        
-        <div class="hero-buttons" style="display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;">
-          <button class="editable-button primary-btn" style="
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(20px);
-            color: #ffffff;
-            padding: 20px 40px;
-            borderRadius: '24px',
-            border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)'}`,
-            boxShadow: '0 8px 24px rgba(0,0,0,0.05)'
+      {/* Header */}
+      <header style={{
+        background: isDarkMode 
+          ? 'rgba(15, 23, 42, 0.8)' 
+          : 'rgba(255, 255, 255, 0.8)',
+        backdropFilter: 'blur(40px)',
+        borderBottom: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+        padding: '16px 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        zIndex: 1000,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.04)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          <div style={{
+            fontSize: '1.5rem',
+            fontWeight: '800',
+            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            letterSpacing: '-0.5px'
           }}>
-            <span style={{ fontSize: '1.2rem' }}>✂️</span>
-            <span style={{ 
-              color: isDarkMode ? '#e2e8f0' : '#1a202c',
-              fontWeight: '600',
-              fontSize: '0.95rem'
-            }}>
-              מספרה מודרנית
-            </span>
+            🚀 WebMaster Pro
+          </div>
+          
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '8px 16px',
+            background: isDarkMode 
+              ? 'rgba(255,255,255,0.05)' 
+              : 'rgba(255,255,255,0.7)',
+            borderRadius: '12px',
+            border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)'}`,
+            fontSize: '0.9rem',
+            fontWeight: '500',
+            color: isDarkMode ? '#e2e8f0' : '#1a202c'
+          }}>
+            📄 {getCurrentPage()?.name || 'טוען...'}
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {/* Device Switcher */}
+          <div style={{
+            display: 'flex',
+            background: isDarkMode 
+              ? 'rgba(255,255,255,0.05)' 
+              : 'rgba(255,255,255,0.6)',
+            borderRadius: '12px',
+            padding: '4px'
+          }}>
+            {Object.entries(devices).slice(0, 3).map(([deviceKey, device]) => (
+              <button
+                key={deviceKey}
+                onClick={() => setCurrentDevice(deviceKey)}
+                style={{
+                  padding: '8px 12px',
+                  border: 'none',
+                  background: currentDevice === deviceKey
+                    ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)')
+                    : 'transparent',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  color: currentDevice === deviceKey
+                    ? (isDarkMode ? '#ffffff' : '#1a202c')
+                    : (isDarkMode ? '#94a3b8' : '#64748b'),
+                  fontSize: '0.8rem',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {device.icon} {device.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Zoom Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={() => setCurrentZoom(Math.max(25, currentZoom - 25))}
+              style={{
+                width: '32px',
+                height: '32px',
+                border: 'none',
+                background: isDarkMode 
+                  ? 'rgba(255,255,255,0.08)' 
+                  : 'rgba(255,255,255,0.8)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                fontSize: '1rem'
+              }}
+            >
+              −
+            </button>
+            <span style={{
+              color: isDarkMode ? '#e2e8f0' : '#1a202c',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              minWidth: '50px',
+              textAlign: 'center'
+            }}>
+              {currentZoom}%
+            </span>
+            <button
+              onClick={() => setCurrentZoom(Math.min(200, currentZoom + 25))}
+              style={{
+                width: '32px',
+                height: '32px',
+                border: 'none',
+                background: isDarkMode 
+                  ? 'rgba(255,255,255,0.08)' 
+                  : 'rgba(255,255,255,0.8)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                fontSize: '1rem'
+              }}
+            >
+              +
+            </button>
+          </div>
+
+          {/* Action Buttons */}
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
             style={{
-              padding: '12px 20px',
+              padding: '8px 12px',
               background: isDarkMode 
                 ? 'rgba(255,255,255,0.08)' 
                 : 'rgba(255,255,255,0.7)',
               border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)'}`,
-              borderRadius: '16px',
+              borderRadius: '8px',
               color: isDarkMode ? '#e2e8f0' : '#1a202c',
               cursor: 'pointer',
-              fontSize: '0.9rem',
-              fontWeight: '500',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(20px)'
+              fontSize: '0.8rem'
             }}
           >
-            {isDarkMode ? '☀️ Light' : '🌙 Dark'}
+            {isDarkMode ? '☀️' : '🌙'}
           </button>
-          
+
           <button
-            onClick={() => showToastMessage('פרויקט נשמר!')}
+            onClick={() => setIsPreviewMode(!isPreviewMode)}
             style={{
-              padding: '12px 24px',
-              background: 'linear-gradient(135deg, #06d6a0, #0891b2)',
+              padding: '8px 16px',
+              background: isPreviewMode 
+                ? 'linear-gradient(135deg, #06d6a0, #0891b2)' 
+                : (isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.7)'),
               border: 'none',
-              borderRadius: '16px',
-              color: 'white',
-              fontWeight: '600',
+              borderRadius: '8px',
+              color: isPreviewMode ? 'white' : (isDarkMode ? '#e2e8f0' : '#1a202c'),
               cursor: 'pointer',
-              fontSize: '0.9rem',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 8px 24px rgba(6, 214, 160, 0.3)'
+              fontSize: '0.8rem',
+              fontWeight: '500'
             }}
           >
-            💾 Save
+            {isPreviewMode ? '✏️ Edit' : '👁️ Preview'}
           </button>
-          
+
           <button
-            onClick={() => showToastMessage('האתר מתפרסם!')}
+            onClick={exportToHTML}
             style={{
-              padding: '12px 24px',
+              padding: '8px 16px',
               background: 'linear-gradient(135deg, #667eea, #764ba2)',
               border: 'none',
-              borderRadius: '16px',
+              borderRadius: '8px',
               color: 'white',
               fontWeight: '600',
               cursor: 'pointer',
-              fontSize: '0.9rem',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 8px 24px rgba(103, 126, 234, 0.3)'
+              fontSize: '0.8rem'
             }}
           >
-            🚀 Publish
+            💾 Export
           </button>
         </div>
       </header>
 
-      <div style={{ display: 'flex', height: 'calc(100vh - 84px)' }}>
+      {/* Main Layout */}
+      <div style={{ display: 'flex', height: 'calc(100vh - 73px)' }}>
         
-        {/* Left Sidebar - Tools */}
-        <div style={{
-          width: '360px',
-          background: isDarkMode 
-            ? 'rgba(15, 23, 42, 0.7)' 
-            : 'rgba(255, 255, 255, 0.7)',
-          backdropFilter: 'blur(40px)',
-          borderRight: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          
-          {/* Tabs */}
+        {/* Left Sidebar */}
+        {!isPreviewMode && (
           <div style={{
+            width: '320px',
+            background: isDarkMode 
+              ? 'rgba(15, 23, 42, 0.7)' 
+              : 'rgba(255, 255, 255, 0.7)',
+            backdropFilter: 'blur(40px)',
+            borderRight: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
             display: 'flex',
-            padding: '24px 24px 0 24px',
-            gap: '8px'
-          }}>
-            {[
-              { id: 'elements', label: 'Elements', icon: '🧩' },
-              { id: 'design', label: 'Design', icon: '🎨' },
-              { id: 'settings', label: 'Settings', icon: '⚙️' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  flex: 1,
-                  padding: '16px 12px',
-                  background: activeTab === tab.id
-                    ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)')
-                    : 'transparent',
-                  border: 'none',
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                fontWeight: '700',
-                fontSize: '1rem',
-                backdropFilter: 'blur(20px)',
-                border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)'}`,
-                minWidth: '80px',
-                textAlign: 'center'
-              }}>
-                {currentZoom}%
-              </div>
-              
-              <button
-                onClick={() => {
-                  if (currentZoom < 200) {
-                    setCurrentZoom(prev => prev + 10);
-                    showToastMessage(`Zoom: ${currentZoom + 10}%`);
-                  }
-                }}
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  border: 'none',
-                  background: isDarkMode 
-                    ? 'rgba(255,255,255,0.08)' 
-                    : 'rgba(255,255,255,0.8)',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                  fontSize: '1.2rem',
-                  fontWeight: '600',
-                  transition: 'all 0.3s ease',
-                  backdropFilter: 'blur(20px)'
-                }}
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          {/* Canvas */}
-          <div style={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-            padding: '60px',
-            overflow: 'auto',
-            position: 'relative'
+            flexDirection: 'column'
           }}>
             
-            {/* Canvas Background Pattern */}
+            {/* Panel Tabs */}
             <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              opacity: isDarkMode ? 0.03 : 0.06,
-              backgroundImage: `radial-gradient(circle, ${isDarkMode ? '#ffffff' : '#1a202c'} 1px, transparent 1px)`,
-              backgroundSize: '32px 32px',
-              pointerEvents: 'none'
-            }} />
+              display: 'flex',
+              padding: '16px 16px 0 16px',
+              gap: '4px'
+            }}>
+              {[
+                { id: 'pages', label: 'דפים', icon: '📄' },
+                { id: 'elements', label: 'רכיבים', icon: '🧩' },
+                { id: 'design', label: 'עיצוב', icon: '🎨' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActivePanel(tab.id)}
+                  style={{
+                    flex: 1,
+                    padding: '12px 8px',
+                    background: activePanel === tab.id
+                      ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)')
+                      : 'transparent',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: activePanel === tab.id
+                      ? (isDarkMode ? '#ffffff' : '#1a202c')
+                      : (isDarkMode ? '#94a3b8' : '#64748b'),
+                    cursor: 'pointer',
+                    fontSize: '0.8rem',
+                    fontWeight: activePanel === tab.id ? '600' : '500',
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <span>{tab.icon}</span>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-            {/* Loading State */}
-            {isLoading && (
+            {/* Panel Content */}
+            <div style={{ flex: 1, padding: '16px', overflowY: 'auto' }}>
+              
+              {/* Pages Panel */}
+              {activePanel === 'pages' && (
+                <div className="animate-fade-in">
+                  <h3 style={{
+                    color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '16px'
+                  }}>
+                    📄 ניהול דפים
+                  </h3>
+
+                  <button
+                    onClick={() => createPage('page', 'דף חדש')}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      marginBottom: '16px',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    ➕ הוסף דף חדש
+                  </button>
+
+                  <div style={{ display: 'grid', gap: '8px' }}>
+                    {pages.map((page) => (
+                      <div
+                        key={page.id}
+                        onClick={() => setCurrentPageId(page.id)}
+                        style={{
+                          padding: '12px',
+                          background: currentPageId === page.id
+                            ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(103, 126, 234, 0.1)')
+                            : (isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.6)'),
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          border: currentPageId === page.id
+                            ? '2px solid #667eea'
+                            : `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.8)'}`,
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}>
+                          <div>
+                            <div style={{
+                              fontWeight: '600',
+                              color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                              fontSize: '0.9rem'
+                            }}>
+                              {page.name}
+                            </div>
+                            <div style={{
+                              fontSize: '0.75rem',
+                              color: isDarkMode ? '#94a3b8' : '#64748b',
+                              marginTop: '2px'
+                            }}>
+                              {page.url}
+                            </div>
+                          </div>
+                          {pages.length > 1 && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deletePage(page.id);
+                              }}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#ef4444',
+                                cursor: 'pointer',
+                                padding: '4px',
+                                borderRadius: '4px',
+                                fontSize: '0.8rem'
+                              }}
+                            >
+                              🗑️
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Elements Panel */}
+              {activePanel === 'elements' && (
+                <div className="animate-fade-in">
+                  <h3 style={{
+                    color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '16px'
+                  }}>
+                    🧩 רכיבים
+                  </h3>
+
+                  {Object.entries(componentLibrary).map(([category, components]) => (
+                    <div key={category} style={{ marginBottom: '24px' }}>
+                      <h4 style={{
+                        color: isDarkMode ? '#cbd5e1' : '#475569',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        marginBottom: '12px',
+                        textTransform: 'capitalize'
+                      }}>
+                        {category === 'text' && '📝 טקסט'}
+                        {category === 'media' && '🎬 מדיה'}
+                        {category === 'layout' && '📐 פריסה'}
+                        {category === 'interactive' && '🔘 אינטראקטיבי'}
+                        {category === 'business' && '💼 עסקי'}
+                      </h4>
+                      
+                      <div style={{ display: 'grid', gap: '8px' }}>
+                        {components.map((component) => (
+                          <div
+                            key={component.id}
+                            onClick={() => createElement(component.id)}
+                            style={{
+                              padding: '12px',
+                              background: isDarkMode 
+                                ? 'rgba(255,255,255,0.04)' 
+                                : 'rgba(255,255,255,0.6)',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.8)'}`,
+                              transition: 'all 0.2s ease',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '12px'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.transform = 'translateY(-2px)';
+                              e.target.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.transform = 'translateY(0)';
+                              e.target.style.boxShadow = 'none';
+                            }}
+                          >
+                            <div style={{
+                              width: '32px',
+                              height: '32px',
+                              background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '1rem'
+                            }}>
+                              {component.icon}
+                            </div>
+                            <div>
+                              <div style={{
+                                fontWeight: '600',
+                                color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                                fontSize: '0.9rem'
+                              }}>
+                                {component.name}
+                              </div>
+                              <div style={{
+                                fontSize: '0.75rem',
+                                color: isDarkMode ? '#94a3b8' : '#64748b'
+                              }}>
+                                {component.tag.toUpperCase()}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Design Panel */}
+              {activePanel === 'design' && selectedElement && (
+                <div className="animate-fade-in">
+                  <h3 style={{
+                    color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '16px'
+                  }}>
+                    🎨 עיצוב אלמנט
+                  </h3>
+
+                  <div style={{
+                    padding: '12px',
+                    background: isDarkMode 
+                      ? 'rgba(255,255,255,0.05)' 
+                      : 'rgba(255,255,255,0.8)',
+                    borderRadius: '8px',
+                    marginBottom: '16px',
+                    border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)'}`,
+                    fontSize: '0.9rem',
+                    color: isDarkMode ? '#e2e8f0' : '#1a202c'
+                  }}>
+                    <strong>נבחר:</strong> {selectedElement.type}
+                  </div>
+
+                  {/* Content Editor */}
+                  {(selectedElement.type.includes('heading') || selectedElement.type === 'paragraph' || selectedElement.type === 'button') && (
+                    <div style={{ marginBottom: '20px' }}>
+                      <label style={{
+                        display: 'block',
+                        marginBottom: '8px',
+                        color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                        fontWeight: '500',
+                        fontSize: '0.9rem'
+                      }}>
+                        📝 תוכן
+                      </label>
+                      <textarea
+                        value={selectedElement.content}
+                        onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })}
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
+                          borderRadius: '8px',
+                          background: isDarkMode 
+                            ? 'rgba(255,255,255,0.05)' 
+                            : 'rgba(255,255,255,0.9)',
+                          color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                          fontSize: '0.9rem',
+                          fontFamily: 'inherit',
+                          resize: 'vertical',
+                          minHeight: '80px'
+                        }}
+                        placeholder="הכנס תוכן..."
+                      />
+                    </div>
+                  )}
+
+                  {/* Typography Controls */}
+                  <div style={{ marginBottom: '20px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                      fontWeight: '500',
+                      fontSize: '0.9rem'
+                    }}>
+                      🔤 גופן
+                    </label>
+                    <select
+                      value={selectedElement.styles?.fontFamily || 'Assistant'}
+                      onChange={(e) => updateElement(selectedElement.id, {
+                        styles: { ...selectedElement.styles, fontFamily: e.target.value }
+                      })}
+                      style={{
+                        width: '100%',
+                        padding: '8px',
+                        border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
+                        borderRadius: '6px',
+                        background: isDarkMode 
+                          ? 'rgba(255,255,255,0.05)' 
+                          : 'rgba(255,255,255,0.9)',
+                        color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      {googleFonts.map(font => (
+                        <option key={font.name} value={font.name}>
+                          {font.name} {font.hebrew ? '(עברית)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Font Size */}
+                  <div style={{ marginBottom: '20px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                      fontWeight: '500',
+                      fontSize: '0.9rem'
+                    }}>
+                      📏 גודל ({selectedElement.styles?.fontSize || '1rem'})
+                    </label>
+                    <input
+                      type="range"
+                      min="0.5"
+                      max="6"
+                      step="0.1"
+                      value={parseFloat(selectedElement.styles?.fontSize) || 1}
+                      onChange={(e) => updateElement(selectedElement.id, {
+                        styles: { ...selectedElement.styles, fontSize: e.target.value + 'rem' }
+                      })}
+                      style={{
+                        width: '100%',
+                        cursor: 'pointer'
+                      }}
+                    />
+                  </div>
+
+                  {/* Font Weight */}
+                  <div style={{ marginBottom: '20px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                      fontWeight: '500',
+                      fontSize: '0.9rem'
+                    }}>
+                      💪 עובי גופן
+                    </label>
+                    <select
+                      value={selectedElement.styles?.fontWeight || '400'}
+                      onChange={(e) => updateElement(selectedElement.id, {
+                        styles: { ...selectedElement.styles, fontWeight: e.target.value }
+                      })}
+                      style={{
+                        width: '100%',
+                        padding: '8px',
+                        border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
+                        borderRadius: '6px',
+                        background: isDarkMode 
+                          ? 'rgba(255,255,255,0.05)' 
+                          : 'rgba(255,255,255,0.9)',
+                        color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      <option value="200">200 - דק מאוד</option>
+                      <option value="300">300 - דק</option>
+                      <option value="400">400 - רגיל</option>
+                      <option value="500">500 - בינוני</option>
+                      <option value="600">600 - מודגש</option>
+                      <option value="700">700 - מודגש מאוד</option>
+                      <option value="800">800 - עבה</option>
+                    </select>
+                  </div>
+
+                  {/* Color Picker */}
+                  <div style={{ marginBottom: '20px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                      fontWeight: '500',
+                      fontSize: '0.9rem'
+                    }}>
+                      🎨 צבע טקסט
+                    </label>
+                    <input
+                      type="color"
+                      value={selectedElement.styles?.color || '#000000'}
+                      onChange={(e) => updateElement(selectedElement.id, {
+                        styles: { ...selectedElement.styles, color: e.target.value }
+                      })}
+                      style={{
+                        width: '100%',
+                        height: '40px',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer'
+                      }}
+                    />
+                  </div>
+
+                  {/* Text Align */}
+                  <div style={{ marginBottom: '20px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                      fontWeight: '500',
+                      fontSize: '0.9rem'
+                    }}>
+                      📐 יישור טקסט
+                    </label>
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      {['right', 'center', 'left', 'justify'].map((align) => (
+                        <button
+                          key={align}
+                          onClick={() => updateElement(selectedElement.id, {
+                            styles: { ...selectedElement.styles, textAlign: align }
+                          })}
+                          style={{
+                            flex: 1,
+                            padding: '8px',
+                            border: 'none',
+                            background: selectedElement.styles?.textAlign === align
+                              ? 'linear-gradient(135deg, #667eea, #764ba2)'
+                              : (isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.8)'),
+                            color: selectedElement.styles?.textAlign === align
+                              ? 'white'
+                              : (isDarkMode ? '#e2e8f0' : '#1a202c'),
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                        >
+                          {align === 'right' && '→'}
+                          {align === 'center' && '↔'}
+                          {align === 'left' && '←'}
+                          {align === 'justify' && '≡'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'grid', gap: '8px', marginTop: '24px' }}>
+                    <button
+                      onClick={() => duplicateElement(selectedElement.id)}
+                      style={{
+                        padding: '10px',
+                        background: isDarkMode 
+                          ? 'rgba(255,255,255,0.08)' 
+                          : 'rgba(255,255,255,0.8)',
+                        border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+                        borderRadius: '8px',
+                        color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        fontWeight: '500'
+                      }}
+                    >
+                      📋 שכפל אלמנט
+                    </button>
+                    
+                    <button
+                      onClick={() => deleteElement(selectedElement.id)}
+                      style={{
+                        padding: '10px',
+                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: 'white',
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        fontWeight: '500'
+                      }}
+                    >
+                      🗑️ מחק אלמנט
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* No Element Selected */}
+              {activePanel === 'design' && !selectedElement && (
+                <div style={{
+                  textAlign: 'center',
+                  color: isDarkMode ? '#94a3b8' : '#64748b',
+                  padding: '40px 20px'
+                }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '16px' }}>👆</div>
+                  <div style={{ fontSize: '1rem', fontWeight: '500', marginBottom: '8px' }}>
+                    בחר אלמנט לעריכה
+                  </div>
+                  <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
+                    לחץ על אלמנט בקנבס כדי לערוך את המאפיינים שלו
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Canvas Area */}
+        <div style={{
+          flex: 1,
+          background: isDarkMode 
+            ? 'linear-gradient(135deg, #0f172a, #1e293b)' 
+            : 'linear-gradient(135deg, #e2e8f0, #cbd5e1)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          padding: isPreviewMode ? '0' : '40px',
+          overflow: 'auto'
+        }}>
+
+          {/* Canvas */}
+          <div
+            ref={canvasRef}
+            style={{
+              background: '#ffffff',
+              borderRadius: isPreviewMode ? '0' : '16px',
+              boxShadow: isPreviewMode 
+                ? 'none' 
+                : (isDarkMode 
+                  ? '0 40px 120px rgba(0,0,0,0.5)' 
+                  : '0 40px 120px rgba(0,0,0,0.15)'),
+              overflow: isPreviewMode ? 'visible' : 'hidden',
+              transform: isPreviewMode ? 'none' : `scale(${currentZoom / 100})`,
+              transformOrigin: 'top center',
+              width: isPreviewMode ? '100%' : devices[currentDevice].width,
+              minHeight: isPreviewMode ? '100vh' : '600px',
+              border: isPreviewMode 
+                ? 'none' 
+                : `2px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)'}`,
+              position: 'relative',
+              transition: 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setSelectedElement(null);
+              }
+            }}
+          >
+            
+            {/* Render Page Elements */}
+            {getCurrentPage()?.elements.map((element) => {
+              const Element = element.tag;
+              const isSelected = selectedElement?.id === element.id;
+              const responsiveStyles = element.responsive?.[currentDevice]?.styles || {};
+              const isHidden = element.responsive?.[currentDevice]?.hidden;
+              
+              if (isHidden && !isPreviewMode) return null;
+              
+              return (
+                <Element
+                  key={element.id}
+                  className={`${isSelected ? 'element-selected' : ''} ${!isPreviewMode ? 'draggable-element' : ''}`}
+                  style={{
+                    ...element.styles,
+                    ...responsiveStyles,
+                    position: 'absolute',
+                    left: element.position?.x || 0,
+                    top: element.position?.y || 0,
+                    cursor: isPreviewMode ? 'default' : 'pointer',
+                    userSelect: isPreviewMode ? 'text' : 'none',
+                    opacity: isHidden ? 0.3 : (element.styles?.opacity || 1)
+                  }}
+                  onClick={(e) => {
+                    if (!isPreviewMode) {
+                      e.stopPropagation();
+                      setSelectedElement(element);
+                    }
+                  }}
+                  onDoubleClick={(e) => {
+                    if (!isPreviewMode && (element.type.includes('heading') || element.type === 'paragraph' || element.type === 'button')) {
+                      // Enable inline editing
+                      e.target.contentEditable = true;
+                      e.target.focus();
+                      
+                      const handleBlur = () => {
+                        e.target.contentEditable = false;
+                        updateElement(element.id, { content: e.target.textContent });
+                        e.target.removeEventListener('blur', handleBlur);
+                      };
+                      
+                      e.target.addEventListener('blur', handleBlur);
+                    }
+                  }}
+                >
+                  {element.type === 'image' ? (
+                    element.content ? (
+                      <img src={element.content} alt="" style={{ width: '100%', height: 'auto' }} />
+                    ) : (
+                      <div style={{
+                        width: '200px',
+                        height: '150px',
+                        background: '#f1f5f9',
+                        border: '2px dashed #cbd5e1',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#64748b',
+                        fontSize: '0.9rem'
+                      }}>
+                        🖼️ הוסף תמונה
+                      </div>
+                    )
+                  ) : element.type === 'video' ? (
+                    element.content ? (
+                      element.content.includes('youtube.com') || element.content.includes('youtu.be') ? (
+                        <iframe
+                          src={element.content.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                          width="560"
+                          height="315"
+                          frameBorder="0"
+                          allowFullScreen
+                        />
+                      ) : element.content.includes('vimeo.com') ? (
+                        <iframe
+                          src={element.content.replace('vimeo.com/', 'player.vimeo.com/video/')}
+                          width="560"
+                          height="315"
+                          frameBorder="0"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <video controls style={{ width: '100%', maxWidth: '560px' }}>
+                          <source src={element.content} type="video/mp4" />
+                        </video>
+                      )
+                    ) : (
+                      <div style={{
+                        width: '300px',
+                        height: '200px',
+                        background: '#f1f5f9',
+                        border: '2px dashed #cbd5e1',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#64748b',
+                        fontSize: '0.9rem'
+                      }}>
+                        🎬 הוסף וידאו
+                      </div>
+                    )
+                  ) : element.type === 'hero' ? (
+                    <div style={{
+                      background: element.styles?.background || 'linear-gradient(135deg, #667eea, #764ba2)',
+                      color: element.styles?.color || '#ffffff',
+                      padding: '4rem 2rem',
+                      textAlign: 'center',
+                      borderRadius: '12px',
+                      width: '100%',
+                      minHeight: '400px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}>
+                      <h1 style={{
+                        fontSize: '3rem',
+                        fontWeight: '700',
+                        marginBottom: '1rem',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}>
+                        {element.content}
+                      </h1>
+                      <p style={{
+                        fontSize: '1.25rem',
+                        opacity: 0.9,
+                        marginBottom: '2rem'
+                      }}>
+                        הטקסט התומך של הHero
+                      </p>
+                      <button style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        color: 'white',
+                        border: '2px solid rgba(255,255,255,0.3)',
+                        padding: '1rem 2rem',
+                        borderRadius: '50px',
+                        fontSize: '1.1rem',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}>
+                        התחל עכשיו
+                      </button>
+                    </div>
+                  ) : element.type === 'testimonial' ? (
+                    <div style={{
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      padding: '2rem',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                      maxWidth: '400px'
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        marginBottom: '1rem'
+                      }}>
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} style={{ color: '#fbbf24', fontSize: '1.2rem' }}>⭐</span>
+                        ))}
+                      </div>
+                      <p style={{
+                        fontSize: '1.1rem',
+                        lineHeight: '1.6',
+                        marginBottom: '1rem',
+                        fontStyle: 'italic'
+                      }}>
+                        "{element.content}"
+                      </p>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem'
+                      }}>
+                        <div style={{
+                          width: '50px',
+                          height: '50px',
+                          background: '#e2e8f0',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
+                          👤
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: '600' }}>שם הלקוח</div>
+                          <div style={{ fontSize: '0.9rem', color: '#64748b' }}>תפקיד</div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : element.type === 'team-member' ? (
+                    <div style={{
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      padding: '1.5rem',
+                      textAlign: 'center',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                      maxWidth: '300px'
+                    }}>
+                      <div style={{
+                        width: '100px',
+                        height: '100px',
+                        background: '#e2e8f0',
+                        borderRadius: '50%',
+                        margin: '0 auto 1rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2rem'
+                      }}>
+                        👤
+                      </div>
+                      <h3 style={{
+                        fontSize: '1.25rem',
+                        fontWeight: '600',
+                        marginBottom: '0.5rem'
+                      }}>
+                        {element.content}
+                      </h3>
+                      <p style={{
+                        color: '#64748b',
+                        marginBottom: '1rem'
+                      }}>
+                        תפקיד בחברה
+                      </p>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '0.5rem'
+                      }}>
+                        <span style={{ cursor: 'pointer' }}>📧</span>
+                        <span style={{ cursor: 'pointer' }}>💼</span>
+                        <span style={{ cursor: 'pointer' }}>🐦</span>
+                      </div>
+                    </div>
+                  ) : element.type === 'service-card' ? (
+                    <div style={{
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      padding: '2rem',
+                      textAlign: 'center',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                      maxWidth: '350px',
+                      transition: 'transform 0.3s ease'
+                    }}>
+                      <div style={{
+                        fontSize: '3rem',
+                        marginBottom: '1rem'
+                      }}>
+                        💼
+                      </div>
+                      <h3 style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '600',
+                        marginBottom: '1rem'
+                      }}>
+                        {element.content}
+                      </h3>
+                      <p style={{
+                        color: '#64748b',
+                        lineHeight: '1.6',
+                        marginBottom: '1.5rem'
+                      }}>
+                        תיאור השירות והיתרונות שלו ללקוחות שלכם
+                      </p>
+                      <button style={{
+                        background: '#667eea',
+                        color: 'white',
+                        border: 'none',
+                        padding: '0.75rem 1.5rem',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '500'
+                      }}>
+                        קרא עוד
+                      </button>
+                    </div>
+                  ) : element.type === 'stats' ? (
+                    <div style={{
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      padding: '2rem',
+                      textAlign: 'center',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                      minWidth: '200px'
+                    }}>
+                      <div style={{
+                        fontSize: '3rem',
+                        fontWeight: '700',
+                        color: '#667eea',
+                        marginBottom: '0.5rem'
+                      }}>
+                        {element.content}
+                      </div>
+                      <p style={{
+                        color: '#64748b',
+                        fontSize: '1.1rem',
+                        fontWeight: '500'
+                      }}>
+                        לקוחות מרוצים
+                      </p>
+                    </div>
+                  ) : element.type === 'form' ? (
+                    <div style={{
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '12px',
+                      padding: '2rem',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                      maxWidth: '500px'
+                    }}>
+                      <h3 style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '600',
+                        marginBottom: '1.5rem',
+                        textAlign: 'center'
+                      }}>
+                        צור קשר
+                      </h3>
+                      <form style={{ display: 'grid', gap: '1rem' }}>
+                        <input
+                          type="text"
+                          placeholder="שם מלא"
+                          style={{
+                            padding: '0.75rem',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '8px',
+                            fontSize: '1rem'
+                          }}
+                        />
+                        <input
+                          type="email"
+                          placeholder="אימייל"
+                          style={{
+                            padding: '0.75rem',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '8px',
+                            fontSize: '1rem'
+                          }}
+                        />
+                        <textarea
+                          placeholder="הודעה"
+                          rows="4"
+                          style={{
+                            padding: '0.75rem',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '8px',
+                            fontSize: '1rem',
+                            resize: 'vertical'
+                          }}
+                        />
+                        <button
+                          type="submit"
+                          style={{
+                            background: '#667eea',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.75rem',
+                            borderRadius: '8px',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          שלח הודעה
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    element.content
+                  )}
+                </Element>
+              );
+            })}
+
+            {/* Empty State */}
+            {getCurrentPage()?.elements.length === 0 && !isPreviewMode && (
               <div style={{
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '24px',
-                color: isDarkMode ? '#e2e8f0' : '#1a202c'
+                textAlign: 'center',
+                color: '#64748b'
               }}>
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  border: `4px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-                  borderTop: '4px solid #667eea',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite'
-                }} />
-                <div style={{
-                  fontSize: '1.3rem',
-                  fontWeight: '600',
-                  textAlign: 'center'
-                }}>
-                  🚀 Loading Premium Editor...
-                </div>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎨</div>
+                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>התחל לעצב!</h3>
+                <p>גרור רכיבים מהסיידבר כדי להתחיל לבנות את האתר</p>
               </div>
-            )}
-
-            {/* Canvas Container */}
-            {!isLoading && (
-              <div
-                ref={canvasRef}
-                style={{
-                  background: isDarkMode 
-                    ? 'rgba(255, 255, 255, 0.02)' 
-                    : 'rgba(255, 255, 255, 0.9)',
-                  backdropFilter: 'blur(40px)',
-                  borderRadius: '24px',
-                  boxShadow: isDarkMode 
-                    ? '0 40px 120px rgba(0,0,0,0.5)' 
-                    : '0 40px 120px rgba(0,0,0,0.15)',
-                  overflow: 'hidden',
-                  transform: `scale(${currentZoom / 100})`,
-                  transformOrigin: 'top center',
-                  width: deviceSizes[currentDevice].width,
-                  minHeight: deviceSizes[currentDevice].height,
-                  border: `2px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)'}`,
-                  position: 'relative',
-                  transition: 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  cursor: 'default'
-                }}
-                onClick={(e) => {
-                  if (e.target === e.currentTarget) {
-                    // Clicked on canvas background, deselect element
-                    document.querySelectorAll('.element-selected').forEach(el => {
-                      el.classList.remove('element-selected');
-                    });
-                    setSelectedElement(null);
-                  }
-                }}
-                dangerouslySetInnerHTML={{ __html: canvasContent }}
-              />
             )}
           </div>
         </div>
-      </div>
 
-      {/* Additional Animations */}
-      <style jsx>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        
-        @keyframes slideInUp {
-          from {
-            transform: translateY(40px);
-            opacity: 0;
+        {/* Right Sidebar - Advanced Properties */}
+        {!isPreviewMode && selectedElement && (
+          <div style={{
+            width: '280px',
+            background: isDarkMode 
+              ? 'rgba(15, 23, 42, 0.7)' 
+              : 'rgba(255, 255, 255, 0.7)',
+            backdropFilter: 'blur(40px)',
+            borderLeft: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+            padding: '20px',
+            overflowY: 'auto'
+          }}>
+            <h3 style={{
+              color: isDarkMode ? '#e2e8f0' : '#1a202c',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              marginBottom: '20px'
+            }}>
+              ⚙️ מאפיינים מתקדמים
+            </h3>
+
+            {/* Spacing Controls */}
+            <div style={{ marginBottom: '24px' }}>
+              <h4 style={{
+                color: isDarkMode ? '#cbd5e1' : '#475569',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                marginBottom: '12px'
+              }}>
+                📐 רווחים
+              </h4>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.8rem',
+                    color: isDarkMode ? '#94a3b8' : '#64748b',
+                    marginBottom: '4px'
+                  }}>
+                    Padding
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedElement.styles?.padding || '0'}
+                    onChange={(e) => updateElement(selectedElement.id, {
+                      styles: { ...selectedElement.styles, padding: e.target.value }
+                    })}
+                    style={{
+                      width: '100%',
+                      padding: '6px',
+                      border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
+                      borderRadius: '4px',
+                      background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.9)',
+                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                      fontSize: '0.8rem'
+                    }}
+                    placeholder="12px"
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.8rem',
+                    color: isDarkMode ? '#94a3b8' : '#64748b',
+                    marginBottom: '4px'
+                  }}>
+                    Margin
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedElement.styles?.margin || '0'}
+                    onChange={(e) => updateElement(selectedElement.id, {
+                      styles: { ...selectedElement.styles, margin: e.target.value }
+                    })}
+                    style={{
+                      width: '100%',
+                      padding: '6px',
+                      border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
+                      borderRadius: '4px',
+                      background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.9)',
+                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                      fontSize: '0.8rem'
+                    }}
+                    placeholder="12px"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Background & Border */}
+            <div style={{ marginBottom: '24px' }}>
+              <h4 style={{
+                color: isDarkMode ? '#cbd5e1' : '#475569',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                marginBottom: '12px'
+              }}>
+                🎨 רקע וגבולות
+              </h4>
+              
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: isDarkMode ? '#94a3b8' : '#64748b',
+                  marginBottom: '4px'
+                }}>
+                  צבע רקע
+                </label>
+                <input
+                  type="color"
+                  value={selectedElement.styles?.backgroundColor || '#ffffff'}
+                  onChange={(e) => updateElement(selectedElement.id, {
+                    styles: { ...selectedElement.styles, backgroundColor: e.target.value }
+                  })}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: isDarkMode ? '#94a3b8' : '#64748b',
+                  marginBottom: '4px'
+                }}>
+                  עיגול פינות
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="50"
+                  value={parseInt(selectedElement.styles?.borderRadius) || 0}
+                  onChange={(e) => updateElement(selectedElement.id, {
+                    styles: { ...selectedElement.styles, borderRadius: e.target.value + 'px' }
+                  })}
+                  style={{
+                    width: '100%',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Position & Size */}
+            <div style={{ marginBottom: '24px' }}>
+              <h4 style={{
+                color: isDarkMode ? '#cbd5e1' : '#475569',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                marginBottom: '12px'
+              }}>
+                📍 מיקום וגודל
+              </h4>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.8rem',
+                    color: isDarkMode ? '#94a3b8' : '#64748b',
+                    marginBottom: '4px'
+                  }}>
+                    X
+                  </label>
+                  <input
+                    type="number"
+                    value={selectedElement.position?.x || 0}
+                    onChange={(e) => updateElement(selectedElement.id, {
+                      position: { ...selectedElement.position, x: parseInt(e.target.value) }
+                    })}
+                    style={{
+                      width: '100%',
+                      padding: '6px',
+                      border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
+                      borderRadius: '4px',
+                      background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.9)',
+                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                      fontSize: '0.8rem'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.8rem',
+                    color: isDarkMode ? '#94a3b8' : '#64748b',
+                    marginBottom: '4px'
+                  }}>
+                    Y
+                  </label>
+                  <input
+                    type="number"
+                    value={selectedElement.position?.y || 0}
+                    onChange={(e) => updateElement(selectedElement.id, {
+                      position: { ...selectedElement.position, y: parseInt(e.target.value) }
+                    })}
+                    style={{
+                      width: '100%',
+                      padding: '6px',
+                      border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
+                      borderRadius: '4px',
+                      background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.9)',
+                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
+                      fontSize: '0.8rem'
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Responsive Controls */}
+            <div style={{ marginBottom: '24px' }}>
+              <h4 style={{
+                color: isDarkMode ? '#cbd5e1' : '#475569',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                marginBottom: '12px'
+              }}>
+                📱 Responsive
+              </h4>
+              
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '8px',
+                background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.8)',
+                borderRadius: '6px',
+                fontSize: '0.9rem'
+              }}>
+                <span style={{ color: isDarkMode ? '#e2e8f0' : '#1a202c' }}>
+                  הסתר ב-{devices[currentDevice].name}
+                </span>
+                <input
+                  type="checkbox"
+                  checked={selectedElement.responsive?.[currentDevice]?.hidden || false}
+                  onChange={(e) => updateElement(selectedElement.id, {
+                    responsive: {
+                      ...selectedElement.responsive,
+                      [currentDevice]: {
+                        ...selectedElement.responsive?.[currentDevice],
+                        hidden: e.target.checked
+                      }
+                    }
+                  })}
+                  style={{ cursor: 'pointer' }}
+                />
+              </div>
+            </div>
+
+            {/* Element Info */}
+            <div style={{
+              padding: '12px',
+              background: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.8)',
+              borderRadius: '8px',
+              fontSize: '0.8rem',
+              color: isDarkMode ? '#94a3b8' : '#64748b'
+            }}>
+              <div><strong>ID:</strong> {selectedElement.id}</div>
+              <div><strong>Type:</strong> {selectedElement.type}</div>
+              <div><strong>Tag:</strong> {selectedElement.tag}</div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}'use client';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+
+export default function WebMasterPro() {
+  // ============================================
+  // CORE STATE MANAGEMENT
+  // ============================================
+  
+  // Project & Pages
+  const [project, setProject] = useState({
+    id: 'project-1',
+    name: 'אתר חדש',
+    domain: '',
+    language: 'he',
+    direction: 'rtl',
+    createdAt: new Date().toISOString(),
+    settings: {
+      seoTitle: '',
+      seoDescription: '',
+      favicon: '',
+      googleAnalytics: '',
+      colors: {
+        primary: '#667eea',
+        secondary: '#764ba2',
+        accent: '#f093fb',
+        background: '#ffffff',
+        text: '#1a202c'
+      },
+      fonts: {
+        heading: 'Heebo',
+        body: 'Assistant'
+      }
+    }
+  });
+
+  const [pages, setPages] = useState([
+    {
+      id: 'page-home',
+      name: 'דף הבית',
+      url: '/',
+      type: 'home',
+      seo: { title: 'דף הבית', description: 'ברוכים הבאים לאתר שלנו' },
+      elements: []
+    },
+    {
+      id: 'page-about',
+      name: 'אודותינו',
+      url: '/about',
+      type: 'about',
+      seo: { title: 'אודותינו', description: 'הכירו את הצוות והחזון שלנו' },
+      elements: []
+    },
+    {
+      id: 'page-contact',
+      name: 'צור קשר',
+      url: '/contact',
+      type: 'contact',
+      seo: { title: 'צור קשר', description: 'נשמח לשמוע מכם' },
+      elements: []
+    }
+  ]);
+
+  // Editor State
+  const [currentPageId, setCurrentPageId] = useState('page-home');
+  const [selectedElement, setSelectedElement] = useState(null);
+  const [currentDevice, setCurrentDevice] = useState('desktop');
+  const [currentZoom, setCurrentZoom] = useState(100);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [activePanel, setActivePanel] = useState('pages');
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+
+  // UI State
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [draggedElement, setDraggedElement] = useState(null);
+
+  // Refs
+  const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // ============================================
+  // RESPONSIVE BREAKPOINTS
+  // ============================================
+  
+  const devices = {
+    mobile: { name: 'Mobile', width: '375px', icon: '📱' },
+    tablet: { name: 'Tablet', width: '768px', icon: '📱' },
+    desktop: { name: 'Desktop', width: '1024px', icon: '🖥️' },
+    large: { name: 'Large', width: '1440px', icon: '🖥️' },
+    xl: { name: 'XL', width: '1920px', icon: '🖥️' }
+  };
+
+  // ============================================
+  // COMPONENT LIBRARY
+  // ============================================
+  
+  const componentLibrary = {
+    text: [
+      { id: 'heading-1', name: 'כותרת ראשית', icon: '📝', tag: 'h1' },
+      { id: 'heading-2', name: 'כותרת משנה', icon: '📝', tag: 'h2' },
+      { id: 'heading-3', name: 'כותרת קטנה', icon: '📝', tag: 'h3' },
+      { id: 'paragraph', name: 'פסקה', icon: '📄', tag: 'p' },
+      { id: 'quote', name: 'ציטוט', icon: '💬', tag: 'blockquote' }
+    ],
+    media: [
+      { id: 'image', name: 'תמונה', icon: '🖼️', tag: 'img' },
+      { id: 'video', name: 'וידאו', icon: '🎬', tag: 'video' },
+      { id: 'gallery', name: 'גלריה', icon: '🎨', tag: 'div' },
+      { id: 'icon', name: 'אייקון', icon: '⭐', tag: 'i' }
+    ],
+    layout: [
+      { id: 'container', name: 'מכולה', icon: '📦', tag: 'div' },
+      { id: 'section', name: 'סקשן', icon: '📋', tag: 'section' },
+      { id: 'grid', name: 'רשת', icon: '⚏', tag: 'div' },
+      { id: 'spacer', name: 'רווח', icon: '⬜', tag: 'div' }
+    ],
+    interactive: [
+      { id: 'button', name: 'כפתור', icon: '🔘', tag: 'button' },
+      { id: 'form', name: 'טופס', icon: '📝', tag: 'form' },
+      { id: 'link', name: 'קישור', icon: '🔗', tag: 'a' },
+      { id: 'menu', name: 'תפריט', icon: '☰', tag: 'nav' }
+    ],
+    business: [
+      { id: 'hero', name: 'Hero Section', icon: '🎯', tag: 'section' },
+      { id: 'testimonial', name: 'המלצה', icon: '⭐', tag: 'div' },
+      { id: 'team-member', name: 'איש צוות', icon: '👤', tag: 'div' },
+      { id: 'service-card', name: 'כרטיס שירות', icon: '💼', tag: 'div' },
+      { id: 'stats', name: 'סטטיסטיקות', icon: '📊', tag: 'div' },
+      { id: 'timeline', name: 'ציר זמן', icon: '📅', tag: 'div' }
+    ]
+  };
+
+  // ============================================
+  // GOOGLE FONTS LIBRARY
+  // ============================================
+  
+  const googleFonts = [
+    { name: 'Heebo', category: 'sans-serif', hebrew: true },
+    { name: 'Assistant', category: 'sans-serif', hebrew: true },
+    { name: 'Rubik', category: 'sans-serif', hebrew: true },
+    { name: 'Alef', category: 'sans-serif', hebrew: true },
+    { name: 'Frank Ruhl Libre', category: 'serif', hebrew: true },
+    { name: 'Secular One', category: 'sans-serif', hebrew: true },
+    { name: 'Varela Round', category: 'sans-serif', hebrew: true },
+    { name: 'Open Sans', category: 'sans-serif', hebrew: false },
+    { name: 'Roboto', category: 'sans-serif', hebrew: false },
+    { name: 'Lato', category: 'sans-serif', hebrew: false },
+    { name: 'Montserrat', category: 'sans-serif', hebrew: false },
+    { name: 'Poppins', category: 'sans-serif', hebrew: false },
+    { name: 'Inter', category: 'sans-serif', hebrew: false },
+    { name: 'Playfair Display', category: 'serif', hebrew: false },
+    { name: 'Source Sans Pro', category: 'sans-serif', hebrew: false },
+    { name: 'Nunito', category: 'sans-serif', hebrew: false }
+  ];
+
+  // ============================================
+  // HELPER FUNCTIONS
+  // ============================================
+  
+  const showToastMessage = useCallback((message, type = 'success') => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  }, []);
+
+  const getCurrentPage = useCallback(() => {
+    return pages.find(page => page.id === currentPageId);
+  }, [pages, currentPageId]);
+
+  const generateId = useCallback(() => {
+    return 'el-' + Math.random().toString(36).substr(2, 9);
+  }, []);
+
+  // ============================================
+  // PAGE MANAGEMENT
+  // ============================================
+  
+  const createPage = useCallback((type = 'page', name = 'דף חדש') => {
+    const newPage = {
+      id: `page-${Date.now()}`,
+      name,
+      url: `/${name.replace(/\s+/g, '-').toLowerCase()}`,
+      type,
+      seo: {
+        title: name,
+        description: `תיאור עבור ${name}`,
+        keywords: ''
+      },
+      elements: []
+    };
+    
+    setPages(prev => [...prev, newPage]);
+    setCurrentPageId(newPage.id);
+    showToastMessage(`דף "${name}" נוצר בהצלחה!`);
+  }, [showToastMessage]);
+
+  const deletePage = useCallback((pageId) => {
+    if (pages.length <= 1) {
+      showToastMessage('חייב להישאר לפחות דף אחד!', 'error');
+      return;
+    }
+    
+    setPages(prev => prev.filter(p => p.id !== pageId));
+    if (currentPageId === pageId) {
+      setCurrentPageId(pages[0].id);
+    }
+    showToastMessage('הדף נמחק בהצלחה!');
+  }, [pages, currentPageId, showToastMessage]);
+
+  const updatePage = useCallback((pageId, updates) => {
+    setPages(prev => prev.map(page => 
+      page.id === pageId ? { ...page, ...updates } : page
+    ));
+  }, []);
+
+  // ============================================
+  // ELEMENT MANAGEMENT
+  // ============================================
+  
+  const createElement = useCallback((componentType, position = { x: 100, y: 100 }) => {
+    const component = Object.values(componentLibrary)
+      .flat()
+      .find(comp => comp.id === componentType);
+    
+    if (!component) return;
+
+    const elementId = generateId();
+    const newElement = {
+      id: elementId,
+      type: componentType,
+      tag: component.tag,
+      content: getDefaultContent(componentType),
+      styles: getDefaultStyles(componentType),
+      position,
+      responsive: {
+        mobile: { hidden: false, styles: {} },
+        tablet: { hidden: false, styles: {} },
+        desktop: { hidden: false, styles: {} },
+        large: { hidden: false, styles: {} },
+        xl: { hidden: false, styles: {} }
+      }
+    };
+
+    setPages(prev => prev.map(page => 
+      page.id === currentPageId 
+        ? { ...page, elements: [...page.elements, newElement] }
+        : page
+    ));
+
+    setSelectedElement(newElement);
+    showToastMessage(`${component.name} נוסף בהצלחה!`);
+  }, [currentPageId, generateId, showToastMessage]);
+
+  const updateElement = useCallback((elementId, updates) => {
+    setPages(prev => prev.map(page => 
+      page.id === currentPageId 
+        ? {
+            ...page,
+            elements: page.elements.map(el => 
+              el.id === elementId ? { ...el, ...updates } : el
+            )
           }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
+        : page
+    ));
+
+    if (selectedElement?.id === elementId) {
+      setSelectedElement(prev => ({ ...prev, ...updates }));
+    }
+  }, [currentPageId, selectedElement]);
+
+  const deleteElement = useCallback((elementId) => {
+    setPages(prev => prev.map(page => 
+      page.id === currentPageId 
+        ? { ...page, elements: page.elements.filter(el => el.id !== elementId) }
+        : page
+    ));
+    
+    if (selectedElement?.id === elementId) {
+      setSelectedElement(null);
+    }
+    
+    showToastMessage('האלמנט נמחק בהצלחה!');
+  }, [currentPageId, selectedElement, showToastMessage]);
+
+  const duplicateElement = useCallback((elementId) => {
+    const page = getCurrentPage();
+    const element = page?.elements.find(el => el.id === elementId);
+    
+    if (!element) return;
+
+    const newElement = {
+      ...element,
+      id: generateId(),
+      position: {
+        x: element.position.x + 20,
+        y: element.position.y + 20
+      }
+    };
+
+    setPages(prev => prev.map(page => 
+      page.id === currentPageId 
+        ? { ...page, elements: [...page.elements, newElement] }
+        : page
+    ));
+
+    showToastMessage('האלמנט שוכפל בהצלחה!');
+  }, [currentPageId, getCurrentPage, generateId, showToastMessage]);
+
+  // ============================================
+  // DEFAULT CONTENT & STYLES
+  // ============================================
+  
+  const getDefaultContent = (type) => {
+    const defaults = {
+      'heading-1': 'כותרת ראשית',
+      'heading-2': 'כותרת משנה', 
+      'heading-3': 'כותרת קטנה',
+      'paragraph': 'זהו טקסט לדוגמה. לחץ כדי לערוך את התוכן.',
+      'quote': 'זהו ציטוט מעורר השראה.',
+      'button': 'לחץ כאן',
+      'image': '',
+      'video': '',
+      'hero': 'ברוכים הבאים לעסק שלנו',
+      'testimonial': 'שירות מעולה! אני ממליץ בחום.',
+      'team-member': 'יוסי כהן',
+      'service-card': 'השירות שלנו',
+      'stats': '150+',
+      'link': 'קישור'
+    };
+    return defaults[type] || 'תוכן חדש';
+  };
+
+  const getDefaultStyles = (type) => {
+    const baseStyles = {
+      'heading-1': {
+        fontSize: '3rem',
+        fontWeight: '700',
+        lineHeight: '1.2',
+        color: project.settings.colors.text,
+        marginBottom: '1rem',
+        textAlign: 'center'
+      },
+      'heading-2': {
+        fontSize: '2.5rem',
+        fontWeight: '600',
+        lineHeight: '1.3',
+        color: project.settings.colors.text,
+        marginBottom: '1rem'
+      },
+      'heading-3': {
+        fontSize: '2rem',
+        fontWeight: '600',
+        lineHeight: '1.4',
+        color: project.settings.colors.text,
+        marginBottom: '0.75rem'
+      },
+      'paragraph': {
+        fontSize: '1.125rem',
+        lineHeight: '1.6',
+        color: project.settings.colors.text,
+        marginBottom: '1rem'
+      },
+      'quote': {
+        fontSize: '1.25rem',
+        fontStyle: 'italic',
+        borderLeft: `4px solid ${project.settings.colors.primary}`,
+        paddingLeft: '1rem',
+        marginLeft: '1rem',
+        color: project.settings.colors.text
+      },
+      'button': {
+        backgroundColor: project.settings.colors.primary,
+        color: '#ffffff',
+        padding: '0.75rem 2rem',
+        borderRadius: '0.5rem',
+        border: 'none',
+        fontSize: '1rem',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease'
+      },
+      'image': {
+        maxWidth: '100%',
+        height: 'auto',
+        borderRadius: '0.5rem'
+      },
+      'hero': {
+        padding: '4rem 2rem',
+        textAlign: 'center',
+        background: `linear-gradient(135deg, ${project.settings.colors.primary}, ${project.settings.colors.secondary})`,
+        color: '#ffffff',
+        fontSize: '3rem',
+        fontWeight: '700'
+      }
+    };
+
+    return baseStyles[type] || {};
+  };
+
+  // ============================================
+  // EXPORT FUNCTIONALITY
+  // ============================================
+  
+  const exportToHTML = useCallback(() => {
+    const htmlContent = generateHTML();
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${project.name}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToastMessage('האתר יוצא בהצלחה!');
+  }, [project, showToastMessage]);
+
+  const generateHTML = useCallback(() => {
+    const currentPage = getCurrentPage();
+    if (!currentPage) return '';
+
+    return `<!DOCTYPE html>
+<html lang="${project.language}" dir="${project.direction}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${currentPage.seo.title}</title>
+    <meta name="description" content="${currentPage.seo.description}">
+    <link href="https://fonts.googleapis.com/css2?family=${project.settings.fonts.heading.replace(' ', '+')}:wght@200;300;400;500;600;700;800&family=${project.settings.fonts.body.replace(' ', '+')}:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        ${generateCSS()}
+    </style>
+</head>
+<body>
+    ${generatePageHTML(currentPage)}
+    <script>
+        ${generateJavaScript()}
+    </script>
+</body>
+</html>`;
+  }, [project, getCurrentPage]);
+
+  const generateCSS = useCallback(() => {
+    return `
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: '${project.settings.fonts.body}', sans-serif;
+    line-height: 1.6;
+    color: ${project.settings.colors.text};
+    background: ${project.settings.colors.background};
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: '${project.settings.fonts.heading}', sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: ${project.settings.colors.primary};
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background: ${project.settings.colors.secondary};
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+}
+`;
+  }, [project]);
+
+  const generatePageHTML = useCallback((page) => {
+    return page.elements.map(element => {
+      const Tag = element.tag;
+      const styles = Object.entries(element.styles)
+        .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}`)
+        .join('; ');
+      
+      return `<${Tag} style="${styles}">${element.content}</${Tag}>`;
+    }).join('\n');
+  }, []);
+
+  const generateJavaScript = useCallback(() => {
+    return `
+// WebMaster Pro Generated Code
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Form handling
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('טופס נשלח בהצלחה! (דמו)');
+        });
+    });
+});
+`;
+  }, []);
+
+  // ============================================
+  // UI COMPONENTS
+  // ============================================
+
+  const Toast = () => (
+    showToast && (
+      <div style={{
+        position: 'fixed',
+        top: '24px',
+        right: '24px',
+        background: isDarkMode ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(40px)',
+        padding: '16px 24px',
+        borderRadius: '12px',
+        border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+        color: isDarkMode ? '#e2e8f0' : '#1a202c',
+        zIndex: 10000,
+        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+        animation: 'slideInRight 0.3s ease-out'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '20px',
+            height: '20px',
+            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px'
+          }}>
+            ✓
+          </div>
+          {toastMessage}
+        </div>
+      </div>
+    )
+  );
+
+  // ============================================
+  // MAIN RENDER
+  // ============================================
+
+  return (
+    <div style={{
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      height: '100vh',
+      background: isDarkMode 
+        ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)'
+        : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+
+      {/* Global Styles */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@200;300;400;500;600;700;800&family=Assistant:wght@200;300;400;500;600;700;800&display=swap');
+        
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
         }
         
-        .canvas-element {
-          animation: slideInUp 0.4s ease-out;
+        body {
+          font-family: 'Assistant', sans-serif;
+          overflow: hidden;
+        }
+        
+        .element-selected {
+          outline: 3px solid #667eea !important;
+          outline-offset: 2px;
+          position: relative;
+          z-index: 1000;
+        }
+        
+        .element-selected::after {
+          content: '✏️';
+          position: absolute;
+          top: -12px;
+          right: -12px;
+          background: #667eea;
+          color: white;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          border: 2px solid white;
+          z-index: 1001;
+        }
+        
+        .draggable-element {
+          cursor: move;
+          transition: all 0.2s ease;
+        }
+        
+        .draggable-element:hover {
+          transform: scale(1.02);
+          box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        @keyframes slideInRight {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out;
         }
         
         /* Custom Scrollbar */
@@ -384,1282 +2096,4 @@ export default function PremiumEditor() {
         }
         
         ::-webkit-scrollbar-thumb:hover {
-          background: ${isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'};
-        }
-        
-        /* Smooth focus states */
-        input:focus, button:focus {
-          outline: 2px solid #667eea;
-          outline-offset: 2px;
-        }
-      `}</style>
-    </div>
-  );
-}
-                  color: activeTab === tab.id
-                    ? (isDarkMode ? '#ffffff' : '#1a202c')
-                    : (isDarkMode ? '#94a3b8' : '#64748b'),
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  fontWeight: activeTab === tab.id ? '600' : '500',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}
-              >
-                <span>{tab.icon}</span>
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab Content */}
-          <div style={{ flex: 1, padding: '32px 24px', overflowY: 'auto' }}>
-            
-            {activeTab === 'elements' && (
-              <div>
-                <h3 style={{
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                  fontSize: '1.4rem',
-                  fontWeight: '700',
-                  marginBottom: '32px',
-                  letterSpacing: '-0.5px'
-                }}>
-                  🧩 Elements
-                </h3>
-                
-                <div style={{ display: 'grid', gap: '20px' }}>
-                  {tools.map((tool) => (
-                    <div
-                      key={tool.id}
-                      onClick={() => addElement(tool.id)}
-                      style={{
-                        padding: '24px 20px',
-                        background: isDarkMode 
-                          ? 'rgba(255,255,255,0.04)' 
-                          : 'rgba(255,255,255,0.6)',
-                        borderRadius: '20px',
-                        cursor: 'pointer',
-                        border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.8)'}`,
-                        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                        backdropFilter: 'blur(20px)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.transform = 'translateY(-4px)';
-                        e.target.style.boxShadow = isDarkMode 
-                          ? '0 20px 60px rgba(0,0,0,0.3)' 
-                          : '0 20px 60px rgba(0,0,0,0.1)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.transform = 'translateY(0)';
-                        e.target.style.boxShadow = 'none';
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                        <div style={{
-                          width: '56px',
-                          height: '56px',
-                          background: `linear-gradient(135deg, ${tool.color}, ${tool.color}dd)`,
-                          borderRadius: '16px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '1.6rem',
-                          boxShadow: `0 8px 24px ${tool.color}40`
-                        }}>
-                          {tool.icon}
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{
-                            fontWeight: '700',
-                            color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                            marginBottom: '4px',
-                            fontSize: '1.1rem'
-                          }}>
-                            {tool.name}
-                          </div>
-                          <div style={{
-                            fontSize: '0.85rem',
-                            color: isDarkMode ? '#94a3b8' : '#64748b',
-                            lineHeight: '1.4'
-                          }}>
-                            {tool.desc}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'design' && selectedElement && (
-              <div>
-                <h3 style={{
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                  fontSize: '1.4rem',
-                  fontWeight: '700',
-                  marginBottom: '32px',
-                  letterSpacing: '-0.5px'
-                }}>
-                  🎨 Design
-                </h3>
-
-                <div style={{ display: 'grid', gap: '32px' }}>
-                  
-                  {/* Text Content */}
-                  {(selectedElement.classList.contains('editable-text') || selectedElement.classList.contains('editable-button')) && (
-                    <div>
-                      <label style={{
-                        display: 'block',
-                        marginBottom: '12px',
-                        color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                        fontWeight: '600',
-                        fontSize: '0.95rem'
-                      }}>
-                        ✏️ Text Content
-                      </label>
-                      <div style={{ display: 'flex', gap: '12px' }}>
-                        <input
-                          type="text"
-                          value={elementProperties.text}
-                          onChange={(e) => setElementProperties(prev => ({ ...prev, text: e.target.value }))}
-                          style={{
-                            flex: 1,
-                            padding: '16px',
-                            border: `2px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
-                            borderRadius: '16px',
-                            background: isDarkMode 
-                              ? 'rgba(255,255,255,0.05)' 
-                              : 'rgba(255,255,255,0.9)',
-                            color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                            fontSize: '0.95rem',
-                            backdropFilter: 'blur(10px)'
-                          }}
-                          placeholder="הכנס טקסט..."
-                        />
-                        <button
-                          onClick={() => updateElement('text', elementProperties.text)}
-                          style={{
-                            padding: '16px 20px',
-                            background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                            border: 'none',
-                            borderRadius: '16px',
-                            color: 'white',
-                            cursor: 'pointer',
-                            fontWeight: '600',
-                            fontSize: '0.9rem'
-                          }}
-                        >
-                          ✓
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Font Size */}
-                  <div>
-                    <label style={{
-                      display: 'block',
-                      marginBottom: '12px',
-                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                      fontWeight: '600',
-                      fontSize: '0.95rem'
-                    }}>
-                      📏 Font Size
-                    </label>
-                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                      <input
-                        type="range"
-                        min="12"
-                        max="72"
-                        value={elementProperties.fontSize}
-                        onChange={(e) => {
-                          const value = parseInt(e.target.value);
-                          setElementProperties(prev => ({ ...prev, fontSize: value }));
-                          updateElement('fontSize', value);
-                        }}
-                        style={{
-                          flex: 1,
-                          cursor: 'pointer',
-                          height: '8px',
-                          borderRadius: '4px',
-                          background: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0',
-                          outline: 'none'
-                        }}
-                      />
-                      <div style={{
-                        minWidth: '60px',
-                        padding: '8px 16px',
-                        background: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.9)',
-                        borderRadius: '12px',
-                        color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                        fontWeight: '600',
-                        fontSize: '0.9rem',
-                        textAlign: 'center'
-                      }}>
-                        {elementProperties.fontSize}px
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Color Picker */}
-                  <div>
-                    <label style={{
-                      display: 'block',
-                      marginBottom: '12px',
-                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                      fontWeight: '600',
-                      fontSize: '0.95rem'
-                    }}>
-                      🎨 Text Color
-                    </label>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                      <input
-                        type="color"
-                        value={elementProperties.color}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setElementProperties(prev => ({ ...prev, color: value }));
-                          updateElement('color', value);
-                        }}
-                        style={{
-                          width: '56px',
-                          height: '56px',
-                          border: 'none',
-                          borderRadius: '16px',
-                          cursor: 'pointer',
-                          boxShadow: '0 8px 24px rgba(0,0,0,0.1)'
-                        }}
-                      />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-                          {['#1a202c', '#667eea', '#f093fb', '#06d6a0', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'].map(color => (
-                            <button
-                              key={color}
-                              onClick={() => {
-                                setElementProperties(prev => ({ ...prev, color }));
-                                updateElement('color', color);
-                              }}
-                              style={{
-                                width: '36px',
-                                height: '36px',
-                                background: color,
-                                border: 'none',
-                                borderRadius: '12px',
-                                cursor: 'pointer',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                                transition: 'all 0.2s ease'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.target.style.transform = 'scale(1.1)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.target.style.transform = 'scale(1)';
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Background Color */}
-                  <div>
-                    <label style={{
-                      display: 'block',
-                      marginBottom: '12px',
-                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                      fontWeight: '600',
-                      fontSize: '0.95rem'
-                    }}>
-                      🎯 Background
-                    </label>
-                    <input
-                      type="color"
-                      value={elementProperties.backgroundColor === 'transparent' ? '#ffffff' : elementProperties.backgroundColor}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setElementProperties(prev => ({ ...prev, backgroundColor: value }));
-                        updateElement('backgroundColor', value);
-                      }}
-                      style={{
-                        width: '100%',
-                        height: '56px',
-                        border: 'none',
-                        borderRadius: '16px',
-                        cursor: 'pointer',
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.1)'
-                      }}
-                    />
-                  </div>
-
-                  {/* Border Radius */}
-                  <div>
-                    <label style={{
-                      display: 'block',
-                      marginBottom: '12px',
-                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                      fontWeight: '600',
-                      fontSize: '0.95rem'
-                    }}>
-                      📐 Border Radius
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="50"
-                      value={elementProperties.borderRadius}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        setElementProperties(prev => ({ ...prev, borderRadius: value }));
-                        updateElement('borderRadius', value);
-                      }}
-                      style={{
-                        width: '100%',
-                        cursor: 'pointer',
-                        height: '8px',
-                        borderRadius: '4px',
-                        background: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0',
-                        outline: 'none'
-                      }}
-                    />
-                  </div>
-
-                  {/* Opacity */}
-                  <div>
-                    <label style={{
-                      display: 'block',
-                      marginBottom: '12px',
-                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                      fontWeight: '600',
-                      fontSize: '0.95rem'
-                    }}>
-                      👁️ Opacity ({elementProperties.opacity}%)
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={elementProperties.opacity}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        setElementProperties(prev => ({ ...prev, opacity: value }));
-                        updateElement('opacity', value);
-                      }}
-                      style={{
-                        width: '100%',
-                        cursor: 'pointer',
-                        height: '8px',
-                        borderRadius: '4px',
-                        background: isDarkMode ? 'rgba(255,255,255,0.1)' : '#e2e8f0',
-                        outline: 'none'
-                      }}
-                    />
-                  </div>
-
-                  {/* Actions */}
-                  <div style={{ display: 'grid', gap: '16px', marginTop: '24px' }}>
-                    <button
-                      onClick={() => {
-                        if (selectedElement && selectedElement.parentNode) {
-                          const clone = selectedElement.cloneNode(true);
-                          selectedElement.parentNode.insertBefore(clone, selectedElement.nextSibling);
-                          
-                          setTimeout(() => {
-                            clone.addEventListener('click', (e) => {
-                              e.stopPropagation();
-                              selectElement(clone);
-                            });
-                          }, 100);
-                          
-                          showToastMessage('אלמנט שוכפל!');
-                        }
-                      }}
-                      style={{
-                        padding: '16px',
-                        background: isDarkMode 
-                          ? 'rgba(255,255,255,0.08)' 
-                          : 'rgba(255,255,255,0.9)',
-                        border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-                        borderRadius: '16px',
-                        color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        fontSize: '0.95rem',
-                        transition: 'all 0.3s ease',
-                        backdropFilter: 'blur(20px)'
-                      }}
-                    >
-                      📋 Duplicate Element
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        if (selectedElement) {
-                          selectedElement.remove();
-                          setSelectedElement(null);
-                          showToastMessage('אלמנט נמחק!');
-                        }
-                      }}
-                      style={{
-                        padding: '16px',
-                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                        border: 'none',
-                        borderRadius: '16px',
-                        color: 'white',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        fontSize: '0.95rem',
-                        transition: 'all 0.3s ease',
-                        boxShadow: '0 8px 24px rgba(239, 68, 68, 0.3)'
-                      }}
-                    >
-                      🗑️ Delete Element
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'design' && !selectedElement && (
-              <div style={{
-                textAlign: 'center',
-                color: isDarkMode ? '#94a3b8' : '#64748b',
-                padding: '60px 20px'
-              }}>
-                <div style={{ fontSize: '4rem', marginBottom: '24px' }}>👆</div>
-                <div style={{ fontSize: '1.3rem', fontWeight: '600', marginBottom: '12px' }}>
-                  Select an element
-                </div>
-                <div style={{ fontSize: '1rem', lineHeight: '1.5', opacity: 0.8 }}>
-                  Click on any element in the canvas to start editing its design properties
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'settings' && (
-              <div>
-                <h3 style={{
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                  fontSize: '1.4rem',
-                  fontWeight: '700',
-                  marginBottom: '32px',
-                  letterSpacing: '-0.5px'
-                }}>
-                  ⚙️ Settings
-                </h3>
-                
-                <div style={{ display: 'grid', gap: '24px' }}>
-                  <div style={{
-                    padding: '24px',
-                    background: isDarkMode 
-                      ? 'rgba(255,255,255,0.04)' 
-                      : 'rgba(255,255,255,0.6)',
-                    borderRadius: '20px',
-                    border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.8)'}`
-                  }}>
-                    <h4 style={{
-                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                      fontSize: '1.1rem',
-                      fontWeight: '600',
-                      marginBottom: '16px'
-                    }}>
-                      🎯 Page Settings
-                    </h4>
-                    <p style={{
-                      color: isDarkMode ? '#94a3b8' : '#64748b',
-                      fontSize: '0.9rem',
-                      marginBottom: '20px'
-                    }}>
-                      Configure global page settings
-                    </p>
-                    <button style={{
-                      width: '100%',
-                      padding: '12px',
-                      background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                      border: 'none',
-                      borderRadius: '12px',
-                      color: 'white',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}>
-                      Page Settings
-                    </button>
-                  </div>
-                  
-                  <div style={{
-                    padding: '24px',
-                    background: isDarkMode 
-                      ? 'rgba(255,255,255,0.04)' 
-                      : 'rgba(255,255,255,0.6)',
-                    borderRadius: '20px',
-                    border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.8)'}`
-                  }}>
-                    <h4 style={{
-                      color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                      fontSize: '1.1rem',
-                      fontWeight: '600',
-                      marginBottom: '16px'
-                    }}>
-                      📤 Export
-                    </h4>
-                    <p style={{
-                      color: isDarkMode ? '#94a3b8' : '#64748b',
-                      fontSize: '0.9rem',
-                      marginBottom: '20px'
-                    }}>
-                      Export your design as HTML/CSS
-                    </p>
-                    <button 
-                      onClick={() => showToastMessage('HTML exported!')}
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        background: 'linear-gradient(135deg, #06d6a0, #0891b2)',
-                        border: 'none',
-                        borderRadius: '12px',
-                        color: 'white',
-                        fontWeight: '600',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Export HTML
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Canvas Area */}
-        <div style={{
-          flex: 1,
-          background: isDarkMode 
-            ? 'linear-gradient(135deg, #0f172a, #1e293b)' 
-            : 'linear-gradient(135deg, #e2e8f0, #cbd5e1)',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          
-          {/* Canvas Toolbar */}
-          <div style={{
-            background: isDarkMode 
-              ? 'rgba(15, 23, 42, 0.7)' 
-              : 'rgba(255, 255, 255, 0.7)',
-            backdropFilter: 'blur(40px)',
-            padding: '24px 40px',
-            borderBottom: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            
-            {/* Device Switcher */}
-            <div style={{
-              display: 'flex',
-              background: isDarkMode 
-                ? 'rgba(255,255,255,0.05)' 
-                : 'rgba(255,255,255,0.6)',
-              borderRadius: '20px',
-              padding: '6px',
-              backdropFilter: 'blur(20px)',
-              border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)'}`,
-              boxShadow: '0 8px 24px rgba(0,0,0,0.05)'
-            }}>
-              {['desktop', 'tablet', 'mobile'].map((device) => (
-                <button
-                  key={device}
-                  onClick={() => {
-                    setCurrentDevice(device);
-                    showToastMessage(`Switched to ${device} view`);
-                  }}
-                  style={{
-                    padding: '14px 24px',
-                    border: 'none',
-                    background: currentDevice === device
-                      ? (isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.9)')
-                      : 'transparent',
-                    borderRadius: '16px',
-                    cursor: 'pointer',
-                    color: currentDevice === device
-                      ? (isDarkMode ? '#ffffff' : '#1a202c')
-                      : (isDarkMode ? '#94a3b8' : '#64748b'),
-                    fontWeight: currentDevice === device ? '700' : '500',
-                    fontSize: '0.9rem',
-                    transition: 'all 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  {device === 'desktop' && '🖥️'}
-                  {device === 'tablet' && '📱'}
-                  {device === 'mobile' && '📱'}
-                  {device.charAt(0).toUpperCase() + device.slice(1)}
-                </button>
-              ))}
-            </div>
-
-            {/* Zoom Controls */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-              <button
-                onClick={() => {
-                  if (currentZoom > 50) {
-                    setCurrentZoom(prev => prev - 10);
-                    showToastMessage(`Zoom: ${currentZoom - 10}%`);
-                  }
-                }}
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  border: 'none',
-                  background: isDarkMode 
-                    ? 'rgba(255,255,255,0.08)' 
-                    : 'rgba(255,255,255,0.8)',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  color: isDarkMode ? '#e2e8f0' : '#1a202c',
-                  fontSize: '1.2rem',
-                  fontWeight: '600',
-                  transition: 'all 0.3s ease',
-                  backdropFilter: 'blur(20px)'
-                }}
-              >
-                −
-              </button>
-              
-              <div style={{
-                padding: '12px 20px',
-                background: isDarkMode 
-                  ? 'rgba(255,255,255,0.05)' 
-                  : 'rgba(255,255,255,0.8)',
-                borderRadius: '16px',: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.1);
-          " data-element-type="button">
-            📞 הזמן תור עכשיו
-          </button>
-          
-          <button class="editable-button secondary-btn" style="
-            background: transparent;
-            color: #ffffff;
-            padding: 20px 40px;
-            border: 2px solid rgba(255,255,255,0.4);
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.4s ease;
-          " data-element-type="button">
-            💼 גלריית עבודות
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <section class="services-section editable-container" style="
-      padding: 160px 80px;
-      background: linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
-      position: relative;
-    ">
-      <div class="container" style="max-width: 1400px; margin: 0 auto;">
-        <div class="section-header" style="text-align: center; margin-bottom: 100px;">
-          <h2 class="editable-text section-title" style="
-            font-size: 4rem;
-            color: #1a202c;
-            font-weight: 200;
-            letter-spacing: -2px;
-            margin-bottom: 32px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-          " data-element-type="heading">
-            השירותים המקצועיים שלנו
-          </h2>
-          
-          <p class="editable-text section-subtitle" style="
-            font-size: 1.4rem;
-            color: #64748b;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-            cursor: pointer;
-            transition: all 0.3s ease;
-          " data-element-type="text">
-            חוויה מותאמת אישית עם הטכנולוגיות והטכניקות הכי מתקדמות
-          </p>
-        </div>
-
-        <div class="services-grid" style="
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-          gap: 48px;
-          margin-bottom: 80px;
-        ">
-          <div class="service-card editable-container" style="
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(40px);
-            padding: 60px 48px;
-            border-radius: 32px;
-            box-shadow: 0 32px 80px rgba(0,0,0,0.06);
-            border: 1px solid rgba(255,255,255,0.9);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-          " data-element-type="card">
-            <div class="service-icon" style="
-              font-size: 4rem;
-              margin-bottom: 32px;
-              filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
-            ">✂️</div>
-            
-            <h3 class="editable-text service-title" style="
-              font-size: 1.8rem;
-              color: #1a202c;
-              font-weight: 700;
-              margin-bottom: 20px;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            " data-element-type="heading">
-              תספורת מקצועית
-            </h3>
-            
-            <p class="editable-text service-description" style="
-              color: #64748b;
-              line-height: 1.7;
-              font-size: 1.1rem;
-              margin-bottom: 32px;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            " data-element-type="text">
-              תספורת מותאמת אישית עם ייעוץ מקצועי וטכניקות מתקדמות
-            </p>
-            
-            <div class="service-price" style="
-              background: linear-gradient(135deg, #667eea, #764ba2);
-              color: white;
-              padding: 12px 32px;
-              border-radius: 25px;
-              font-weight: 700;
-              font-size: 1.1rem;
-              display: inline-block;
-            ">
-              החל מ-₪80
-            </div>
-          </div>
-
-          <div class="service-card editable-container" style="
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(40px);
-            padding: 60px 48px;
-            border-radius: 32px;
-            box-shadow: 0 32px 80px rgba(0,0,0,0.06);
-            border: 1px solid rgba(255,255,255,0.9);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-          " data-element-type="card">
-            <div class="service-icon" style="
-              font-size: 4rem;
-              margin-bottom: 32px;
-              filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
-            ">🧔</div>
-            
-            <h3 class="editable-text service-title" style="
-              font-size: 1.8rem;
-              color: #1a202c;
-              font-weight: 700;
-              margin-bottom: 20px;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            " data-element-type="heading">
-              עיצוב זקן מקצועי
-            </h3>
-            
-            <p class="editable-text service-description" style="
-              color: #64748b;
-              line-height: 1.7;
-              font-size: 1.1rem;
-              margin-bottom: 32px;
-              cursor: pointer;
-              transition: all 0.3s ease;
-            " data-element-type="text">
-              עיצוב מדויק ומקצועי של הזקן עם כלים מתקדמים
-            </p>
-            
-            <div class="service-price" style="
-              background: linear-gradient(135deg, #f093fb, #f59e0b);
-              color: white;
-              padding: 12px 32px;
-              border-radius: 25px;
-              font-weight: 700;
-              font-size: 1.1rem;
-              display: inline-block;
-            ">
-              החל מ-₪60
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  `;
-
-  // Performance optimized functions
-  const showToastMessage = useCallback((message) => {
-    setToastMessage(message);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 2500);
-  }, []);
-
-  const selectElement = useCallback((element) => {
-    if (!element) return;
-    
-    // Remove previous selection
-    document.querySelectorAll('.element-selected').forEach(el => {
-      el.classList.remove('element-selected');
-    });
-    
-    // Add selection to new element
-    element.classList.add('element-selected');
-    setSelectedElement(element);
-    
-    // Get element properties
-    const computedStyle = window.getComputedStyle(element);
-    setElementProperties({
-      text: element.textContent || '',
-      fontSize: parseInt(computedStyle.fontSize) || 16,
-      fontWeight: parseInt(computedStyle.fontWeight) || 400,
-      color: computedStyle.color || '#000000',
-      backgroundColor: computedStyle.backgroundColor || 'transparent',
-      padding: parseInt(computedStyle.padding) || 0,
-      margin: parseInt(computedStyle.margin) || 0,
-      borderRadius: parseInt(computedStyle.borderRadius) || 0,
-      opacity: Math.round(parseFloat(computedStyle.opacity || 1) * 100),
-      rotation: 0,
-      x: element.offsetLeft,
-      y: element.offsetTop,
-      width: element.offsetWidth,
-      height: element.offsetHeight
-    });
-    
-    showToastMessage(`נבחר: ${element.getAttribute('data-element-type') || 'אלמנט'}`);
-  }, [showToastMessage]);
-
-  const updateElement = useCallback((property, value) => {
-    if (!selectedElement) return;
-    
-    const element = selectedElement;
-    
-    switch(property) {
-      case 'text':
-        element.textContent = value;
-        break;
-      case 'fontSize':
-        element.style.fontSize = value + 'px';
-        break;
-      case 'fontWeight':
-        element.style.fontWeight = value;
-        break;
-      case 'color':
-        element.style.color = value;
-        break;
-      case 'backgroundColor':
-        element.style.backgroundColor = value;
-        break;
-      case 'padding':
-        element.style.padding = value + 'px';
-        break;
-      case 'margin':
-        element.style.margin = value + 'px';
-        break;
-      case 'borderRadius':
-        element.style.borderRadius = value + 'px';
-        break;
-      case 'opacity':
-        element.style.opacity = value / 100;
-        break;
-      case 'rotation':
-        element.style.transform = `rotate(${value}deg)`;
-        break;
-    }
-    
-    setElementProperties(prev => ({ ...prev, [property]: value }));
-    showToastMessage('עודכן בהצלחה!');
-  }, [selectedElement, showToastMessage]);
-
-  const addElement = useCallback((type) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const elements = {
-      heading: `
-        <h2 class="editable-text new-element" style="
-          font-size: 2.5rem;
-          font-weight: 600;
-          color: #1a202c;
-          margin: 32px 0;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          background: rgba(103, 126, 234, 0.1);
-          padding: 24px;
-          border-radius: 16px;
-          border: 2px dashed #667eea;
-          text-align: center;
-        " data-element-type="heading">
-          כותרת חדשה
-        </h2>
-      `,
-      text: `
-        <p class="editable-text new-element" style="
-          font-size: 1.2rem;
-          color: #64748b;
-          line-height: 1.6;
-          margin: 24px 0;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          background: rgba(103, 126, 234, 0.1);
-          padding: 20px;
-          border-radius: 12px;
-          border: 2px dashed #667eea;
-        " data-element-type="text">
-          טקסט חדש. לחץ לעריכה.
-        </p>
-      `,
-      button: `
-        <button class="editable-button new-element" style="
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          color: white;
-          padding: 16px 32px;
-          border: none;
-          border-radius: 12px;
-          font-size: 1.1rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          margin: 20px;
-          box-shadow: 0 8px 24px rgba(103, 126, 234, 0.3);
-          border: 2px dashed #667eea;
-        " data-element-type="button">
-          כפתור חדש
-        </button>
-      `,
-      image: `
-        <div class="editable-image new-element" style="
-          width: 300px;
-          height: 200px;
-          background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 24px auto;
-          border: 2px dashed #667eea;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        " data-element-type="image">
-          <div style="text-align: center; color: #64748b;">
-            <div style="font-size: 3rem; margin-bottom: 12px;">🖼️</div>
-            <div style="font-size: 1.1rem; font-weight: 500;">תמונה חדשה</div>
-          </div>
-        </div>
-      `,
-      section: `
-        <section class="editable-container new-element" style="
-          padding: 80px 40px;
-          background: rgba(255,255,255,0.8);
-          border-radius: 24px;
-          margin: 40px 0;
-          border: 2px dashed #667eea;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        " data-element-type="section">
-          <h3 class="editable-text" style="
-            font-size: 2rem;
-            color: #1a202c;
-            text-align: center;
-            margin-bottom: 24px;
-            cursor: pointer;
-          " data-element-type="heading">
-            סקשן חדש
-          </h3>
-          <p class="editable-text" style="
-            color: #64748b;
-            text-align: center;
-            font-size: 1.1rem;
-            cursor: pointer;
-          " data-element-type="text">
-            תוכן הסקשן החדש
-          </p>
-        </section>
-      `
-    };
-
-    if (elements[type]) {
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = elements[type];
-      const newElement = tempDiv.firstElementChild;
-      
-      canvas.appendChild(newElement);
-      
-      // Add event listeners
-      setTimeout(() => {
-        const editableElements = newElement.querySelectorAll('.editable-text, .editable-button, .editable-image, .editable-container');
-        editableElements.forEach(el => {
-          el.addEventListener('click', (e) => {
-            e.stopPropagation();
-            selectElement(el);
-          });
-        });
-        
-        newElement.addEventListener('click', (e) => {
-          e.stopPropagation();
-          selectElement(newElement);
-        });
-        
-        newElement.classList.remove('new-element');
-        selectElement(newElement);
-      }, 100);
-      
-      showToastMessage(`${type === 'heading' ? 'כותרת' : type === 'text' ? 'טקסט' : type === 'button' ? 'כפתור' : type === 'image' ? 'תמונה' : 'סקשן'} נוסף!`);
-    }
-  }, [selectElement, showToastMessage]);
-
-  const deviceSizes = {
-    desktop: { width: '1200px', height: '800px' },
-    tablet: { width: '768px', height: '1024px' },
-    mobile: { width: '375px', height: '667px' }
-  };
-
-  useEffect(() => {
-    setIsLoading(true);
-    setCanvasContent(premiumTemplate);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      // Add event listeners to all editable elements
-      const editableElements = document.querySelectorAll('.editable-text, .editable-button, .editable-image, .editable-container');
-      editableElements.forEach(element => {
-        element.addEventListener('click', (e) => {
-          e.stopPropagation();
-          selectElement(element);
-        });
-      });
-      
-      showToastMessage('אדיטור מוכן לעבודה!');
-    }, 1000);
-  }, [selectElement, showToastMessage]);
-
-  const tools = [
-    { id: 'heading', icon: '📝', name: 'כותרת', color: '#667eea', desc: 'כותרות ראשיות' },
-    { id: 'text', icon: '📄', name: 'טקסט', color: '#06d6a0', desc: 'פסקאות וטקסט' },
-    { id: 'button', icon: '🔘', name: 'כפתור', color: '#f093fb', desc: 'כפתורי פעולה' },
-    { id: 'image', icon: '🖼️', name: 'תמונה', color: '#f59e0b', desc: 'תמונות וגרפיקה' },
-    { id: 'section', icon: '📦', name: 'סקשן', color: '#8b5cf6', desc: 'מקטעי תוכן' },
-    { id: 'form', icon: '📋', name: 'טופס', color: '#06b6d4', desc: 'טפסי יצירת קשר' }
-  ];
-
-  return (
-    <div style={{
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif',
-      height: '100vh',
-      background: isDarkMode 
-        ? 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)'
-        : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
-      overflow: 'hidden',
-      position: 'relative'
-    }}>
-
-      {/* Advanced Styling */}
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap');
-        
-        * {
-          box-sizing: border-box;
-        }
-        
-        .element-selected {
-          outline: 3px solid #667eea !important;
-          outline-offset: 4px;
-          position: relative;
-          z-index: 1000;
-        }
-        
-        .element-selected::before {
-          content: '';
-          position: absolute;
-          top: -8px;
-          left: -8px;
-          right: -8px;
-          bottom: -8px;
-          background: rgba(103, 126, 234, 0.1);
-          border-radius: 12px;
-          z-index: -1;
-        }
-        
-        .element-selected::after {
-          content: '✏️';
-          position: absolute;
-          top: -16px;
-          right: -16px;
-          background: #667eea;
-          color: white;
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 14px;
-          border: 3px solid white;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-          z-index: 1001;
-        }
-        
-        .service-card:hover {
-          transform: translateY(-12px) scale(1.02);
-          box-shadow: 0 48px 120px rgba(0,0,0,0.15) !important;
-        }
-        
-        .primary-btn:hover {
-          background: rgba(255,255,255,0.3) !important;
-          transform: translateY(-4px);
-          box-shadow: 0 24px 60px rgba(0,0,0,0.2) !important;
-        }
-        
-        .secondary-btn:hover {
-          background: rgba(255,255,255,0.1) !important;
-          transform: translateY(-4px);
-        }
-        
-        .editable-text:hover,
-        .editable-button:hover,
-        .editable-image:hover,
-        .editable-container:hover {
-          background: rgba(103, 126, 234, 0.08) !important;
-          backdrop-filter: blur(10px);
-          border-radius: 8px;
-        }
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33% { transform: translateY(-20px) rotate(1deg); }
-          66% { transform: translateY(-10px) rotate(-1deg); }
-        }
-        
-        @keyframes slideInRight {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slideInLeft {
-          from { transform: translateX(-100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes fadeInUp {
-          from { transform: translateY(30px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .loading-shimmer {
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-          background-size: 200% 100%;
-          animation: shimmer 2s infinite;
-        }
-        
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-      `}</style>
-
-      {/* Toast Notification */}
-      {showToast && (
-        <div style={{
-          position: 'fixed',
-          top: '24px',
-          right: '24px',
-          background: isDarkMode 
-            ? 'rgba(15, 23, 42, 0.95)' 
-            : 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(40px)',
-          padding: '20px 32px',
-          borderRadius: '20px',
-          border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-          color: isDarkMode ? '#e2e8f0' : '#1a202c',
-          zIndex: 10000,
-          animation: 'slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          boxShadow: isDarkMode 
-            ? '0 32px 80px rgba(0,0,0,0.4)' 
-            : '0 32px 80px rgba(0,0,0,0.12)',
-          fontWeight: '500',
-          fontSize: '0.95rem'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '24px',
-              height: '24px',
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '12px'
-            }}>
-              ✓
-            </div>
-            {toastMessage}
-          </div>
-        </div>
-      )}
-
-      {/* Header */}
-      <header style={{
-        background: isDarkMode 
-          ? 'rgba(15, 23, 42, 0.8)' 
-          : 'rgba(255, 255, 255, 0.8)',
-        backdropFilter: 'blur(40px)',
-        borderBottom: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
-        padding: '20px 32px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        zIndex: 1000,
-        boxShadow: isDarkMode 
-          ? '0 8px 32px rgba(0,0,0,0.2)' 
-          : '0 8px 32px rgba(0,0,0,0.04)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-          <div style={{
-            fontSize: '1.8rem',
-            fontWeight: '800',
-            background: 'linear-gradient(135deg, #667eea, #764ba2)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            letterSpacing: '-1px'
-          }}>
-            🚀 WebMaster Pro
-          </div>
-          
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            padding: '12px 24px',
-            background: isDarkMode 
-              ? 'rgba(255,255,255,0.05)' 
-              : 'rgba(255,255,255,0.7)',
-            backdropFilter: 'blur(20px)',
-            border
+          background: ${isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(
