@@ -364,283 +364,49 @@ export default function EnhancedTemplatesGallery() {
       downloads: 890,
       description: 'תבנית למאמנים אישיים ומכוני כושר עם מעקב התקדמות',
       features: ['מערכת אימונים', 'מעקב התקדמות', 'תוכניות תזונה', 'יעדים אישיים'],
-      fullHTML: `
-        <div style="font-family: Arial, sans-serif; margin: 0; padding: 0; direction: rtl;">
-          <header style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; padding: 80px 20px; text-align: center;">
-            <h1 style="font-size: 3.5rem; margin: 0; font-weight: bold;">FIT POWER</h1>
-            <p style="font-size: 1.3rem; margin: 20px 0;">אימונים אישיים ברמה הגבוהה ביותר</p>
-            <button style="background: white; color: #ff6b6b; padding: 15px 40px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer; font-weight: bold; margin-top: 30px;">התחל עכשיו</button>
-          </header>
-          
-          <section style="padding: 80px 20px;">
-            <div style="max-width: 1200px; margin: 0 auto;">
-              <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #2c3e50;">השירותים שלנו</h2>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;">
-                <div style="background: white; padding: 50px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #ff6b6b;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;">אימון אישי</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">אימון מותאם אישית עם מאמן מקצועי</p>
-                  <div style="font-size: 2rem; color: #ff6b6b; font-weight: bold;">₪200/שיעור</div>
-                </div>
-                <div style="background: white; padding: 50px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #ff6b6b;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;">אימוני קבוצה</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">אימונים בקבוצות קטנות באווירה מהנה</p>
-                  <div style="font-size: 2rem; color: #ff6b6b; font-weight: bold;">₪120/שיעור</div>
-                </div>
-                <div style="background: white; padding: 50px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #ff6b6b;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;">תוכנית תזונה</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">תפריט מותאם אישית להשגת היעדים</p>
-                  <div style="font-size: 2rem; color: #ff6b6b; font-weight: bold;">₪300/חודש</div>
-                </div>
-              </div>
-            </div>
-          </section>
-          
-          <footer style="background: #2c3e50; color: white; padding: 50px 20px; text-align: center;">
-            <h3 style="margin-bottom: 20px;">בואו נתחיל את המסע שלכם</h3>
-            <p style="margin-bottom: 30px;">טלפון: 054-1234567 | כתובת: רחוב הספורט 456, חיפה</p>
-            <button style="background: #ff6b6b; color: white; padding: 15px 30px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer;">הזמן אימון ניסיון</button>
-          </footer>
-        </div>
-      `,
+      fullHTML: `<div style="font-family: Arial, sans-serif; margin: 0; padding: 0; direction: rtl;">
+<header style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; padding: 80px 20px; text-align: center;">
+<h1 style="font-size: 3.5rem; margin: 0; font-weight: bold;">FIT POWER</h1>
+<p style="font-size: 1.3rem; margin: 20px 0;">אימונים אישיים ברמה הגבוהה ביותר</p>
+<button style="background: white; color: #ff6b6b; padding: 15px 40px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer; font-weight: bold; margin-top: 30px;">התחל עכשיו</button>
+</header>
+<section style="padding: 80px 20px;">
+<div style="max-width: 1200px; margin: 0 auto;">
+<h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #2c3e50;">השירותים שלנו</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;">
+<div style="background: white; padding: 50px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #ff6b6b;">
+<h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;">אימון אישי</h3>
+<p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">אימון מותאם אישית עם מאמן מקצועי</p>
+<div style="font-size: 2rem; color: #ff6b6b; font-weight: bold;">₪200/שיעור</div>
+</div>
+<div style="background: white; padding: 50px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #ff6b6b;">
+<h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;">אימוני קבוצה</h3>
+<p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">אימונים בקבוצות קטנות באווירה מהנה</p>
+<div style="font-size: 2rem; color: #ff6b6b; font-weight: bold;">₪120/שיעור</div>
+</div>
+<div style="background: white; padding: 50px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid #ff6b6b;">
+<h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.5rem;">תוכנית תזונה</h3>
+<p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">תפריט מותאם אישית להשגת היעדים</p>
+<div style="font-size: 2rem; color: #ff6b6b; font-weight: bold;">₪300/חודש</div>
+</div>
+</div>
+</div>
+</section>
+<footer style="background: #2c3e50; color: white; padding: 50px 20px; text-align: center;">
+<h3 style="margin-bottom: 20px;">בואו נתחיל את המסע שלכם</h3>
+<p style="margin-bottom: 30px;">טלפון: 054-1234567 | כתובת: רחוב הספורט 456, חיפה</p>
+<button style="background: #ff6b6b; color: white; padding: 15px 30px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer;">הזמן אימון ניסיון</button>
+</footer>
+</div>`,
       editorElements: [
         { id: 2001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'FIT POWER', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '56px', fontFamily: 'Arial', textAlign: 'center', fontWeight: 'bold' }},
         { id: 2002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'אימונים אישיים ברמה הגבוהה ביותר', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '20px', fontFamily: 'Arial', textAlign: 'center' }},
         { id: 2003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'התחל עכשיו', style: { backgroundColor: '#ffffff', color: '#ff6b6b', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }}
       ]
-    },
-    {
-      id: 3,
-      name: 'משרד עורכי דין',
-      category: 'משפטים ויעוץ',
-      image: '/images/templates/lawyer-thumbnail.jpg',
-      price: '₪199',
-      rating: 4.7,
-      downloads: 654,
-      description: 'תבנית מקצועית למשרדי עורכי דין עם מערכת הזמנת פגישות',
-      features: ['מערכת הזמנות', 'תיקי לקוחות', 'ייעוץ אונליין', 'מסמכים משפטיים'],
-      fullHTML: `
-        <div style="font-family: 'Times New Roman', serif; margin: 0; padding: 0; direction: rtl;">
-          <header style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 100px 20px; text-align: center;">
-            <h1 style="font-size: 3rem; margin: 0; letter-spacing: 2px;">משרד עורכי דין כהן ושות'</h1>
-            <p style="font-size: 1.2rem; margin: 30px 0; opacity: 0.9;">מומחים בדיני מסחר, נזיקין ומשפט אזרחי</p>
-            <button style="background: #c9b037; color: #1a1a2e; padding: 15px 40px; border: none; border-radius: 5px; font-size: 1.1rem; cursor: pointer; font-weight: bold; margin-top: 20px;">קבע פגישת ייעוץ</button>
-          </header>
-          
-          <section style="padding: 80px 20px; background: #f8f9fa;">
-            <div style="max-width: 1200px; margin: 0 auto;">
-              <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #1a1a2e;">תחומי התמחות</h2>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;">
-                <div style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-right: 5px solid #c9b037;">
-                  <h3 style="color: #1a1a2e; margin-bottom: 20px; font-size: 1.4rem;">דיני מסחר</h3>
-                  <p style="color: #666; line-height: 1.8;">ייעוץ משפטי לעסקים, חוזים מסחריים ויישוב סכסוכים עסקיים</p>
-                  <ul style="color: #666; margin-top: 20px; padding-right: 20px;">
-                    <li>הקמת חברות</li>
-                    <li>חוזים מסחריים</li>
-                    <li>מיזוגים ורכישות</li>
-                  </ul>
-                </div>
-                <div style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-right: 5px solid #c9b037;">
-                  <h3 style="color: #1a1a2e; margin-bottom: 20px; font-size: 1.4rem;">דיני משפחה</h3>
-                  <p style="color: #666; line-height: 1.8;">ליווי משפטי בנושאי משפחה עם רגישות והבנה</p>
-                  <ul style="color: #666; margin-top: 20px; padding-right: 20px;">
-                    <li>הליכי גירושין</li>
-                    <li>משמורת ילדים</li>
-                    <li>הסכמי ממון</li>
-                  </ul>
-                </div>
-                <div style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-right: 5px solid #c9b037;">
-                  <h3 style="color: #1a1a2e; margin-bottom: 20px; font-size: 1.4rem;">דיני נזיקין</h3>
-                  <p style="color: #666; line-height: 1.8;">ייצוג בתביעות נזיקין ותאונות עבודה</p>
-                  <ul style="color: #666; margin-top: 20px; padding-right: 20px;">
-                    <li>תאונות דרכים</li>
-                    <li>תאונות עבודה</li>
-                    <li>רשלנות רפואית</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
-          
-          <footer style="background: #1a1a2e; color: white; padding: 60px 20px; text-align: center;">
-            <h3 style="margin-bottom: 20px; color: #c9b037;">צור קשר לקביעת פגישה</h3>
-            <p style="margin-bottom: 30px; font-size: 1.1rem;">טלפון: 03-7654321 | פקס: 03-7654322</p>
-            <p style="margin-bottom: 30px;">כתובת: מגדל עזריאלי, קומה 25, תל אביב</p>
-            <p style="font-size: 0.9rem; opacity: 0.7;">שעות פעילות: ימים א'-ה' 8:00-18:00</p>
-          </footer>
-        </div>
-      `,
-      editorElements: [
-        { id: 3001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'משרד עורכי דין כהן ושות\'', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '36px', fontFamily: 'Times New Roman', textAlign: 'center', fontWeight: 'bold' }},
-        { id: 3002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'מומחים בדיני מסחר, נזיקין ומשפט אזרחי', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '16px', fontFamily: 'Times New Roman', textAlign: 'center' }},
-        { id: 3003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'קבע פגישת ייעוץ', style: { backgroundColor: '#c9b037', color: '#1a1a2e', fontSize: '18px', fontFamily: 'Times New Roman', textAlign: 'center', borderRadius: '5px' }}
-      ]
-    },
-    {
-      id: 4,
-      name: 'מורה פרטי מקצועי',
-      category: 'חינוך והוראה',
-      image: '/images/templates/private-teacher-thumbnail.jpg',
-      price: '₪99',
-      rating: 4.9,
-      downloads: 1456,
-      description: 'תבנית למורים פרטיים עם מערכת הזמנת שיעורים',
-      features: ['מערכת הזמנות', 'מעקב התקדמות', 'חומרי לימוד', 'הורים ותלמידים'],
-      fullHTML: `
-        <div style="font-family: Arial, sans-serif; margin: 0; padding: 0; direction: rtl;">
-          <header style="background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); color: white; padding: 80px 20px; text-align: center;">
-            <h1 style="font-size: 3rem; margin: 0; font-weight: bold;">אקדמיה פרטית</h1>
-            <p style="font-size: 1.3rem; margin: 20px 0;">הוראה פרטית מקצועית לכל הגילאים</p>
-            <button style="background: white; color: #6c5ce7; padding: 15px 40px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer; font-weight: bold; margin-top: 30px;">קבע שיעור ניסיון</button>
-          </header>
-          
-          <section style="padding: 80px 20px;">
-            <div style="max-width: 1200px; margin: 0 auto;">
-              <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #2c3e50;">המקצועות שלנו</h2>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
-                <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #6c5ce7;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4rem;">מתמטיקה</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">חשבון, אלגברה, גיאומטריה וחדו"א</p>
-                  <div style="font-size: 1.8rem; color: #6c5ce7; font-weight: bold;">₪120/שעה</div>
-                </div>
-                <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #6c5ce7;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4rem;">אנגלית</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">דקדוק, קריאה, כתיבה ודיבור</p>
-                  <div style="font-size: 1.8rem; color: #6c5ce7; font-weight: bold;">₪100/שעה</div>
-                </div>
-                <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #6c5ce7;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4rem;">מדעים</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">פיזיקה, כימיה וביולוגיה</p>
-                  <div style="font-size: 1.8rem; color: #6c5ce7; font-weight: bold;">₪130/שעה</div>
-                </div>
-              </div>
-            </div>
-          </section>
-          
-          <footer style="background: #2c3e50; color: white; padding: 50px 20px; text-align: center;">
-            <h3 style="margin-bottom: 20px;">צור קשר לקביעת שיעור</h3>
-            <p style="margin-bottom: 30px;">טלפון: 052-9876543 | אימייל: info@academy.co.il</p>
-            <button style="background: #6c5ce7; color: white; padding: 15px 30px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer;">הזמן שיעור עכשיו</button>
-          </footer>
-        </div>
-      `,
-      editorElements: [
-        { id: 4001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'אקדמיה פרטית', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '48px', fontFamily: 'Arial', textAlign: 'center', fontWeight: 'bold' }},
-        { id: 4002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'הוראה פרטית מקצועית לכל הגילאים', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '20px', fontFamily: 'Arial', textAlign: 'center' }},
-        { id: 4003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'קבע שיעור ניסיון', style: { backgroundColor: '#ffffff', color: '#6c5ce7', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }}
-      ]
-    },
-    {
-      id: 5,
-      name: 'מטפל פסיכולוגי',
-      category: 'בריאות ורווחה',
-      image: '/images/templates/psychology-thumbnail.jpg',
-      price: '₪129',
-      rating: 4.8,
-      downloads: 743,
-      description: 'תבנית למטפלים ופסיכולוגים עם מערכת הזמנות',
-      features: ['הזמנת פגישות', 'ייעוץ אונליין', 'חומרי עזר', 'פרטיות מלאה'],
-      fullHTML: `
-        <div style="font-family: Arial, sans-serif; margin: 0; padding: 0; direction: rtl;">
-          <header style="background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%); color: white; padding: 80px 20px; text-align: center;">
-            <h1 style="font-size: 3rem; margin: 0; font-weight: 300;">מרכז הטיפול</h1>
-            <p style="font-size: 1.3rem; margin: 20px 0;">טיפול נפשי מקצועי באווירה חמה ותומכת</p>
-            <button style="background: white; color: #0984e3; padding: 15px 40px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer; font-weight: bold; margin-top: 30px;">קבע פגישה</button>
-          </header>
-          
-          <section style="padding: 80px 20px;">
-            <div style="max-width: 1200px; margin: 0 auto;">
-              <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #2c3e50;">שירותי הטיפול</h2>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;">
-                <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #0984e3;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4rem;">טיפול אישי</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">טיפול פסיכולוגי אישי בגישות מגוונות</p>
-                  <div style="font-size: 1.8rem; color: #0984e3; font-weight: bold;">₪250/פגישה</div>
-                </div>
-                <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #0984e3;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4rem;">טיפול זוגי</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">ייעוץ זוגי ומשפחתי מקצועי</p>
-                  <div style="font-size: 1.8rem; color: #0984e3; font-weight: bold;">₪350/פגישה</div>
-                </div>
-                <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #0984e3;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4rem;">ייעוץ אונליין</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">פגישות וידאו בטוחות ונוחות</p>
-                  <div style="font-size: 1.8rem; color: #0984e3; font-weight: bold;">₪200/פגישה</div>
-                </div>
-              </div>
-            </div>
-          </section>
-          
-          <footer style="background: #2c3e50; color: white; padding: 50px 20px; text-align: center;">
-            <h3 style="margin-bottom: 20px;">לקביעת פגישה</h3>
-            <p style="margin-bottom: 30px;">טלפון: 03-5551234 | אימייל: therapy@center.co.il</p>
-            <p style="font-size: 0.9rem; margin-bottom: 30px;">פרטיות מלאה ושמירה על סודיות המטופל</p>
-            <button style="background: #0984e3; color: white; padding: 15px 30px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer;">צור קשר עכשיו</button>
-          </footer>
-        </div>
-      `,
-      editorElements: [
-        { id: 5001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'מרכז הטיפול', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '48px', fontFamily: 'Arial', textAlign: 'center', fontWeight: '300' }},
-        { id: 5002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'טיפול נפשי מקצועי באווירה חמה ותומכת', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '20px', fontFamily: 'Arial', textAlign: 'center' }},
-        { id: 5003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'קבע פגישה', style: { backgroundColor: '#ffffff', color: '#0984e3', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }}
-      ]
-    },
-    {
-      id: 6,
-      name: 'סטודיו יוגה ומדיטציה',
-      category: 'בריאות ורווחה',
-      image: '/images/templates/yoga-studio-thumbnail.jpg',
-      price: 'חינם',
-      rating: 4.9,
-      downloads: 2341,
-      description: 'תבנית לסטודיו יוגה ומדיטציה עם הרשמה לשיעורים',
-      features: ['לוח שיעורים', 'הרשמה אונליין', 'מדיטציות מודרכות', 'קהילת תרגול'],
-      fullHTML: `
-        <div style="font-family: Arial, sans-serif; margin: 0; padding: 0; direction: rtl;">
-          <header style="background: linear-gradient(135deg, #00b894 0%, #55efc4 100%); color: white; padding: 80px 20px; text-align: center;">
-            <h1 style="font-size: 3rem; margin: 0; font-weight: 300; letter-spacing: 3px;">SERENITY</h1>
-            <p style="font-size: 1.3rem; margin: 20px 0;">סטודיו יוגה ומדיטציה</p>
-            <button style="background: white; color: #00b894; padding: 15px 40px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer; font-weight: bold; margin-top: 30px;">הצטרף אלינו</button>
-          </header>
-          
-          <section style="padding: 80px 20px;">
-            <div style="max-width: 1200px; margin: 0 auto;">
-              <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #2c3e50;">השיעורים שלנו</h2>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;">
-                <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #00b894;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4rem;">יוגה למתחילים</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">שיעורים עדינים המתאימים לכל רמה</p>
-                  <div style="font-size: 1.8rem; color: #00b894; font-weight: bold;">₪80/שיעור</div>
-                </div>
-                <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #00b894;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4rem;">וינייסה פלו</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">תנועה דינמית וזרימה רציפה</p>
-                  <div style="font-size: 1.8rem; color: #00b894; font-weight: bold;">₪100/שיעור</div>
-                </div>
-                <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #00b894;">
-                  <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4rem;">מדיטציה מודרכת</h3>
-                  <p style="color: #7f8c8d; line-height: 1.8; margin-bottom: 25px;">פרקטיקת מיינדפולנס ורגיעה עמוקה</p>
-                  <div style="font-size: 1.8rem; color: #00b894; font-weight: bold;">₪60/שיעור</div>
-                </div>
-              </div>
-            </div>
-          </section>
-          
-          <footer style="background: #2c3e50; color: white; padding: 50px 20px; text-align: center;">
-            <h3 style="margin-bottom: 20px;">בואו לתרגל יחד</h3>
-            <p style="margin-bottom: 30px;">טלפון: 054-7777777 | כתובת: רחוב השקט 789, תל אביב</p>
-            <button style="background: #00b894; color: white; padding: 15px 30px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer;">הרשמה לשיעור ניסיון</button>
-          </footer>
-        </div>
-      `,
-      editorElements: [
-        { id: 6001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'SERENITY', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '48px', fontFamily: 'Arial', textAlign: 'center', fontWeight: '300', letterSpacing: '3px' }},
-        { id: 6002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'סטודיו יוגה ומדיטציה', style: { backgroundColor: 'transparent', color: '#ffffff', fontSize: '20px', fontFamily: 'Arial', textAlign: 'center' }},
-        { id: 6003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'הצטרף אלינו', style: { backgroundColor: '#ffffff', color: '#00b894', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }}
-      ]
     }
   ];
 
-  const categories = ['הכל', 'יופי ואסתטיקה', 'ספורט וכושר', 'משפטים ויעוץ', 'חינוך והוראה', 'בריאות ורווחה'];
+  const categories = ['הכל', 'יופי ואסתטיקה', 'ספורט וכושר'];
 
   const filteredTemplates = selectedCategory === 'הכל' 
     ? templates 
@@ -667,80 +433,7 @@ export default function EnhancedTemplatesGallery() {
           <a 
             href="/editor" 
             style={{
-              background: 'rgba(0, 0, 0, 0.9)',
-          zIndex: 10000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '2rem'
-        }}>
-          <div style={{
-            background: 'white',
-            borderRadius: '20px',
-            maxWidth: '90vw',
-            maxHeight: '90vh',
-            overflow: 'auto',
-            position: 'relative'
-          }}>
-            {/* Close Button */}
-            <button
-              onClick={() => setPreviewTemplate(null)}
-              style={{
-                position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                background: '#e74c3c',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '40px',
-                height: '40px',
-                cursor: 'pointer',
-                fontSize: '1.2rem',
-                fontWeight: 'bold',
-                zIndex: 10001
-              }}
-            >
-              ×
-            </button>
-
-            {/* Preview Content */}
-            <div 
-              dangerouslySetInnerHTML={{ __html: previewTemplate.fullHTML }}
-              style={{ width: '100%', height: '100%' }}
-            />
-
-            {/* Edit Button in Preview */}
-            <div style={{
-              position: 'absolute',
-              bottom: '2rem',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 10001
-            }}>
-              <a
-                href={`/editor?template=${previewTemplate.id}`}
-                style={{
-                  background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
-                  color: 'white',
-                  padding: '1rem 2rem',
-                  borderRadius: '25px',
-                  textDecoration: 'none',
-                  fontWeight: 'bold',
-                  fontSize: '1.1rem',
-                  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                ערוך תבנית זו ✏️
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}255, 255, 255, 0.2)',
+              background: 'rgba(255, 255, 255, 0.2)',
               color: 'white',
               padding: '0.8rem 1.5rem',
               borderRadius: '25px',
@@ -806,14 +499,6 @@ export default function EnhancedTemplatesGallery() {
                 boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
                 transition: 'all 0.3s ease',
                 cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-10px)';
-                e.currentTarget.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
               }}
             >
               {/* Template Image */}
@@ -958,4 +643,77 @@ export default function EnhancedTemplatesGallery() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(
+          background: 'rgba(0, 0, 0, 0.9)',
+          zIndex: 10000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            maxWidth: '90vw',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            position: 'relative'
+          }}>
+            {/* Close Button */}
+            <button
+              onClick={() => setPreviewTemplate(null)}
+              style={{
+                position: 'absolute',
+                top: '1rem',
+                right: '1rem',
+                background: '#e74c3c',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                cursor: 'pointer',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                zIndex: 10001
+              }}
+            >
+              ×
+            </button>
+
+            {/* Preview Content */}
+            <div 
+              dangerouslySetInnerHTML={{ __html: previewTemplate.fullHTML }}
+              style={{ width: '100%', height: '100%' }}
+            />
+
+            {/* Edit Button in Preview */}
+            <div style={{
+              position: 'absolute',
+              bottom: '2rem',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 10001
+            }}>
+              <a
+                href={`/editor?template=${previewTemplate.id}`}
+                style={{
+                  background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+                  color: 'white',
+                  padding: '1rem 2rem',
+                  borderRadius: '25px',
+                  textDecoration: 'none',
+                  fontWeight: 'bold',
+                  fontSize: '1.1rem',
+                  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                ערוך תבנית זו ✏️
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
