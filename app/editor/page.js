@@ -1,12 +1,98 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
-export default function FixedEditor() {
+export default function EnhancedEditor() {
   const [elements, setElements] = useState([]);
   const [selectedElement, setSelectedElement] = useState(null);
   const [dragState, setDragState] = useState({ isDragging: false, startPos: null, elementId: null });
   const [viewMode, setViewMode] = useState('desktop');
+  const [currentTemplate, setCurrentTemplate] = useState(null);
+  const [canvasBackground, setCanvasBackground] = useState('#ffffff');
   const canvasRef = useRef();
+
+  // Load template on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateId = urlParams.get('template');
+    
+    if (templateId) {
+      loadTemplate(parseInt(templateId));
+    }
+  }, []);
+
+  // Enhanced template presets with editor elements
+  const templateData = {
+    1: {
+      name: 'מספרת מקצועית',
+      background: '#f8f9fa',
+      elements: [
+        { id: 1001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'מספרת מקצועית', style: { backgroundColor: 'transparent', color: '#2c3e50', fontSize: '48px', fontFamily: 'Arial', textAlign: 'center', fontWeight: 'bold' }},
+        { id: 1002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'עיצוב שיער מקצועי ברמה הגבוהה ביותר', style: { backgroundColor: 'transparent', color: '#7f8c8d', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center' }},
+        { id: 1003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'קבע תור עכשיו', style: { backgroundColor: '#e74c3c', color: '#ffffff', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }},
+        { id: 1004, type: 'text', x: 50, y: 250, width: 600, height: 40, content: 'השירותים שלנו', style: { backgroundColor: 'transparent', color: '#2c3e50', fontSize: '32px', fontFamily: 'Arial', textAlign: 'center', fontWeight: 'bold' }}
+      ]
+    },
+    2: {
+      name: 'מכון כושר אישי',
+      background: '#fff5f5',
+      elements: [
+        { id: 2001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'FIT POWER', style: { backgroundColor: 'transparent', color: '#ff6b6b', fontSize: '56px', fontFamily: 'Arial', textAlign: 'center', fontWeight: 'bold' }},
+        { id: 2002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'אימונים אישיים ברמה הגבוהה ביותר', style: { backgroundColor: 'transparent', color: '#2c3e50', fontSize: '20px', fontFamily: 'Arial', textAlign: 'center' }},
+        { id: 2003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'התחל עכשיו', style: { backgroundColor: '#ff6b6b', color: '#ffffff', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }},
+        { id: 2004, type: 'text', x: 50, y: 250, width: 600, height: 40, content: 'השירותים שלנו', style: { backgroundColor: 'transparent', color: '#2c3e50', fontSize: '32px', fontFamily: 'Arial', textAlign: 'center', fontWeight: 'bold' }}
+      ]
+    },
+    3: {
+      name: 'משרד עורכי דין',
+      background: '#f8f9fa',
+      elements: [
+        { id: 3001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'משרד עורכי דין כהן ושות\'', style: { backgroundColor: 'transparent', color: '#1a1a2e', fontSize: '36px', fontFamily: 'Times New Roman', textAlign: 'center', fontWeight: 'bold' }},
+        { id: 3002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'מומחים בדיני מסחר, נזיקין ומשפט אזרחי', style: { backgroundColor: 'transparent', color: '#666666', fontSize: '16px', fontFamily: 'Times New Roman', textAlign: 'center' }},
+        { id: 3003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'קבע פגישת ייעוץ', style: { backgroundColor: '#c9b037', color: '#1a1a2e', fontSize: '16px', fontFamily: 'Times New Roman', textAlign: 'center', borderRadius: '5px' }},
+        { id: 3004, type: 'text', x: 50, y: 250, width: 600, height: 40, content: 'תחומי התמחות', style: { backgroundColor: 'transparent', color: '#1a1a2e', fontSize: '32px', fontFamily: 'Times New Roman', textAlign: 'center', fontWeight: 'bold' }}
+      ]
+    },
+    4: {
+      name: 'מורה פרטי מקצועי',
+      background: '#f9f9ff',
+      elements: [
+        { id: 4001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'ד"ר שרה לוי - מורה פרטי', style: { backgroundColor: 'transparent', color: '#667eea', fontSize: '36px', fontFamily: 'Arial', textAlign: 'center', fontWeight: 'bold' }},
+        { id: 4002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'מתמטיקה • פיזיקה • כימיה', style: { backgroundColor: 'transparent', color: '#764ba2', fontSize: '20px', fontFamily: 'Arial', textAlign: 'center' }},
+        { id: 4003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'קבע שיעור ניסיון', style: { backgroundColor: '#ff6b6b', color: '#ffffff', fontSize: '16px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }},
+        { id: 4004, type: 'text', x: 50, y: 250, width: 600, height: 40, content: 'המקצועות שלי', style: { backgroundColor: 'transparent', color: '#2c3e50', fontSize: '32px', fontFamily: 'Arial', textAlign: 'center', fontWeight: 'bold' }}
+      ]
+    },
+    5: {
+      name: 'מטפל פסיכולוגי',
+      background: '#f8fbff',
+      elements: [
+        { id: 5001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: 'ד"ר מיכל רוזן', style: { backgroundColor: 'transparent', color: '#74b9ff', fontSize: '42px', fontFamily: 'Arial', textAlign: 'center', fontWeight: '300' }},
+        { id: 5002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'פסיכולוגית קלינית מוסמכת', style: { backgroundColor: 'transparent', color: '#2d3436', fontSize: '20px', fontFamily: 'Arial', textAlign: 'center' }},
+        { id: 5003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'קבע פגישת היכרות', style: { backgroundColor: '#74b9ff', color: '#ffffff', fontSize: '16px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }},
+        { id: 5004, type: 'text', x: 50, y: 250, width: 600, height: 40, content: 'תחומי הטיפול', style: { backgroundColor: 'transparent', color: '#2d3436', fontSize: '32px', fontFamily: 'Arial', textAlign: 'center', fontWeight: 'bold' }}
+      ]
+    },
+    6: {
+      name: 'סטודיו יוגה ומדיטציה',
+      background: '#f8fdf8',
+      elements: [
+        { id: 6001, type: 'text', x: 50, y: 30, width: 500, height: 60, content: '🧘‍♀️ SERENITY', style: { backgroundColor: 'transparent', color: '#2e7d32', fontSize: '56px', fontFamily: 'Arial', textAlign: 'center', fontWeight: '300' }},
+        { id: 6002, type: 'text', x: 50, y: 100, width: 500, height: 40, content: 'סטודיו יוגה ומדיטציה', style: { backgroundColor: 'transparent', color: '#2e7d32', fontSize: '24px', fontFamily: 'Arial', textAlign: 'center' }},
+        { id: 6003, type: 'button', x: 200, y: 160, width: 200, height: 50, content: 'התחל את המסע שלך', style: { backgroundColor: '#2e7d32', color: '#ffffff', fontSize: '16px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }},
+        { id: 6004, type: 'text', x: 50, y: 250, width: 600, height: 40, content: 'השיעורים שלנו', style: { backgroundColor: 'transparent', color: '#2e7d32', fontSize: '32px', fontFamily: 'Arial', textAlign: 'center', fontWeight: '300' }}
+      ]
+    }
+  };
+
+  const loadTemplate = (templateId) => {
+    const template = templateData[templateId];
+    if (template) {
+      setElements(template.elements);
+      setCurrentTemplate(template);
+      setCanvasBackground(template.background);
+      setSelectedElement(null);
+    }
+  };
 
   // Viewport sizes
   const viewportSizes = {
@@ -109,9 +195,9 @@ export default function FixedEditor() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>האתר שלי</title>
+    <title>${currentTemplate ? currentTemplate.name : 'האתר שלי'}</title>
     <style>
-        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: #f5f5f5; }
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: ${canvasBackground}; }
         .container { max-width: 1200px; margin: 0 auto; background: white; min-height: 500px; position: relative; }
         ${elements.map(el => `
         .element-${el.id} {
@@ -131,6 +217,8 @@ export default function FixedEditor() {
             align-items: center;
             justify-content: center;
             ${el.type === 'button' ? 'cursor: pointer;' : ''}
+            padding: ${el.style.padding || '0'};
+            font-weight: ${el.style.fontWeight || 'normal'};
         }`).join('')}
     </style>
 </head>
@@ -159,7 +247,7 @@ export default function FixedEditor() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'my-website.html';
+    a.download = `${currentTemplate ? currentTemplate.name : 'my-website'}.html`;
     a.click();
   };
 
@@ -170,7 +258,14 @@ export default function FixedEditor() {
       
       {/* Header */}
       <header style={{ background: '#2d2d2d', padding: '15px 25px', borderBottom: '1px solid #444', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#ffffff' }}>🎨 אדיטור מקצועי</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#ffffff' }}>🎨 אדיטור מקצועי</h1>
+          {currentTemplate && (
+            <div style={{ background: '#667eea', color: 'white', padding: '5px 15px', borderRadius: '15px', fontSize: '0.9rem' }}>
+              📋 {currentTemplate.name}
+            </div>
+          )}
+        </div>
         
         <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
           {/* Viewport Controls */}
@@ -219,6 +314,13 @@ export default function FixedEditor() {
           <h3 style={{ margin: '0 0 20px 0', color: '#ffffff' }}>🛠️ כלים</h3>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button 
+              onClick={() => window.location.href = '/templates'}
+              style={{ padding: '10px', background: '#95a5a6', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontSize: '0.9rem', marginBottom: '10px' }}
+            >
+              ← חזור לגלריה
+            </button>
+            
             <button onClick={() => addElement('text')} style={{ padding: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
               📝 טקסט
             </button>
@@ -239,9 +341,9 @@ export default function FixedEditor() {
             <button 
               onClick={() => {
                 const heroElements = [
-                  { ...{ id: Date.now() + 1, type: 'text', x: 50, y: 50, width: 400, height: 60, content: 'ברוכים הבאים לאתר שלנו', style: { backgroundColor: 'transparent', color: '#2c3e50', fontSize: '32px', fontFamily: 'Arial', textAlign: 'center' }}},
-                  { ...{ id: Date.now() + 2, type: 'text', x: 50, y: 120, width: 500, height: 40, content: 'אנחנו מציעים שירותים מקצועיים ואיכותיים', style: { backgroundColor: 'transparent', color: '#7f8c8d', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center' }}},
-                  { ...{ id: Date.now() + 3, type: 'button', x: 200, y: 180, width: 200, height: 50, content: 'צור קשר עכשיו', style: { backgroundColor: '#3498db', color: '#ffffff', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }}}
+                  { id: Date.now() + 1, type: 'text', x: 50, y: 50, width: 400, height: 60, content: 'ברוכים הבאים לאתר שלנו', style: { backgroundColor: 'transparent', color: '#2c3e50', fontSize: '32px', fontFamily: 'Arial', textAlign: 'center' }},
+                  { id: Date.now() + 2, type: 'text', x: 50, y: 120, width: 500, height: 40, content: 'אנחנו מציעים שירותים מקצועיים ואיכותיים', style: { backgroundColor: 'transparent', color: '#7f8c8d', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center' }},
+                  { id: Date.now() + 3, type: 'button', x: 200, y: 180, width: 200, height: 50, content: 'צור קשר עכשיו', style: { backgroundColor: '#3498db', color: '#ffffff', fontSize: '18px', fontFamily: 'Arial', textAlign: 'center', borderRadius: '25px' }}
                 ];
                 setElements([...elements, ...heroElements]);
               }}
@@ -263,7 +365,7 @@ export default function FixedEditor() {
               width: viewportSizes[viewMode].width,
               maxWidth: viewportSizes[viewMode].maxWidth,
               minHeight: '600px',
-              background: 'white',
+              background: canvasBackground,
               position: 'relative',
               boxShadow: '0 0 20px rgba(0,0,0,0.1)',
               borderRadius: '8px',
@@ -310,7 +412,9 @@ export default function FixedEditor() {
                   justifyContent: 'center',
                   cursor: 'move',
                   userSelect: 'none',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  padding: element.style.padding || '0',
+                  fontWeight: element.style.fontWeight || 'normal'
                 }}
               >
                 {element.type === 'video' && element.videoUrl ? (
@@ -367,11 +471,10 @@ export default function FixedEditor() {
                 {(selectedEl.type === 'text' || selectedEl.type === 'button') && (
                   <div style={{ marginBottom: '15px' }}>
                     <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>תוכן:</label>
-                    <input
-                      type="text"
+                    <textarea
                       value={selectedEl.content}
                       onChange={(e) => updateElement(selectedEl.id, { content: e.target.value })}
-                      style={{ width: '100%', padding: '8px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white' }}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white', minHeight: '60px', resize: 'vertical' }}
                     />
                   </div>
                 )}
@@ -479,12 +582,38 @@ export default function FixedEditor() {
                     <input
                       type="range"
                       min="12"
-                      max="48"
+                      max="72"
                       value={parseInt(selectedEl.style.fontSize)}
                       onChange={(e) => updateElementStyle(selectedEl.id, { fontSize: e.target.value + 'px' })}
                       style={{ width: '100%' }}
                     />
                     <span style={{ color: '#bdc3c7', fontSize: '0.9rem' }}>{selectedEl.style.fontSize}</span>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>יישור טקסט:</label>
+                    <select
+                      value={selectedEl.style.textAlign}
+                      onChange={(e) => updateElementStyle(selectedEl.id, { textAlign: e.target.value })}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #555', borderRadius: '4px', background: '#555', color: 'white' }}
+                    >
+                      <option value="center">מרכז</option>
+                      <option value="right">ימין</option>
+                      <option value="left">שמאל</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#bdc3c7' }}>עיגול פינות:</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="50"
+                      value={parseInt(selectedEl.style.borderRadius)}
+                      onChange={(e) => updateElementStyle(selectedEl.id, { borderRadius: e.target.value + 'px' })}
+                      style={{ width: '100%' }}
+                    />
+                    <span style={{ color: '#bdc3c7', fontSize: '0.9rem' }}>{selectedEl.style.borderRadius}</span>
                   </div>
                 </div>
               </div>
