@@ -16,8 +16,1162 @@ export default function EnhancedTemplatesGallery() {
       downloads: 1200,
       description: 'תבנית מודרנה למספרות וברברים עם מערכת הזמנות',
       features: ['מערכת הזמנות', 'גלריית עבודות', 'צוות מקצועי', 'מחירון שירותים'],
-      fullHTML: `
-        <div style="font-family: Arial, sans-serif; margin: 0; padding: 0; direction: rtl;">
+     <!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ברבר סטודיו - מספרת מקצועית בתל אביב</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #d4af37;
+            --secondary-color: #1a1a2e;
+            --accent-color: #c9a96e;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --bg-light: #f8f9fa;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--secondary-color);
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(212, 175, 55, 0.1)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23f0f0f0" width="1200" height="800"/><defs><pattern id="barbershop" patternUnits="userSpaceOnUse" width="40" height="40"><rect fill="%23ffffff" width="40" height="40"/><circle fill="%23d4af37" cx="20" cy="20" r="3" opacity="0.1"/></pattern></defs><rect fill="url(%23barbershop)" width="1200" height="800"/></svg>');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, transparent 20%, rgba(26, 26, 46, 0.9) 80%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6vw, 6rem);
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .hero .description {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--secondary-color);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 8rem 2rem;
+            background: var(--bg-light);
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.8;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+
+        .service-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .service-card p {
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+            line-height: 1.8;
+        }
+
+        .service-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .service-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .service-features li {
+            padding: 0.5rem 0;
+            color: var(--text-dark);
+            position: relative;
+            padding-right: 1.5rem;
+        }
+
+        .service-features li::before {
+            content: '✓';
+            position: absolute;
+            right: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* About Section */
+        .about {
+            padding: 8rem 2rem;
+            background: white;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+            line-height: 1.8;
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Team Section */
+        .team {
+            padding: 8rem 2rem;
+            background: var(--bg-light);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .member-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--secondary-color);
+        }
+
+        .member-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .member-role {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .member-bio {
+            color: var(--text-dark);
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Gallery Section */
+        .gallery {
+            padding: 8rem 2rem;
+            background: white;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            height: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .gallery-item i {
+            font-size: 3rem;
+            color: var(--secondary-color);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 8rem 2rem;
+            background: var(--secondary-color);
+            color: var(--text-light);
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-item i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            width: 30px;
+        }
+
+        .booking-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(236, 240, 241, 0.7);
+        }
+
+        /* Footer */
+        .footer {
+            background: #0d0d1a;
+            padding: 3rem 2rem 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .fade-in:nth-child(1) { animation-delay: 0.1s; }
+        .fade-in:nth-child(2) { animation-delay: 0.2s; }
+        .fade-in:nth-child(3) { animation-delay: 0.3s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .about-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Scroll animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease-out;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="#home" class="logo">ברבר סטודיו</a>
+            <ul class="nav-links">
+                <li><a href="#home">בית</a></li>
+                <li><a href="#services">שירותים</a></li>
+                <li><a href="#about">אודות</a></li>
+                <li><a href="#team">הצוות</a></li>
+                <li><a href="#gallery">גלריה</a></li>
+                <li><a href="#contact">צור קשר</a></li>
+            </ul>
+            <a href="#contact" class="cta-btn">קביעת תור</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="fade-in">ברבר סטודיו</h1>
+            <p class="subtitle fade-in">מספרת מקצועית בתל אביב</p>
+            <p class="description fade-in">
+                חוויית עיצוב שיער יוקרתית המשלבת מסורת קלאסית עם טכניקות מודרניות. 
+                הצוות המקצועי שלנו יעניק לך מראה מושלם ותחושה של פינוק מלא.
+            </p>
+            <div class="hero-buttons">
+                <a href="#contact" class="btn-primary fade-in">
+                    <i class="fas fa-calendar-alt"></i>
+                    קביעת תור
+                </a>
+                <a href="#services" class="btn-secondary fade-in">
+                    <i class="fas fa-cut"></i>
+                    השירותים שלנו
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services scroll-reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">השירותים שלנו</h2>
+                <p class="section-subtitle">מגוון שירותי עיצוב ברמה הגבוהה ביותר</p>
+                <p class="section-description">
+                    כל שירות מבוצע ברמה מקצועית עם התאמה אישית לסגנון ולאישיות שלך
+                </p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>תספורת מקצועית</h3>
+                    <p>תספורות מותאמות אישית עם הכלים המתקדמים ביותר והטכניקות העדכניות</p>
+                    <div class="service-price">₪120</div>
+                    <ul class="service-features">
+                        <li>ייעוץ מקצועי ואישי</li>
+                        <li>שטיפת שיער עם מוצרים איכותיים</li>
+                        <li>עיצוב וסטיילינג</li>
+                        <li>טיפים לתחזוקה ביתית</li>
+                    </ul>
+                    <a href="#contact" class="btn-primary">הזמן עכשיו</a>
+                </div>
+
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>עיצוב זקן מקצועי</h3>
+                    <p>עיצוב וטיפוח זקן ברמה מקצועית עם מוצרים איכותיים וטכניקות מתקדמות</p>
+                    <div class="service-price">₪80</div>
+                    <ul class="service-features">
+                        <li>עיצוב זקן מדויק</li>
+                        <li>גילוח מקצועי</li>
+                        <li>טיפוח וחידוד</li>
+                        <li>שמנים וקרמים איכותיים</li>
+                    </ul>
+                    <a href="#contact" class="btn-primary">הזמן עכשיו</a>
+                </div>
+
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h3>טיפוח פנים יוקרתי</h3>
+                    <p>טיפול פנים מרגיע ומחדש עם מוצרי יוקרה בטכנולוגיה מתקדמת</p>
+                    <div class="service-price">₪200</div>
+                    <ul class="service-features">
+                        <li>ניקוי עמוק של הפנים</li>
+                        <li>מסכות מזינות</li>
+                        <li>עיסוי פנים מרגיע</li>
+                        <li>טיפול לחות מתקדם</li>
+                    </ul>
+                    <a href="#contact" class="btn-primary">הזמן עכשיו</a>
+                </div>
+
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3>חבילת VIP מלאה</h3>
+                    <p>חוויה מלאה ויוקרתית הכוללת את כל השירותים עם יחס אישי מלא</p>
+                    <div class="service-price">₪350</div>
+                    <ul class="service-features">
+                        <li>תספורת + עיצוב זקן</li>
+                        <li>טיפוח פנים מלא</li>
+                        <li>משקאות איכותיים</li>
+                        <li>ליווי אישי מלא</li>
+                    </ul>
+                    <a href="#contact" class="btn-primary">הזמן עכשיו</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about scroll-reveal">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>הסיפור שלנו</h2>
+                    <p>
+                        ברבר סטודיו נוסד בשנת 2015 מתוך אהבה עמוקה לאומנות עיצוב השיער והרצון להעניק 
+                        חוויה יוקרתית ומקצועית לכל לקוח. אנחנו משלבים מסורת קלאסית עם טכנולוגיה 
+                        מתקדמת ומוצרים איכותיים מהמותגים המובילים בעולם.
+                    </p>
+                    <p>
+                        הצוות המקצועי שלנו עבר הכשרות מתקדמות בחו"ל ומתעדכן באופן קבוע בטרנדים 
+                        החדשים ובטכניקות החדשניות ביותר. אנחנו מאמינים שכל לקוח ראוי לחוויה אישית 
+                        ומותאמת שתעניק לו ביטחון עצמי ומראה מושלם.
+                    </p>
+                    <p>
+                        הסטודיו שלנו מעוצב ברמה הגבוהה ביותר ומצויד בכלים המתקדמים ביותר 
+                        כדי להעניק לך חוויה נעימה ותוצאות מושלמות בכל ביקור.
+                    </p>
+                    <a href="#contact" class="btn-primary">בואו להכיר אותנו</a>
+                </div>
+                <div class="about-image">
+                    <div style="width: 100%; height: 500px; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--secondary-color);">
+                        <i class="fas fa-store"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="team scroll-reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">הצוות המקצועי</h2>
+                <p class="section-subtitle">מומחים בעלי ניסיון רב שנים</p>
+                <p class="section-description">
+                    כל חבר בצוות עבר הכשרות מתקדמות ומתמחה בתחומים שונים של עיצוב השיער
+                </p>
+            </div>
+            
+            <div class="team-grid">
+                <div class="team-member scroll-reveal">
+                    <div class="member-photo">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3 class="member-name">דניאל כהן</h3>
+                    <p class="member-role">מנהל ומעצב ראשי</p>
+                    <p class="member-bio">
+                        15+ שנות ניסיון, בוגר אקדמיה ללונדון. מתמחה בתספורות קלאסיות ומודרניות 
+                        ועיצוב זקן ברמה הגבוהה ביותר.
+                    </p>
+                </div>
+
+                <div class="team-member scroll-reveal">
+                    <div class="member-photo">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3 class="member-name">אלון לוי</h3>
+                    <p class="member-role">מעצב בכיר</p>
+                    <p class="member-bio">
+                        מומחה לטרנדים עכשוויים ותספורות מתקדמות. בוגר קורסי התמחות בפריז 
+                        ומתמחה בסטיילינג לאירועים מיוחדים.
+                    </p>
+                </div>
+
+                <div class="team-member scroll-reveal">
+                    <div class="member-photo">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h3 class="member-name">רון אברהם</h3>
+                    <p class="member-role">מומחה טיפוח</p>
+                    <p class="member-bio">
+                        מתמחה בטיפוח פנים וגילוח מקצועי. בוגר קורסי התמחות באיטליה 
+                        ובעל ידע נרחב במוצרי יוקרה ובטכניקות טיפוח מתקדמות.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery scroll-reveal">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">גלריית עבודות</h2>
+                <p class="section-subtitle">דוגמאות מעבודותינו המקצועיות</p>
+                <p class="section-description">
+                    ראו דוגמאות מהעבודות המקצועיות שלנו ותיווכחו באיכות השירות הגבוהה
+                </p>
+            </div>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item scroll-reveal">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <div class="gallery-item scroll-reveal">
+                    <i class="fas fa-cut"></i>
+                </div>
+                <div class="gallery-item scroll-reveal">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="gallery-item scroll-reveal">
+                    <i class="fas fa-spa"></i>
+                </div>
+                <div class="gallery-item scroll-reveal">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="gallery-item scroll-reveal">
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Booking Section -->
+    <section id="contact" class="contact scroll-reveal">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h2>צור קשר וקביעת תור</h2>
+                    <p style="margin-bottom: 3rem; font-size: 1.2rem; opacity: 0.9;">
+                        מוזמנים לקבוע תור או לפנות אלינו לכל שאלה. אנחנו כאן כדי להעניק לכם 
+                        את החוויה הטובה ביותר.
+                    </p>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>כתובת</h4>
+                            <p>רחוב דיזנגוף 123, תל אביב</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>טלפון</h4>
+                            <p>03-1234567</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>אימייל</h4>
+                            <p>info@barberstudio.co.il</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>שעות פתיחה</h4>
+                            <p>ראשון-חמישי: 9:00-21:00<br>
+                            שישי: 9:00-15:00<br>
+                            שבת: סגור</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="booking-form">
+                    <h3 style="margin-bottom: 2rem; color: var(--primary-color); font-size: 1.8rem;">קביעת תור מקוון</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="name">שם מלא</label>
+                            <input type="text" id="name" placeholder="הכנס את שמך המלא" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">טלפון</label>
+                            <input type="tel" id="phone" placeholder="050-1234567" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">אימייל</label>
+                            <input type="email" id="email" placeholder="your@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="service">סוג השירות</label>
+                            <select id="service" required>
+                                <option value="">בחר שירות</option>
+                                <option value="haircut">תספורת מקצועית - ₪120</option>
+                                <option value="beard">עיצוב זקן - ₪80</option>
+                                <option value="facial">טיפוח פנים - ₪200</option>
+                                <option value="vip">חבילת VIP - ₪350</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date">תאריך מועדף</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="time">שעה מועדפת</label>
+                            <select id="time" required>
+                                <option value="">בחר שעה</option>
+                                <option value="09:00">09:00</option>
+                                <option value="10:00">10:00</option>
+                                <option value="11:00">11:00</option>
+                                <option value="12:00">12:00</option>
+                                <option value="13:00">13:00</option>
+                                <option value="14:00">14:00</option>
+                                <option value="15:00">15:00</option>
+                                <option value="16:00">16:00</option>
+                                <option value="17:00">17:00</option>
+                                <option value="18:00">18:00</option>
+                                <option value="19:00">19:00</option>
+                                <option value="20:00">20:00</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes">הערות נוספות</label>
+                            <textarea id="notes" rows="3" placeholder="ספר לנו על העיצוב שאתה מחפש..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">
+                            <i class="fas fa-calendar-check"></i>
+                            קבע תור עכשיו
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#" title="פייסבוק"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" title="אינסטגרם"><i class="fab fa-instagram"></i></a>
+                <a href="#" title="וואטסאפ"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" title="גוגל"><i class="fab fa-google"></i></a>
+            </div>
+            
+            <div style="border-top: 1px solid rgba(212, 175, 55, 0.2); padding-top: 2rem; color: rgba(236, 240, 241, 0.7);">
+                <p>&copy; 2025 ברבר סטודיו. כל הזכויות שמורות.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    עוצב ופותח על ידי <span style="color: var(--primary-color);">בונה אתרים מקצועי</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for animations and interactions -->
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(26, 26, 46, 0.98)';
+                header.style.padding = '0.5rem 0';
+            } else {
+                header.style.background = 'rgba(26, 26, 46, 0.95)';
+                header.style.padding = '1rem 0';
+            }
+        });
+
+        // Scroll reveal animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const service = document.getElementById('service').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            
+            // Simple validation
+            if (!name || !phone || !service || !date || !time) {
+                alert('אנא מלא את כל השדות החובה');
+                return;
+            }
+            
+            // Success message
+            alert(`תודה ${name}! התור שלך נקבע בהצלחה.\nנחזור אליך בקרוב לאישור הפרטים.`);
+            
+            // Reset form
+            this.reset();
+        });
+
+        // Add some interactive hover effects
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-10px) scale(1)';
+            });
+        });
+
+        // Dynamic year for copyright
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentYear = new Date().getFullYear();
+            const copyrightText = document.querySelector('footer p');
+            if (copyrightText) {
+                copyrightText.innerHTML = copyrightText.innerHTML.replace('2025', currentYear);
+            }
+        });
+
+        // Add loading animation for images when they would be loaded
+        document.querySelectorAll('.gallery-item, .about-image').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Mobile menu toggle (if needed in future)
+        const mobileMenuToggle = () => {
+            // Mobile menu functionality can be added here
+            console.log('Mobile menu toggle');
+        };
+
+        // Performance optimization - lazy loading simulation
+        const lazyElements = document.querySelectorAll('.gallery-item, .service-card');
+        const lazyObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        lazyElements.forEach(el => lazyObserver.observe(el));
+    </script>
+</body>
+</html>
           <header style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 60px 20px; text-align: center;">
             <h1 style="font-size: 3rem; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">מספרת מקצועית</h1>
             <p style="font-size: 1.2rem; margin: 20px 0;">עיצוב שיער מקצועי ברמה הגבוהה ביותר</p>
