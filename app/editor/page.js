@@ -2,7 +2,167 @@
 
 import React, { useState } from 'react';
 
-// BarbershopCanvas Component
+// PageManager Component
+const defaultTemplates = {
+  Home: ['Hero', 'Services', 'Testimonials'],
+  About: ['Hero', 'Story', 'Team'],
+  Services: ['Hero', 'ServicesGrid', 'Pricing'],
+  Contact: ['Hero', 'ContactForm', 'Map'],
+  Gallery: ['Hero', 'ImageGallery'],
+  Blog: ['Hero', 'BlogPosts'],
+};
+
+const pageIcons = {
+  Home: '🏠',
+  About: '👤',
+  Services: '💈',
+  Contact: '📞',
+  Gallery: '🖼️',
+  Blog: '📝',
+};
+
+function PageManager({ onPageChange, currentPageId }) {
+  const [pages, setPages] = useState([
+    createPage('Home'),
+  ]);
+  const [activePageId, setActivePageId] = useState(pages[0].id);
+
+  function createPage(type) {
+    return {
+      id: Date.now() + Math.random(),
+      name: type,
+      type,
+      content: defaultTemplates[type],
+      settings: { seoTitle: '', metaDescription: '' },
+      lastModified: new Date().toISOString(),
+    };
+  }
+
+  function addPage(type = 'Home') {
+    const newPage = createPage(type);
+    setPages([...pages, newPage]);
+    setActivePageId(newPage.id);
+    if (onPageChange) onPageChange(newPage);
+  }
+
+  function deletePage(id) {
+    if (pages.length <= 1) return; // לא למחוק את הדף האחרון
+    const updated = pages.filter((p) => p.id !== id);
+    setPages(updated);
+    if (activePageId === id && updated.length > 0) {
+      setActivePageId(updated[0].id);
+      if (onPageChange) onPageChange(updated[0]);
+    }
+  }
+
+  function duplicatePage(id) {
+    const original = pages.find((p) => p.id === id);
+    if (original) {
+      const copy = {
+        ...createPage(original.type),
+        name: original.name + ' Copy',
+        content: [...original.content],
+      };
+      setPages([...pages, copy]);
+      setActivePageId(copy.id);
+      if (onPageChange) onPageChange(copy);
+    }
+  }
+
+  function renamePage(id, newName) {
+    const updatedPages = pages.map((p) => (p.id === id ? { ...p, name: newName } : p));
+    setPages(updatedPages);
+    if (id === activePageId && onPageChange) {
+      const updatedPage = updatedPages.find((p) => p.id === id);
+      onPageChange(updatedPage);
+    }
+  }
+
+  function setActivePage(id) {
+    setActivePageId(id);
+    if (onPageChange) {
+      const page = pages.find((p) => p.id === id);
+      onPageChange(page);
+    }
+  }
+
+  const activePage = pages.find((p) => p.id === activePageId);
+
+  return (
+    <div style={pageStyles.container}>
+      {/* Page Tabs */}
+      <div style={pageStyles.tabs}>
+        {pages.map((page) => (
+          <div
+            key={page.id}
+            style={{
+              ...pageStyles.tab,
+              backgroundColor: page.id === activePageId ? '#3b82f6' : '#334155',
+              borderBottom: page.id === activePageId ? '3px solid #60a5fa' : 'none',
+            }}
+            onClick={() => setActivePage(page.id)}
+          >
+            <span style={pageStyles.tabIcon}>{pageIcons[page.type] || '📄'}</span>
+            <span style={pageStyles.tabName}>{page.name}</span>
+            {pages.length > 1 && (
+              <button
+                style={pageStyles.closeBtn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deletePage(page.id);
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        ))}
+        <div style={pageStyles.addPageDropdown}>
+          <button style={pageStyles.addPageBtn}>➕ דף חדש</button>
+          <div style={pageStyles.dropdown}>
+            {Object.keys(defaultTemplates).map((type) => (
+              <button 
+                key={type} 
+                style={pageStyles.dropdownItem} 
+                onClick={() => addPage(type)}
+              >
+                {pageIcons[type]} {type}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Page Actions */}
+      <div style={pageStyles.pageActions}>
+        <span style={pageStyles.pageInfo}>
+          📄 {activePage?.name} ({activePage?.type})
+        </span>
+        <div style={pageStyles.actionButtons}>
+          <button 
+            style={pageStyles.actionBtn}
+            onClick={() => duplicatePage(activePageId)}
+          >
+            📋 שכפל דף
+          </button>
+          <button 
+            style={pageStyles.actionBtn}
+            onClick={() => {
+              const newName = prompt('שם חדש לדף:', activePage?.name);
+              if (newName && newName.trim()) {
+                renamePage(activePageId, newName.trim());
+              }
+            }}
+          >
+            ✏️ שנה שם
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// BarbershopCanvas Component (מהקוד הקודם)
 function BarbershopCanvas({ onSelectElement }) {
   const [selectedId, setSelectedId] = useState(null);
 
@@ -71,38 +231,6 @@ function BarbershopCanvas({ onSelectElement }) {
         </div>
         {selectedId === 'services' && (
           <div style={canvasStyles.editBadge}>✏️ עריכת שירותים</div>
-        )}
-      </section>
-
-      {/* Counters Section */}
-      <section
-        data-id="counters"
-        onClick={() => handleSelect('counters')}
-        style={{
-          ...canvasStyles.counters,
-          outline: selectedId === 'counters' ? '3px solid #3b82f6' : 'none',
-          cursor: 'pointer'
-        }}
-      >
-        <div style={canvasStyles.container}>
-          <h2 style={canvasStyles.sectionTitle}>במספרים</h2>
-          <div style={canvasStyles.countersGrid}>
-            {[
-              { label: 'לקוחות מרוצים', value: '2,847+', icon: '👨‍🦱' },
-              { label: 'שנות ניסיון', value: '15+', icon: '⭐' },
-              { label: 'פרסים בינלאומיים', value: '8', icon: '🏆' },
-              { label: 'ספרים מקצועיים', value: '12', icon: '✂️' }
-            ].map((counter, i) => (
-              <div key={i} style={canvasStyles.counterBox}>
-                <div style={canvasStyles.counterIcon}>{counter.icon}</div>
-                <h3 style={canvasStyles.counterValue}>{counter.value}</h3>
-                <p style={canvasStyles.counterLabel}>{counter.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        {selectedId === 'counters' && (
-          <div style={canvasStyles.editBadge}>✏️ עריכת מונים</div>
         )}
       </section>
 
@@ -175,39 +303,18 @@ const templates = [
     features: ['מונים אנימטיים', 'מערכת הרשמה', 'לוח אימונים']
   },
   {
-    id: 'lawfirm',
-    title: 'משרד עורכי דין',
-    description: 'ייצוג משפטי מקצועי ואמין.',
-    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&h=300&fit=crop',
-    features: ['עיצוב קלאסי', 'אזור לקוחות', 'יצירת קשר מאובטח']
-  },
-  {
     id: 'restaurant',
     title: 'מסעדת גורמה',
     description: 'חוויית טעמים בלתי נשכחת.',
     image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop',
     features: ['תפריט דיגיטלי', 'הזמנות אונליין', 'גלריית מנות']
-  },
-  {
-    id: 'clinic',
-    title: 'קליניקה רפואית',
-    description: 'טיפול אישי ומקצועי בסטנדרטים הגבוהים ביותר.',
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=300&fit=crop',
-    features: ['הזמנת תורים', 'מידע רפואי', 'פורטל מטופלים']
-  },
-  {
-    id: 'yoga',
-    title: 'סטודיו יוגה',
-    description: 'איזון גוף ונפש בסביבה שלווה.',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
-    features: ['שיעורים אונליין', 'מדיטציה מודרכת', 'חנות יוגה']
   }
 ];
 
 const tabs = ['AI Assistant', 'רכיבים', 'תבניות', 'אנימציות'];
 const devices = ['Desktop', 'Tablet', 'Mobile'];
 
-const EditorWithTemplates = () => {
+const EditorWithPages = () => {
   const [activeTab, setActiveTab] = useState('תבניות');
   const [selectedDevice, setSelectedDevice] = useState('Desktop');
   const [elements, setElements] = useState([]);
@@ -216,6 +323,24 @@ const EditorWithTemplates = () => {
   const [loadingTemplateId, setLoadingTemplateId] = useState(null);
   const [currentTemplate, setCurrentTemplate] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
+  const [currentPage, setCurrentPage] = useState(null);
+
+  // פונקציה לטיפול בשינוי דף
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    if (page.type === 'Home' && currentTemplate === 'barbershop-ultra') {
+      // אם זה דף בית עם תבנית מספרה - לשמור את התבנית
+      return;
+    }
+    // למדם אחר - להציג רכיבים לפי תוכן הדף
+    const pageElements = page.content.map((section, index) => ({
+      id: Date.now() + index,
+      type: section,
+      content: `${section} של דף ${page.name}`
+    }));
+    setElements(pageElements);
+    setCurrentTemplate(null);
+  };
 
   const addElement = (type) => {
     const newElement = {
@@ -235,9 +360,8 @@ const EditorWithTemplates = () => {
     setTimeout(() => {
       if (templateId === 'barbershop-ultra') {
         setCurrentTemplate('barbershop-ultra');
-        setElements([]); // מנקה רכיבים קיימים
+        setElements([]);
       } else {
-        // תבניות אחרות
         const defaultElements = [
           {
             id: Date.now(),
@@ -255,7 +379,7 @@ const EditorWithTemplates = () => {
       }
       
       setLoadingTemplateId(null);
-      setActiveTab('רכיבים'); // עבור לטאב רכיבים אחרי טעינה
+      setActiveTab('רכיבים');
     }, 1500);
   };
 
@@ -301,7 +425,6 @@ const EditorWithTemplates = () => {
             <h4 style={templateStyles.templateTitle}>{template.title}</h4>
             <p style={templateStyles.templateDescription}>{template.description}</p>
             
-            {/* Features */}
             {template.features && (
               <div style={templateStyles.features}>
                 {template.features.map((feature, index) => (
@@ -334,6 +457,7 @@ const EditorWithTemplates = () => {
       <div style={styles.leftPanel}>
         <div style={styles.logo}>
           <h2 style={styles.logoText}>WebMaster Pro</h2>
+          <div style={styles.version}>Multi-Page Edition</div>
         </div>
         
         <div style={styles.tabs}>
@@ -363,23 +487,10 @@ const EditorWithTemplates = () => {
               <textarea
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="תאר מה אתה רוצה ליצור... למשל: 'צור hero section למספרה עם וידאו ברקע'"
+                placeholder="תאר מה אתה רוצה ליצור..."
                 style={styles.textarea}
               />
               <button style={styles.primaryButton}>✨ צור עם AI</button>
-              
-              <div style={styles.quickActions}>
-                <h4 style={styles.quickTitle}>דוגמאות מהירות:</h4>
-                <button style={styles.quickButton} onClick={() => setAiPrompt('צור hero section מרשים')}>
-                  Hero Section
-                </button>
-                <button style={styles.quickButton} onClick={() => setAiPrompt('הוסף גלריית תמונות')}>
-                  גלריה
-                </button>
-                <button style={styles.quickButton} onClick={() => setAiPrompt('צור טופס יצירת קשר')}>
-                  טופס קשר
-                </button>
-              </div>
             </div>
           )}
           
@@ -409,12 +520,6 @@ const EditorWithTemplates = () => {
               <label style={styles.checkboxLabel}>
                 <input type="checkbox" style={styles.checkbox} /> Slide Up
               </label>
-              <label style={styles.checkboxLabel}>
-                <input type="checkbox" style={styles.checkbox} /> Parallax
-              </label>
-              <label style={styles.checkboxLabel}>
-                <input type="checkbox" style={styles.checkbox} /> Bounce
-              </label>
             </div>
           )}
         </div>
@@ -422,6 +527,10 @@ const EditorWithTemplates = () => {
 
       {/* Center Canvas */}
       <div style={styles.center}>
+        {/* Page Manager */}
+        <PageManager onPageChange={handlePageChange} />
+        
+        {/* Toolbar */}
         <div style={styles.toolbar}>
           <div style={styles.toolbarLeft}>
             {devices.map((device) => (
@@ -446,19 +555,25 @@ const EditorWithTemplates = () => {
             <button style={styles.toolButton}>↷ Redo</button>
             <button style={styles.toolButton}>💾 Save</button>
             <button style={styles.toolButton}>👁️ Preview</button>
-            <button style={styles.toolButton}>📱 Export</button>
+            <button style={styles.toolButton}>🚀 Publish</button>
           </div>
         </div>
         
+        {/* Canvas */}
         <div style={styles.canvas}>
           {currentTemplate === 'barbershop-ultra' ? (
             <BarbershopCanvas onSelectElement={selectSection} />
           ) : elements.length === 0 ? (
             <div style={styles.emptyState}>
               <div style={styles.emptyIcon}>🎨</div>
-              <h3 style={styles.emptyTitle}>התחל ליצור</h3>
+              <h3 style={styles.emptyTitle}>
+                {currentPage ? `עריכת דף ${currentPage.name}` : 'התחל ליצור'}
+              </h3>
               <p style={styles.emptyText}>
-                בחר תבנית מהצד השמאלי או הוסף רכיבים כדי להתחיל לעצב
+                {currentPage 
+                  ? `בחר תבנית או הוסף רכיבים לדף ${currentPage.name}`
+                  : 'בחר תבנית מהצד השמאלי או הוסף רכיבים כדי להתחיל לעצב'
+                }
               </p>
             </div>
           ) : (
@@ -475,10 +590,6 @@ const EditorWithTemplates = () => {
                 >
                   <div style={styles.elementHeader}>
                     <span style={styles.elementType}>{el.type}</span>
-                    <div style={styles.elementActions}>
-                      <button style={styles.elementAction}>⚙️</button>
-                      <button style={styles.elementAction}>👁️</button>
-                    </div>
                   </div>
                   <div style={styles.elementContent}>{el.content}</div>
                 </div>
@@ -545,16 +656,126 @@ const EditorWithTemplates = () => {
           </div>
         ) : (
           <div style={styles.noSelection}>
-            <div style={styles.noSelectionIcon}>👆</div>
-            <h4 style={styles.noSelectionTitle}>בחר רכיב לעריכה</h4>
+            <div style={styles.noSelectionIcon}>🎯</div>
+            <h4 style={styles.noSelectionTitle}>ניהול דפים מקצועי</h4>
             <p style={styles.noSelectionText}>
-              לחץ על רכיב בקנבס כדי לערוך את המאפיינים שלו
+              🏠 הוסף דפים חדשים<br/>
+              ✏️ ערוך תוכן<br/>
+              📱 תצוגה רספונסיבית<br/>
+              🚀 פרסם באינטרנט
             </p>
           </div>
         )}
       </div>
     </div>
   );
+};
+
+// Page Manager Styles
+const pageStyles = {
+  container: {
+    backgroundColor: '#1e293b',
+    borderBottom: '1px solid #334155'
+  },
+  tabs: {
+    display: 'flex',
+    padding: '8px 12px',
+    gap: '8px',
+    alignItems: 'center',
+    overflowX: 'auto'
+  },
+  tab: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    borderRadius: '6px 6px 0 0',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    whiteSpace: 'nowrap',
+    minWidth: 'fit-content'
+  },
+  tabIcon: {
+    fontSize: '1rem'
+  },
+  tabName: {
+    fontSize: '0.9rem',
+    fontWeight: '500'
+  },
+  closeBtn: {
+    background: 'none',
+    border: 'none',
+    color: '#94a3b8',
+    cursor: 'pointer',
+    fontSize: '0.8rem',
+    marginLeft: '4px',
+    padding: '2px 4px',
+    borderRadius: '2px',
+    transition: 'all 0.2s ease'
+  },
+  addPageDropdown: {
+    position: 'relative'
+  },
+  addPageBtn: {
+    background: 'linear-gradient(90deg, #10b981, #059669)',
+    border: 'none',
+    color: 'white',
+    padding: '8px 16px',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    transition: 'all 0.3s ease'
+  },
+  dropdown: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    background: '#334155',
+    borderRadius: '6px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+    zIndex: 1000,
+    minWidth: '150px',
+    display: 'none'
+  },
+  dropdownItem: {
+    width: '100%',
+    background: 'none',
+    border: 'none',
+    color: '#f8fafc',
+    padding: '8px 12px',
+    textAlign: 'left',
+    cursor: 'pointer',
+    fontSize: '0.9rem',
+    transition: 'all 0.2s ease'
+  },
+  pageActions: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '8px 16px',
+    backgroundColor: '#334155',
+    borderTop: '1px solid #475569'
+  },
+  pageInfo: {
+    fontSize: '0.9rem',
+    color: '#cbd5e1',
+    fontWeight: '500'
+  },
+  actionButtons: {
+    display: 'flex',
+    gap: '8px'
+  },
+  actionBtn: {
+    background: '#475569',
+    border: 'none',
+    color: '#e2e8f0',
+    padding: '6px 12px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '0.8rem',
+    transition: 'all 0.3s ease'
+  }
 };
 
 // Canvas Styles for BarbershopCanvas
@@ -715,44 +936,6 @@ const canvasStyles = {
     width: '100%',
     transition: 'all 0.3s ease'
   },
-  counters: {
-    padding: '60px 20px',
-    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-    position: 'relative',
-    transition: 'all 0.3s ease'
-  },
-  countersGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '30px',
-    maxWidth: '1000px',
-    margin: '0 auto'
-  },
-  counterBox: {
-    textAlign: 'center',
-    padding: '30px 20px',
-    background: 'rgba(51, 65, 85, 0.5)',
-    borderRadius: '16px',
-    border: '1px solid rgba(59, 130, 246, 0.2)',
-    backdropFilter: 'blur(10px)'
-  },
-  counterIcon: {
-    fontSize: '3rem',
-    marginBottom: '15px'
-  },
-  counterValue: {
-    fontSize: '3rem',
-    fontWeight: 'bold',
-    color: '#3b82f6',
-    marginBottom: '10px',
-    margin: 0
-  },
-  counterLabel: {
-    fontSize: '1.1rem',
-    color: '#cbd5e1',
-    fontWeight: '500',
-    margin: 0
-  },
   testimonials: {
     padding: '60px 20px',
     backgroundColor: 'rgba(15, 23, 42, 0.8)',
@@ -910,13 +1093,18 @@ const styles = {
     textAlign: 'center'
   },
   logoText: {
-    margin: 0,
+    margin: '0 0 5px 0',
     background: 'linear-gradient(90deg, #3b82f6, #1d4ed8)',
     backgroundClip: 'text',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
     fontSize: '1.5rem',
     fontWeight: 'bold'
+  },
+  version: {
+    fontSize: '0.7rem',
+    color: '#10b981',
+    fontWeight: '600'
   },
   tabs: {
     padding: '16px 0',
@@ -977,7 +1165,8 @@ const styles = {
     backgroundColor: '#334155',
     color: '#fff',
     cursor: 'pointer',
-    fontSize: '0.8rem'
+    fontSize: '0.8rem',
+    transition: 'all 0.3s ease'
   },
   canvas: {
     flex: 1,
@@ -1037,17 +1226,6 @@ const styles = {
     color: '#94a3b8',
     textTransform: 'uppercase',
     fontWeight: 'bold'
-  },
-  elementActions: {
-    display: 'flex',
-    gap: '8px'
-  },
-  elementAction: {
-    background: 'none',
-    border: 'none',
-    color: '#94a3b8',
-    cursor: 'pointer',
-    fontSize: '0.9rem'
   },
   elementContent: {
     fontSize: '1rem',
@@ -1127,25 +1305,6 @@ const styles = {
     marginBottom: '8px',
     textAlign: 'left'
   },
-  quickActions: {
-    marginTop: '20px'
-  },
-  quickTitle: {
-    fontSize: '0.9rem',
-    marginBottom: '10px',
-    color: '#cbd5e1'
-  },
-  quickButton: {
-    background: '#475569',
-    border: 'none',
-    color: '#e2e8f0',
-    padding: '6px 12px',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '0.8rem',
-    marginRight: '8px',
-    marginBottom: '6px'
-  },
   checkboxLabel: {
     display: 'flex',
     alignItems: 'center',
@@ -1204,4 +1363,4 @@ const styles = {
   }
 };
 
-export default EditorWithTemplates;
+export default EditorWithPages;
