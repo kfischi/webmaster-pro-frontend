@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebMaster Pro - גלריית תבניות אתרים מקצועיים</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .stat {
+            text-align: center;
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .category {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .category h2 {
+            color: #2d3748;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .template-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .template-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .template-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .template-subtitle {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .template-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .template-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .modal-subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .modal-pages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .page-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .page-item:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .page-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .page-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .close-modal:hover {
+            color: #2d3748;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 WebMaster Pro</h1>
+            <p>גלריית תבניות אתרים מקצועיים - 17 תבניות מוכנות לשימוש מיידי</p>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">17</div>
+                    <div class="stat-label">תבניות</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">דפים בכל תבנית</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">קטגוריות</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="categories">
+            <div class="category">
+                <h2>🏥 בריאות ורפואה</h2>
+                <div class="templates-grid">
+                    <div class="template-card" onclick="openModal('Clinical Psychologist', 'פסיכולוג קליני', '🧠')">
+                        <span class="template-icon">🧠</span>
+                        <div class="template-title">Clinical Psychologist</div>
+                        <div class="template-subtitle">פסיכולוג קליני</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Clinical Nutritionist', 'תזונאי קליני', '🥗')">
+                        <span class="template-icon">🥗</span>
+                        <div class="template-title">Clinical Nutritionist</div>
+                        <div class="template-subtitle">תזונאי קליני</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Speech Therapist', 'קלינאי תקשורת', '🗣️')">
+                        <span class="template-icon">🗣️</span>
+                        <div class="template-title">Speech Therapist</div>
+                        <div class="template-subtitle">קלינאי תקשורת</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Mental Coach', 'מאמן נפשי', '🧘')">
+                        <span class="template-icon">🧘</span>
+                        <div class="template-title">Mental Coach</div>
+                        <div class="template-subtitle">מאמן נפשי</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category">
+                <h2>🎓 חינוך והוראה</h2>
+                <div class="templates-grid">
+                    <div class="template-card" onclick="openModal('Private Teacher', 'מורה פרטי', '👨‍🏫')">
+                        <span class="template-icon">👨‍🏫</span>
+                        <div class="template-title">Private Teacher</div>
+                        <div class="template-subtitle">מורה פרטי</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Science Tutor', 'מורה למדעים', '🔬')">
+                        <span class="template-icon">🔬</span>
+                        <div class="template-title">Science Tutor</div>
+                        <div class="template-subtitle">מורה למדעים</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category">
+                <h2>💪 כושר ובריאות</h2>
+                <div class="templates-grid">
+                    <div class="template-card" onclick="openModal('Fitness Coach', 'מאמן כושר', '💪')">
+                        <span class="template-icon">💪</span>
+                        <div class="template-title">Fitness Coach</div>
+                        <div class="template-subtitle">מאמן כושר</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Yoga Studio', 'סטודיו יוגה', '🧘‍♀️')">
+                        <span class="template-icon">🧘‍♀️</span>
+                        <div class="template-title">Yoga Studio</div>
+                        <div class="template-subtitle">סטודיו יוגה</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category">
+                <h2>🎨 עיצוב ויופי</h2>
+                <div class="templates-grid">
+                    <div class="template-card" onclick="openModal('Hair Salon', 'מספרה', '💇‍♀️')">
+                        <span class="template-icon">💇‍♀️</span>
+                        <div class="template-title">Hair Salon</div>
+                        <div class="template-subtitle">מספרה</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Interior Designer', 'מעצב פנים', '🏠')">
+                        <span class="template-icon">🏠</span>
+                        <div class="template-title">Interior Designer</div>
+                        <div class="template-subtitle">מעצב פנים</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category">
+                <h2>⚖️ משפטים ועסקים</h2>
+                <div class="templates-grid">
+                    <div class="template-card" onclick="openModal('Law Firm', 'משרד עורכי דין', '⚖️')">
+                        <span class="template-icon">⚖️</span>
+                        <div class="template-title">Law Firm</div>
+                        <div class="template-subtitle">משרד עורכי דין</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Payroll Services', 'שירותי שכר', '💼')">
+                        <span class="template-icon">💼</span>
+                        <div class="template-title">Payroll Services</div>
+                        <div class="template-subtitle">שירותי שכר</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category">
+                <h2>🔬 טכנולוגיה ויעוץ</h2>
+                <div class="templates-grid">
+                    <div class="template-card" onclick="openModal('Cyber Expert', 'מומחה סייבר', '🛡️')">
+                        <span class="template-icon">🛡️</span>
+                        <div class="template-title">Cyber Expert</div>
+                        <div class="template-subtitle">מומחה סייבר</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Biotechnology', 'ביוטכנולוגיה', '🧬')">
+                        <span class="template-icon">🧬</span>
+                        <div class="template-title">Biotechnology</div>
+                        <div class="template-subtitle">ביוטכנולוגיה</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Solar Consultant', 'יועץ אנרגיה סולארית', '☀️')">
+                        <span class="template-icon">☀️</span>
+                        <div class="template-title">Solar Consultant</div>
+                        <div class="template-subtitle">יועץ אנרגיה סולארית</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Accessibility Consultant', 'יועץ נגישות', '♿')">
+                        <span class="template-icon">♿</span>
+                        <div class="template-title">Accessibility Consultant</div>
+                        <div class="template-subtitle">יועץ נגישות</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                    
+                    <div class="template-card" onclick="openModal('Webmaster Pro Frontend', 'פלטפורמת פיתוח', '💻')">
+                        <span class="template-icon">💻</span>
+                        <div class="template-title">Webmaster Pro</div>
+                        <div class="template-subtitle">פלטפורמת פיתוח</div>
+                        <div class="template-buttons">
+                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
+                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>מוכן להתחיל?</h3>
+            <p>כל תבנית כוללת 7 דפים מקצועיים: דף הבית, אודות, שירותים, גלריה, מאמרים, המלצות וצור קשר.<br>
+            מוכן לשימוש מיידי ולהתאמה אישית.</p>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="templateModal" class="template-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-subtitle" id="modalSubtitle"></div>
+            </div>
+            
+            <div class="modal-pages">
+                <div class="page-item" onclick="alert('דף הבית - בהמשך נוסיף קישור לתצוגה מקדימה')">
+                    <span class="page-icon">🏠</span>
+                    <div class="page-name">דף הבית</div>
+                </div>
+                <div class="page-item" onclick="alert('דף אודות - בהמשך נוסיף קישור לתצוגה מקדימה')">
+                    <span class="page-icon">👤</span>
+                    <div class="page-name">אודות</div>
+                </div>
+                <div class="page-item" onclick="alert('דף שירותים - בהמשך נוסיף קישור לתצוגה מקדימה')">
+                    <span class="page-icon">⚙️</span>
+                    <div class="page-name">שירותים</div>
+                </div>
+                <div class="page-item" onclick="alert('גלריה - בהמשך נוסיף קישור לתצוגה מקדימה')">
+                    <span class="page-icon">🖼️</span>
+                    <div class="page-name">גלריה</div>
+                </div>
+                <div class="page-item" onclick="alert('מאמרים - בהמשך נוסיף קישור לתצוגה מקדימה')">
+                    <span class="page-icon">📰</span>
+                    <div class="page-name">מאמרים</div>
+                </div>
+                <div class="page-item" onclick="alert('המלצות - בהמשך נוסיף קישור לתצוגה מקדימה')">
+                    <span class="page-icon">⭐</span>
+                    <div class="page-name">המלצות</div>
+                </div>
+                <div class="page-item" onclick="alert('צור קשר - בהמשך נוסיף קישור לתצוגה מקדימה')">
+                    <span class="page-icon">📞</span>
+                    <div class="page-name">צור קשר</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="#" class="btn btn-primary" style="margin-left: 10px;">השתמש בתבנית זו</a>
+                <a href="#" class="btn btn-secondary">הורד קבצים</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(title, subtitle, icon) {
+            document.getElementById('modalTitle').innerHTML = icon + ' ' + title;
+            document.getElementById('modalSubtitle').textContent = subtitle;
+            document.getElementById('templateModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('templateModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('templateModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Add some interactivity
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
