@@ -1,940 +1,524 @@
+'use client';
+
+import React, { useState, useRef, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
+
+export default function Editor() {
+  const [elements, setElements] = useState([]);
+  const [selectedElement, setSelectedElement] = useState(null);
+  const [activeTab, setActiveTab] = useState('🧩 רכיבים');
+  const [draggedElement, setDraggedElement] = useState(null);
+  const canvasRef = useRef(null);
+
+  const handleDragStart = (e, type) => {
+    setDraggedElement(type);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    if (!draggedElement) return;
+
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const newElement = {
+      id: Date.now(),
+      type: draggedElement,
+      x,
+      y,
+      width: 200,
+      height: 100,
+      content: getDefaultContent(draggedElement),
+      style: getDefaultStyle(draggedElement)
+    };
+
+    setElements([...elements, newElement]);
+    setDraggedElement(null);
+    toast.success(`רכיב ${draggedElement} נוסף בהצלחה!`);
+  };
+
+  const getDefaultContent = (type) => {
+    const defaults = {
+      'Hero Section': 'כותרת ראשית מרשימה',
+      'Text Block': 'כאן יבוא הטקסט שלכם...',
+      'Button': 'לחץ כאן',
+      'Image': 'תמונה',
+      'Gallery': 'גלריה',
+      'Video': 'וידאו',
+      'Contact Form': 'טופס יצירת קשר'
+    };
+    return defaults[type] || 'תוכן';
+  };
+
+  const getDefaultStyle = (type) => {
+    const styles = {
+      'Hero Section': {
+        backgroundColor: '#667eea',
+        color: 'white',
+        fontSize: '24px',
+        padding: '40px',
+        textAlign: 'center',
+        borderRadius: '10px'
+      },
+      'Text Block': {
+        fontSize: '16px',
+        color: '#333',
+        padding: '20px',
+        lineHeight: '1.6'
+      },
+      'Button': {
+        backgroundColor: '#667eea',
+        color: 'white',
+        padding: '12px 24px',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontSize: '16px'
+      },
+      'Image': {
+        border: '2px dashed #ccc',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f8f9fa'
+      },
+      'Gallery': {
+        border: '2px solid #667eea',
+        backgroundColor: '#f8f9fa',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      },
+      'Video': {
+        backgroundColor: '#000',
+        color: 'white',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      },
+      'Contact Form': {
+        backgroundColor: '#f8f9fa',
+        padding: '20px',
+        border: '1px solid #ddd',
+        borderRadius: '8px'
+      }
+    };
+    return styles[type] || {};
+  };
+
+  const handleElementClick = (element) => {
+    setSelectedElement(element);
+  };
+
+  const updateElement = (id, updates) => {
+    setElements(elements.map(el => 
+      el.id === id ? { ...el, ...updates } : el
+    ));
+  };
+
+  const deleteElement = (id) => {
+    setElements(elements.filter(el => el.id !== id));
+    setSelectedElement(null);
+    toast.success('הרכיב נמחק בהצלחה!');
+  };
+
+  const exportToHTML = () => {
+    const html = `
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebMaster Pro - גלריית תבניות מקצועיות</title>
+    <title>האתר שלי</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        ${elements.map(el => `
+        .element-${el.id} {
+            position: absolute;
+            left: ${el.x}px;
+            top: ${el.y}px;
+            width: ${el.width}px;
+            height: ${el.height}px;
+            ${Object.entries(el.style).map(([key, value]) => 
+                `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value};`
+            ).join(' ')}
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .navbar {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            padding: 15px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .navbar-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: white;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .nav-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .nav-btn:hover, .nav-btn.active {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .page {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .main-header {
-            text-align: center;
-            margin-bottom: 50px;
-            color: white;
-        }
-
-        .main-header h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .main-header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-
-        .stat {
-            text-align: center;
-            background: rgba(255,255,255,0.2);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            min-width: 120px;
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.8);
-        }
-
-        .templates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .template-card {
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .template-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
-            border-color: #667eea;
-        }
-
-        .template-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .template-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2d3748;
-            margin-bottom: 10px;
-        }
-
-        .template-subtitle {
-            color: #718096;
-            font-size: 1rem;
-            margin-bottom: 25px;
-        }
-
-        .template-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: #edf2f7;
-            color: #4a5568;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-
-        .website-content {
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-
-        .website-content h2 {
-            color: #2d3748;
-            font-size: 2rem;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 10px;
-        }
-
-        .website-content h3 {
-            color: #4a5568;
-            font-size: 1.3rem;
-            margin: 25px 0 15px 0;
-        }
-
-        .website-content p {
-            color: #718096;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .back-btn {
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .back-btn:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 60px;
-            padding: 40px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .footer h3 {
-            color: white;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .footer p {
-            color: rgba(255,255,255,0.8);
-            line-height: 1.6;
-        }
-
-        @media (max-width: 768px) {
-            .main-header h1 {
-                font-size: 2.5rem;
-            }
-            
-            .templates-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .navbar-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .nav-buttons {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-        }
+        `).join('')}
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-content">
-            <div class="logo">🚀 WebMaster Pro</div>
-            <div class="nav-buttons">
-                <button class="nav-btn active" onclick="showPage('home')">דף הבית</button>
-                <button class="nav-btn" onclick="showPage('all-sites')">כל האתרים</button>
-            </div>
-        </div>
-    </nav>
-
     <div class="container">
-        <!-- דף הבית -->
-        <div id="home" class="page active">
-            <div class="main-header">
-                <h1>🚀 WebMaster Pro</h1>
-                <p>גלריית תבניות אתרים מקצועיים - 17 תבניות מוכנות לשימוש מיידי</p>
-                
-                <div class="stats">
-                    <div class="stat">
-                        <div class="stat-number">17</div>
-                        <div class="stat-label">תבניות</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">7</div>
-                        <div class="stat-label">דפים בכל תבנית</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">6</div>
-                        <div class="stat-label">קטגוריות</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="templates-grid">
-                <div class="template-card">
-                    <span class="template-icon">💪</span>
-                    <div class="template-title">מאמן כושר אישי</div>
-                    <div class="template-subtitle">אתר מקצועי למאמני כושר</div>
-                    <div class="template-buttons">
-                        <button class="btn btn-primary" onclick="showWebsite('fitness')">צפה באתר</button>
-                    </div>
-                </div>
-
-                <div class="template-card">
-                    <span class="template-icon">👨‍🏫</span>
-                    <div class="template-title">מורה פרטי</div>
-                    <div class="template-subtitle">אתר למורים פרטיים</div>
-                    <div class="template-buttons">
-                        <button class="btn btn-primary" onclick="showWebsite('teacher')">צפה באתר</button>
-                    </div>
-                </div>
-
-                <div class="template-card">
-                    <span class="template-icon">💇‍♀️</span>
-                    <div class="template-title">מספרה</div>
-                    <div class="template-subtitle">אתר לסלון יופי ומספרה</div>
-                    <div class="template-buttons">
-                        <button class="btn btn-primary" onclick="showWebsite('salon')">צפה באתר</button>
-                    </div>
-                </div>
-
-                <div class="template-card">
-                    <span class="template-icon">⚖️</span>
-                    <div class="template-title">משרד עורכי דין</div>
-                    <div class="template-subtitle">אתר מקצועי למשרד עורכי דין</div>
-                    <div class="template-buttons">
-                        <button class="btn btn-primary" onclick="showWebsite('law')">צפה באתר</button>
-                    </div>
-                </div>
-
-                <div class="template-card">
-                    <span class="template-icon">🧘‍♀️</span>
-                    <div class="template-title">סטודיו יוגה</div>
-                    <div class="template-subtitle">אתר לסטודיו יוגה ומדיטציה</div>
-                    <div class="template-buttons">
-                        <button class="btn btn-primary" onclick="showWebsite('yoga')">צפה באתר</button>
-                    </div>
-                </div>
-
-                <div class="template-card">
-                    <span class="template-icon">🧠</span>
-                    <div class="template-title">פסיכולוגיה קלינית</div>
-                    <div class="template-subtitle">אתר לפסיכולוג קליני</div>
-                    <div class="template-buttons">
-                        <button class="btn btn-primary" onclick="showWebsite('psychology')">צפה באתר</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer">
-                <h3>מוכן להתחיל?</h3>
-                <p>כל תבנית כוללת 7 דפים מקצועיים: דף הבית, אודות, שירותים, גלריה, מאמרים, המלצות וצור קשר.<br>
-                מוכן לשימוש מיידי ולהתאמה אישית.</p>
-            </div>
+        ${elements.map(el => `
+        <div class="element-${el.id}">
+            ${el.content}
         </div>
-
-        <!-- כל האתרים -->
-        <div id="all-sites" class="page">
-            <div class="main-header">
-                <h1>כל האתרים</h1>
-                <p>רשימה מלאה של כל 17 התבניות</p>
-            </div>
-
-            <div class="templates-grid">
-                <div class="template-card" onclick="showWebsite('fitness')">
-                    <span class="template-icon">💪</span>
-                    <div class="template-title">מאמן כושר אישי</div>
-                    <div class="template-subtitle">site1</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('teacher')">
-                    <span class="template-icon">👨‍🏫</span>
-                    <div class="template-title">מורה פרטי</div>
-                    <div class="template-subtitle">site2</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('salon')">
-                    <span class="template-icon">💇‍♀️</span>
-                    <div class="template-title">מספרה</div>
-                    <div class="template-subtitle">site3</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('payroll')">
-                    <span class="template-icon">💼</span>
-                    <div class="template-title">שירותי שכר</div>
-                    <div class="template-subtitle">site4</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('law')">
-                    <span class="template-icon">⚖️</span>
-                    <div class="template-title">משרד עורכי דין</div>
-                    <div class="template-subtitle">site5</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('yoga')">
-                    <span class="template-icon">🧘‍♀️</span>
-                    <div class="template-title">סטודיו יוגה</div>
-                    <div class="template-subtitle">site6</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('psychology')">
-                    <span class="template-icon">🧠</span>
-                    <div class="template-title">פסיכולוגיה קלינית</div>
-                    <div class="template-subtitle">site7</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('solar')">
-                    <span class="template-icon">☀️</span>
-                    <div class="template-title">יועץ סולארי</div>
-                    <div class="template-subtitle">site8</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('mental')">
-                    <span class="template-icon">🧘</span>
-                    <div class="template-title">מאמן מנטלי</div>
-                    <div class="template-subtitle">site9</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('nutrition')">
-                    <span class="template-icon">🥗</span>
-                    <div class="template-title">תזונאי קליני</div>
-                    <div class="template-subtitle">site10</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('cyber')">
-                    <span class="template-icon">🛡️</span>
-                    <div class="template-title">מומחה סייבר</div>
-                    <div class="template-subtitle">site11</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('biotech')">
-                    <span class="template-icon">🧬</span>
-                    <div class="template-title">ביוטכנולוגיה</div>
-                    <div class="template-subtitle">site12</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('science')">
-                    <span class="template-icon">🔬</span>
-                    <div class="template-title">מורה למדעים</div>
-                    <div class="template-subtitle">site13</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('interior')">
-                    <span class="template-icon">🏠</span>
-                    <div class="template-title">מעצב פנים</div>
-                    <div class="template-subtitle">site14</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('speech')">
-                    <span class="template-icon">🗣️</span>
-                    <div class="template-title">קלינאי תקשורת</div>
-                    <div class="template-subtitle">site15</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('accessibility')">
-                    <span class="template-icon">♿</span>
-                    <div class="template-title">יועץ נגישות</div>
-                    <div class="template-subtitle">site16</div>
-                </div>
-
-                <div class="template-card" onclick="showWebsite('webmaster')">
-                    <span class="template-icon">💻</span>
-                    <div class="template-title">WebMaster Pro</div>
-                    <div class="template-subtitle">site17</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- אתר מאמן כושר -->
-        <div id="fitness" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>💪 מאמן כושר אישי - אלון כהן</h2>
-                
-                <h3>דף הבית</h3>
-                <p><strong>כותרת ראשית:</strong> השג את המטרות שלך עם מאמן אישי מקצועי</p>
-                <p>ברוכים הבאים למרכז האימונים הפרטי של אלון כהן. כאן תמצאו מגוון רחב של שירותי אימון אישי, תוכניות תזונה מותאמות אישית ותמיכה מקצועית להשגת המטרות שלכם.</p>
-                
-                <h3>השירותים שלנו</h3>
-                <p>• אימונים אישיים מותאמים אישית<br>
-                • תוכניות תזונה מקצועיות<br>
-                • אימוני כוח ועמידות<br>
-                • ייעוץ בנושאי כושר ותזונה<br>
-                • מעקב והתאמה שוטפת של התוכנית</p>
-                
-                <h3>אודותי</h3>
-                <p>אלון כהן, מאמן כושר מוסמך עם ניסיון של מעל 10 שנים בתחום. בעל תעודות מקצועיות בהדרכת כושר, תזונה ספורטיבית ושיקום פציעות. מאמין בגישה אישית לכל מתאמן והתאמת התוכנית לצרכים האישיים.</p>
-                
-                <h3>המלצות</h3>
-                <p>"אלון שינה לי את החיים! תוך 6 חודשים הגעתי למשקל המטרה שלי ורכשתי הרגלי חיים בריאים לכל החיים." - שרה ל.</p>
-                <p>"מאמן מקצועי, סבלני ומעניק תמיכה מלאה. ממליץ בחום!" - דני מ.</p>
-                
-                <h3>צור קשר</h3>
-                <p><strong>טלפון:</strong> 050-1234567<br>
-                <strong>אימייל:</strong> alon@fitness-coach.co.il<br>
-                <strong>כתובת:</strong> רחוב הספורט 15, תל אביב<br>
-                <strong>שעות פעילות:</strong> ימים א-ו, 06:00-22:00</p>
-            </div>
-        </div>
-
-        <!-- אתר מורה פרטי -->
-        <div id="teacher" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>👨‍🏫 מורה פרטי - מיכל רוזן</h2>
-                
-                <h3>דף הבית</h3>
-                <p><strong>כותרת ראשית:</strong> שיפור ציונים והצלחה לימודית עם מורה פרטי מנוסה</p>
-                <p>מיכל רוזן, מורה פרטי מנוסה עם ותק של 15 שנה בהוראה. מתמחה בהוראת מתמטיקה, אנגלית ומדעים לתלמידי יסודי וחטיבת ביניים. גישה אישית ומותאמת לכל תלמיד.</p>
-                
-                <h3>התמחויות</h3>
-                <p>• מתמטיקה - כל הרמות<br>
-                • אנגלית - שפה וספרות<br>
-                • מדעים - ביולוגיה, כימיה, פיזיקה<br>
-                • הכנה לבגרות<br>
-                • שיפור הרגלי למידה<br>
-                • תמיכה בקשיי למידה</p>
-                
-                <h3>השיטה שלי</h3>
-                <p>כל תלמיד הוא עולם ומלואו. אני מאמינה בהתאמה אישית של שיטות ההוראה לכל תלמיד. מטרתי היא לא רק לשפר ציונים, אלא להעניק כלים ללמידה עצמאית ולבניית ביטחון עצמי אקדמי.</p>
-                
-                <h3>המלצות הורים</h3>
-                <p>"מיכל הצליחה לשנות את הגישה של הבן שלי ללמידה. הציונים שלו השתפרו משמעותית והוא רכש אהבה ללמידה." - רחל כהן</p>
-                <p>"מורה מסורה ומקצועית שיודעת בדיוק איך להגיע לכל ילד. ממליצה בחום!" - אבי לוי</p>
-                
-                <h3>פרטי התקשרות</h3>
-                <p><strong>טלפון:</strong> 052-9876543<br>
-                <strong>אימייל:</strong> michal@private-teacher.co.il<br>
-                <strong>שעות זמינות:</strong> ימים א-ה, 15:00-20:00<br>
-                <strong>אזור שירות:</strong> גוש דן והמרכז</p>
-            </div>
-        </div>
-
-        <!-- בואו נוסיף עוד אתרים... -->
-        <div id="salon" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>💇‍♀️ סלון יופי "נועה" - מספרה ועיצוב שיער</h2>
-                
-                <h3>ברוכות הבאות לסלון "נועה"</h3>
-                <p>סלון יופי מוביל בעיר, המתמחה בעיצוב שיער מקצועי, צביעות מתקדמות וטיפולי שיער. אנו מציעים חוויית יופי מלאה במחירים הוגנים ושירות מקצועי ברמה הגבוהה ביותר.</p>
-                
-                <h3>השירותים שלנו</h3>
-                <p>• תספורות נשים וגברים<br>
-                • צביעות ובהירות מתקדמות<br>
-                • טיפולי קרטין וחלקה<br>
-                • עיצוב שיער לאירועים<br>
-                • תוספות שיער<br>
-                • טיפולי שיער מקצועיים</p>
-                
-                <h3>הצוות המקצועי שלנו</h3>
-                <p>נועה - מעצבת שיער ראשית עם ניסיון של 12 שנה. בעלת תעודות מקצועיות מהמכללות המובילות בישראל. מתמחה בצביעות מתקדמות ועיצוב שיער לכלות.</p>
-                <p>הצוות שלנו עובר השתלמויות קבועות ומתעדכן בטרנדים העדכניים ביותר בעולם היופי.</p>
-                
-                <h3>המלצות לקוחות</h3>
-                <p>"סלון מדהים! נועה היא אמנית אמיתית. יצאתי משם מרגישה כמו מלכה!" - דנה מ.</p>
-                <p>"שירות מקצועי ברמה הגבוהה ביותר. בהחלט אחזור!" - יעל ר.</p>
-                
-                <h3>פרטי הסלון</h3>
-                <p><strong>כתובת:</strong> רחוב דיזנגוף 125, תל אביב<br>
-                <strong>טלפון:</strong> 03-5555678<br>
-                <strong>וואטסאפ:</strong> 050-5555678<br>
-                <strong>שעות פתיחה:</strong><br>
-                א-ה: 09:00-19:00<br>
-                ו: 08:00-15:00<br>
-                ש: סגור</p>
-            </div>
-        </div>
-
-        <!-- שאר האתרים ממשיכים כך... -->
-        <div id="law" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>⚖️ משרד עורכי דין כהן ושותפים</h2>
-                
-                <h3>ייצוג משפטי מקצועי ואמין</h3>
-                <p>משרד עורכי דין כהן ושותפים מתמחה במגוון רחב של תחומי משפט. אנו מספקים ייצוג משפטי מקצועי ויעוץ חוקי ברמה הגבוהה ביותר, תוך הקפדה על שירות אישי וזמינות מלאה ללקוחותינו.</p>
-                
-                <h3>תחומי ההתמחות שלנו</h3>
-                <p>• דיני משפחה וגירושין<br>
-                • דיני נזיקין ותביעות ביטוח<br>
-                • דיני מקרקעין ונדל"ן<br>
-                • דיני עבודה<br>
-                • דיני חוזים ומסחר<br>
-                • ייצוג פלילי</p>
-                
-                <h3>הצוות המשפטי</h3>
-                <p>עו"ד יוסי כהן - שותף בכיר, מתמחה בדיני משפחה ונדל"ן. ניסיון של 20 שנה.<br>
-                עו"ד שרה לוי - שותפה, מתמחה בדיני עבודה ונזיקין. ניסיון של 15 שנה.<br>
-                עו"ד אמיר דוד - עו"ד זוטר, מתמחה בדיני מסחר וחוזים.</p>
-                
-                <h3>למה לבחור בנו?</h3>
-                <p>• ניסיון עשיר של מעל 20 שנה<br>
-                • יחס אישי ומקצועי לכל לקוח<br>
-                • זמינות גבוהה ותגובה מהירה<br>
-                • שקיפות מלאה בתהליכים ובעלויות<br>
-                • הצלחות משמעותיות בבתי המשפט</p>
-                
-                <h3>פרטי התקשרות</h3>
-                <p><strong>כתובת:</strong> רחוב הארבעה 10, תל אביב<br>
-                <strong>טלפון:</strong> 03-6666789<br>
-                <strong>פקס:</strong> 03-6666790<br>
-                <strong>אימייל:</strong> office@cohen-law.co.il<br>
-                <strong>שעות קבלת קהל:</strong> א-ה 09:00-17:00</p>
-            </div>
-        </div>
-
-        <!-- אתר יוגה -->
-        <div id="yoga" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>🧘‍♀️ סטודיו יוגה "נשימה בתנועה"</h2>
-                
-                <h3>ברוכים הבאים לעולם של שלווה ואיזון</h3>
-                <p>סטודיו "נשימה בתנועה" מציע חוויית יוגה מותאמת אישית לכל הרמות. אנו מאמינים שיוגה היא לא רק פעילות גופנית, אלא דרך חיים שמביאה איזון בין הגוף, הנפש והרוח.</p>
-                
-                <h3>סוגי השיעורים שלנו</h3>
-                <p>• האתה יוגה - לשיפור הגמישות והכוח<br>
-                • וויניאסה - זרימה דינמית עם נשימה<br>
-                • יוגה מתחילים - ליוגה ראשונה שלכם<br>
-                • יוגה טיפולית - לשיקום וריפוי<br>
-                • מדיטציה ונשימה - לשלווה נפשית<br>
-                • יוגה נשים - מותאם לצרכים נשיים</p>
-                
-                <h3>המדריכות שלנו</h3>
-                <p>מיכל אור - מדריכת יוגה מוסמכת עם ניסיון של 8 שנים. בעלת הסמכות בינלאומיות ומתמחה ביוגה טיפולית.</p>
-                <p>רונית כהן - מדריכת וויניאסא ומדיטציה. בעלת ניסיון של 6 שנים והכשרה במרכזי יוגה מובילים בהודו.</p>
-                
-                <h3>המלצות תלמידות</h3>
-                <p>"הסטודיו הזה שינה לי את החיים. מצאתי כאן שלווה ואיזון שחיפשתי שנים." - ליאת מ.</p>
-                <p>"מיכל היא מורה מדהימה שיודעת בדיוק איך להנחות ולעודד. אווירה מיוחדת!" - יעל ש.</p>
-                
-                <h3>מידע נוסף</h3>
-                <p><strong>כתובת:</strong> רחוב הצפון 8, רמת גן<br>
-                <strong>טלפון:</strong> 03-7777890<br>
-                <strong>אימייל:</strong> info@yoga-breath.co.il<br>
-                <strong>מחירים:</strong> שיעור בודד: 80₪ | מנוי חודשי: 300₪<br>
-                <strong>שעות פעילות:</strong> א-ו 07:00-21:00, ש 09:00-12:00</p>
-            </div>
-        </div>
-
-        <!-- אתר פסיכולוגיה -->
-        <div id="psychology" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>🧠 ד"ר נועה רוזן - פסיכולוגיה קלינית</h2>
-                
-                <h3>מרחב בטוח לצמיחה אישית</h3>
-                <p>ד"ר נועה רוזן היא פסיכולוגית קלינית מוסמכת עם ניסיון של 12 שנה בטיפול פסיכותרפויטי. המרפאה מציעה טיפול אישי למבוגרים, זוגות ובני נוער במגוון נושאים רגשיים ופסיכולוגיים.</p>
-                
-                <h3>תחומי הטיפול</h3>
-                <p>• חרדות ופחדים<br>
-                • דיכאון ומצבי רוח נמוכים<br>
-                • טיפול זוגי ומשפחתי<br>
-                • התמודדות עם אובדן וצער<br>
-                • הפרעות קשב וריכוז<br>
-                • ליווי במשברי חיים<br>
-                • פיתוח דימוי עצמי חיובי</p>
-                
-                <h3>הגישה הטיפולית</h3>
-                <p>אני מאמינה בגישה רגישה ומותאמת אישית לכל מטופל. הטיפול מתבסס על שילוב של גישות טיפוליות מוכחות: CBT, DBT וטיפול הומניסטי. המטרה היא ליצור מרחב בטוח לחקירה עצמית ולצמיחה אישית.</p>
-                
-                <h3>השכלה ומקצועיות</h3>
-                <p>• דוקטור לפסיכולוגיה קלינית - אוניברסיטת תל אביב<br>
-                • התמחות בטיפול CBT - המרכז למדעי ההתנהגות<br>
-                • הכשרה בטיפול זוגי - מכון אדלר<br>
-                • חברה בהתאחדות הפסיכולוגים בישראל</p>
-                
-                <h3>המלצות מטופלים</h3>
-                <p>"ד"ר רוזן עזרה לי להתמודד עם תקופה קשה בחיי. יחס חם ומקצועי ברמה הגבוהה ביותר." - ר.מ.</p>
-                <p>"טיפול שלם שעזר לי להבין את עצמי ולשפר את איכות החיים שלי." - י.כ.</p>
-                
-                <h3>קביעת תור</h3>
-                <p><strong>כתובת:</strong> רחוב ביאליק 12, תל אביב<br>
-                <strong>טלפון:</strong> 03-8888901<br>
-                <strong>אימייל:</strong> dr.noa@psychology-clinic.co.il<br>
-                <strong>שעות קבלה:</strong> א-ה 16:00-21:00<br>
-                <strong>ימי ו:</strong> 09:00-14:00 (לפי תיאום מראש)</p>
-            </div>
-        </div>
-
-        <!-- נוסיף עוד כמה אתרים חשובים -->
-        <div id="solar" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>☀️ יועץ אנרגיה סולארית - דן גרין</h2>
-                
-                <h3>פתרונות אנרגיה סולארית מקצועיים</h3>
-                <p>דן גרין, יועץ אנרגיה סולארית מוסמך עם ניסיון של 10 שנים בתחום. מתמחה בתכנון והתקנת מערכות סולאריות למגזר הפרטי והעסקי. פתרונות חכמים לחיסכון בחשמל והפיכת הבית שלכם לידידותי לסביבה.</p>
-                
-                <h3>השירותים שלנו</h3>
-                <p>• ייעוץ ותכנון מערכת סולארית<br>
-                • סקר אתר וחישוב כדאיות<br>
-                • התקנה מקצועית ואחריות מלאה<br>
-                • תחזוקה ושירות שוטף<br>
-                • ליווי בקבלת אישורים<br>
-                • מממון גמיש ופתרונות תשלום</p>
-                
-                <h3>למה אנרגיה סולארית?</h3>
-                <p>• חיסכון של עד 90% בחשבון החשמל<br>
-                • השקעה משתלמת תוך 4-6 שנים<br>
-                • הגדלת ערך הנכס<br>
-                • תרומה לסביבה וקיימות<br>
-                • עצמאות אנרגטית<br>
-                • אחריות של 25 שנה על הפאנלים</p>
-                
-                <h3>פרויקטים שביצענו</h3>
-                <p>מעל 500 מערכות הותקנו בהצלחה במגזר הפרטי והעסקי. חיסכון מצטבר של מיליוני שקלים ללקוחותינו וצמצום משמעותי בפליטת גזי חממה.</p>
-                
-                <h3>צור קשר לייעוץ חינם</h3>
-                <p><strong>טלפון:</strong> 050-1111234<br>
-                <strong>אימייל:</strong> dan@solar-green.co.il<br>
-                <strong>כתובת:</strong> האומן 5, פתח תקווה<br>
-                <strong>שעות פעילות:</strong> א-ו 08:00-18:00</p>
-            </div>
-        </div>
-
-        <!-- אתר מומחה סייבר -->
-        <div id="cyber" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>🛡️ אבטחת סייבר - רון שילד</h2>
-                
-                <h3>הגנה מתקדמת בעולם הדיגיטלי</h3>
-                <p>רון שילד, מומחה אבטחת סייבר עם ניסיון של 15 שנה בתחום. מתמחה באבטחת מידע, חדירות אתיות והגנה מפני איומי סייבר. שירותים מקצועיים לעסקים קטנים וגדולים כאחד.</p>
-                
-                <h3>השירותים שלנו</h3>
-                <p>• הערכת סיכוני סייבר ואבטחת מידע<br>
-                • בדיקות חדירה (Penetration Testing)<br>
-                • הטמעת מדיניות אבטחה<br>
-                • הדרכות עובדים ומודעות לסייבר<br>
-                • ניטור מתמיד ותגובה לאירועים<br>
-                • ייעוץ תקינה והתאמה לתקנות</p>
-                
-                <h3>למה אבטחת סייבר חשובה?</h3>
-                <p>• 95% מהעסקים חווים ניסיונות פריצה<br>
-                • הנזק הממוצע מפריצה: 4.5 מיליון דולר<br>
-                • חוק הגנת הפרטיות מחייב אבטחה<br>
-                • אובדן מוניטין ואמון לקוחות<br>
-                • השבתת מערכות וירידה ברווחיות</p>
-                
-                <h3>ההתמחויות שלי</h3>
-                <p>• CISSP - Certified Information Systems Security Professional<br>
-                • CEH - Certified Ethical Hacker<br>
-                • CISM - Certified Information Security Manager<br>
-                • ניסיון ביחידה טכנולוגית בצה"ל<br>
-                • מרצה באוניברסיטאות מובילות</p>
-                
-                <h3>בואו נדבר על האבטחה שלכם</h3>
-                <p><strong>טלפון:</strong> 052-3333456<br>
-                <strong>אימייל:</strong> ron@cyber-security.co.il<br>
-                <strong>כתובת:</strong> פארק הימית, הרצליה<br>
-                <strong>ייעוץ ראשוני:</strong> חינם וללא התחייבות</p>
-            </div>
-        </div>
-
-        <!-- נוסיף עוד אתרים... -->
-        <div id="payroll" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>💼 שירותי שכר - אופיר הנהלת חשבונות</h2>
-                
-                <h3>פתרונות שכר מקצועיים לעסק שלכם</h3>
-                <p>משרד אופיר מתמחה במתן שירותי שכר מקצועיים ומדויקים. אנו מספקים פתרונות מותאמים לעסקים בכל הגדלים - מעסקים משפחתיים ועד חברות גדולות. שירות אמין, מדויק ובהתאם לכל התקנות החדשות.</p>
-                
-                <h3>השירותים שאנו מעניקים</h3>
-                <p>• עיבוד שכר חודשי מלא<br>
-                • דיווחים למוסדות (מס הכנסה, ביטוח לאומי)<br>
-                • הכנת תלושי שכר דיגיטליים<br>
-                • ייעוץ בנושאי יחסי עבודה<br>
-                • ביקורת שכר ותיקון טעויות<br>
-                • הכנה לביקורות רשויות</p>
-                
-                <h3>למה לבחור בנו?</h3>
-                <p>• ניסיון של מעל 12 שנה בתחום<br>
-                • דיוק מוחלט ועמידה בלוחות זמנים<br>
-                • מערכות טכנולוגיות מתקדמות<br>
-                • שירות אישי ונגישות גבוהה<br>
-                • מחירים תחרותיים והוגנים<br>
-                • עדכון שוטף בחקיקה ותקנות</p>
-                
-                <h3>הצוות המקצועי</h3>
-                <p>אופיר לוי - רו"ח מוסמך, מתמחה בשכר וביטוח לאומי. ניסיון של 12 שנה.<br>
-                רינה כהן - מנהלת שכר בכירה. מומחית בתחום יחסי העבודה והדין הסוציאלי.</p>
-                
-                <h3>צרו קשר לייעוץ</h3>
-                <p><strong>טלפון:</strong> 03-4444567<br>
-                <strong>פקס:</strong> 03-4444568<br>
-                <strong>אימייל:</strong> office@payroll-services.co.il<br>
-                <strong>כתובת:</strong> דרך בגין 35, תל אביב<br>
-                <strong>שעות קבלה:</strong> א-ה 08:30-17:00</p>
-            </div>
-        </div>
-
-        <div id="nutrition" class="page">
-            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
-            
-            <div class="website-content">
-                <h2>🥗 תזונה קלינית - לירון ברק</h2>
-                
-                <h3>תזונה מותאמת אישית לבריאות מיטבית</h3>
-                <p>לירון ברק, תזונאית קלינית מוסמכת עם התמחות בתזונה טיפולית ובחירה בריאה של אורח חיים. מתמחה בטיפול תזונתי במחלות כרוניות, ירידה במשקל בריאה ושיפור ביצועים ספורטיביים.</p>
-                
-                <h3>התמחויות טיפוליות</h3>
-                <p>• ירידה במשקל בריאה וקיימת<br>
-                • טיפול תזונתי בסוכרת<br>
-                • תזונה לבעיות עיכול<br>
-                • תזונה ספורטיבית<br>
-                • טיפול בהפרעות אכילה<br>
-                • תזונה בהיריון והנקה<br>
-                • תזונה לילדים ובני נוער</p>
-                
-                <h3>הגישה שלי</h3>
-                <p>אני מאמינה שתזונה נכונה היא לא דיאטה זמנית, אלא אורח חיים. הגישה שלי מתבססת על מחקרים מדעיים עדכניים, התאמה אישית לכל מטופל, ויצירת שינוי הדרגתי וקיים ללא תחושת מחסור.</p>
-                
-                <h3>מה מקבלים בטיפול?</h3>
-                <p>• בדיקת מצב תזונתי מקיפה<br>
-                • תוכנית תזונה אישית ומפורטת<br>
-                • מתכונים ורשימת קניות<br>
-                • מעקב ותמיכה שוטפת<br>
-                • התאמות לפי התקדמות<br>
-                • הדרכה וחינוך תזונתי</p>
-                
-                <h3>המלצות מטופלים</h3>
-                <p>"לירון שינתה לי את הגישה לאוכל. ירדתי 15 קילו תוך 6 חודשים ושמרתי על המשקל כבר שנה!" - מירב ל.</p>
-                <p>"הצלחתי לווסת את הסוכרת שלי רק עם שינויים תזונתיים. מומלץ בחום!" - אבי מ.</p>
-                
-                <h3>פרטי התקשרות</h3>
-                <p><strong>טלפון:</strong> 052-5555789<br>
-                <strong>אימייל:</strong> liron@clinical-nutrition.co.il<br>
-                <strong>כתובת:</strong> רחוב הרופאים 18, רמת גן<br>
-                <strong>שעות קבלה:</strong> א-ה 09:00-19:00<br>
-                <strong>יום ו:</strong> 09:00-13:00</p>
-            </div>
-        </div>
-
+        `).join('')}
     </div>
-
-    <script>
-        function showPage(pageId) {
-            // הסתר את כל הדפים
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // הצג את הדף הנבחר
-            document.getElementById(pageId).classList.add('active');
-            
-            // עדכן את כפתורי הניווט
-            const navBtns = document.querySelectorAll('.nav-btn');
-            navBtns.forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // מצא ועדכן את הכפתור הפעיל
-            const activeBtn = Array.from(navBtns).find(btn => 
-                btn.textContent.includes(pageId === 'home' ? 'דף הבית' : 'כל האתרים')
-            );
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
-            
-            // גלילה לראש הדף
-            window.scrollTo(0, 0);
-        }
-        
-        function showWebsite(websiteId) {
-            showPage(websiteId);
-        }
-
-        // אנימציות לכרטיסים
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.template-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px) scale(1.02)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-        });
-    </script>
 </body>
-</html>
+</html>`;
+    
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'my-website.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success('הקובץ HTML יוצא בהצלחה!');
+  };
+
+  return (
+    <div style={{ 
+      height: '100vh', 
+      display: 'flex', 
+      backgroundColor: '#0f172a',
+      color: '#f8fafc',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      {/* סרגל כלים */}
+      <div style={{ 
+        width: '300px', 
+        backgroundColor: '#1e293b', 
+        borderRight: '1px solid #334155',
+        overflowY: 'auto'
+      }}>
+        <div style={{ padding: '20px' }}>
+          <h2 style={{ margin: '0 0 20px 0', fontSize: '1.5rem', color: '#f8fafc' }}>
+            🎨 עורך אתרים
+          </h2>
+          
+          {/* טאבים */}
+          <div style={{ marginBottom: '20px' }}>
+            {['🧩 רכיבים', '⚙️ מאפיינים', '🎨 עיצוב'].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  marginBottom: '8px',
+                  backgroundColor: activeTab === tab ? '#3b82f6' : '#374151',
+                  color: '#f8fafc',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* תוכן הטאבים */}
+          {activeTab === '🧩 רכיבים' && (
+            <div>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#f8fafc' }}>ספריית רכיבים</h3>
+              {['Hero Section', 'Text Block', 'Button', 'Image', 'Gallery', 'Video', 'Contact Form'].map((component) => (
+                <div
+                  key={component}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, component)}
+                  style={{
+                    padding: '15px',
+                    marginBottom: '10px',
+                    backgroundColor: '#374151',
+                    borderRadius: '8px',
+                    cursor: 'grab',
+                    transition: 'all 0.2s',
+                    border: '2px solid transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#4b5563';
+                    e.target.style.borderColor = '#3b82f6';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#374151';
+                    e.target.style.borderColor = 'transparent';
+                  }}
+                >
+                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                    {component === 'Hero Section' && '🦸‍♂️'} 
+                    {component === 'Text Block' && '📝'} 
+                    {component === 'Button' && '🔘'} 
+                    {component === 'Image' && '🖼️'} 
+                    {component === 'Gallery' && '🎨'} 
+                    {component === 'Video' && '🎬'} 
+                    {component === 'Contact Form' && '📧'} 
+                    {component}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#9ca3af' }}>
+                    גרור לתוך העמוד
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeTab === '⚙️ מאפיינים' && selectedElement && (
+            <div>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#f8fafc' }}>
+                עריכת {selectedElement.type}
+              </h3>
+              
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: '#f8fafc' }}>תוכן:</label>
+                <textarea
+                  value={selectedElement.content}
+                  onChange={(e) => updateElement(selectedElement.id, { content: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '6px',
+                    border: '1px solid #374151',
+                    backgroundColor: '#374151',
+                    color: '#f8fafc',
+                    resize: 'vertical',
+                    minHeight: '80px'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: '#f8fafc' }}>רוחב:</label>
+                <input
+                  type="number"
+                  value={selectedElement.width}
+                  onChange={(e) => updateElement(selectedElement.id, { width: parseInt(e.target.value) })}
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    borderRadius: '6px',
+                    border: '1px solid #374151',
+                    backgroundColor: '#374151',
+                    color: '#f8fafc'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: '#f8fafc' }}>גובה:</label>
+                <input
+                  type="number"
+                  value={selectedElement.height}
+                  onChange={(e) => updateElement(selectedElement.id, { height: parseInt(e.target.value) })}
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    borderRadius: '6px',
+                    border: '1px solid #374151',
+                    backgroundColor: '#374151',
+                    color: '#f8fafc'
+                  }}
+                />
+              </div>
+
+              <button
+                onClick={() => deleteElement(selectedElement.id)}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  backgroundColor: '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                🗑️ מחק רכיב
+              </button>
+            </div>
+          )}
+
+          {activeTab === '🎨 עיצוב' && selectedElement && (
+            <div>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#f8fafc' }}>עיצוב הרכיב</h3>
+              
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: '#f8fafc' }}>צבע רקע:</label>
+                <input
+                  type="color"
+                  value={selectedElement.style.backgroundColor || '#ffffff'}
+                  onChange={(e) => updateElement(selectedElement.id, { 
+                    style: { ...selectedElement.style, backgroundColor: e.target.value }
+                  })}
+                  style={{
+                    width: '100%',
+                    height: '40px',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: '#f8fafc' }}>צבע טקסט:</label>
+                <input
+                  type="color"
+                  value={selectedElement.style.color || '#000000'}
+                  onChange={(e) => updateElement(selectedElement.id, { 
+                    style: { ...selectedElement.style, color: e.target.value }
+                  })}
+                  style={{
+                    width: '100%',
+                    height: '40px',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: '#f8fafc' }}>גודל פונט:</label>
+                <input
+                  type="range"
+                  min="12"
+                  max="48"
+                  value={parseInt(selectedElement.style.fontSize) || 16}
+                  onChange={(e) => updateElement(selectedElement.id, { 
+                    style: { ...selectedElement.style, fontSize: e.target.value + 'px' }
+                  })}
+                  style={{ width: '100%' }}
+                />
+                <div style={{ textAlign: 'center', color: '#9ca3af', fontSize: '12px' }}>
+                  {parseInt(selectedElement.style.fontSize) || 16}px
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* כפתורי פעולה */}
+        <div style={{ 
+          position: 'absolute', 
+          bottom: '20px', 
+          left: '20px', 
+          right: '20px' 
+        }}>
+          <button
+            onClick={exportToHTML}
+            style={{
+              width: '100%',
+              padding: '15px',
+              backgroundColor: '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              marginBottom: '10px'
+            }}
+          >
+            📥 ייצא לHTML
+          </button>
+          
+          <button
+            onClick={() => {
+              setElements([]);
+              setSelectedElement(null);
+              toast.success('העמוד נוקה בהצלחה!');
+            }}
+            style={{
+              width: '100%',
+              padding: '12px',
+              backgroundColor: '#374151',
+              color: '#f8fafc',
+              border: '1px solid #4b5563',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            🗑️ נקה עמוד
+          </button>
+        </div>
+      </div>
+
+      {/* אזור העבודה */}
+      <div style={{ flex: 1, position: 'relative', overflow: 'auto' }}>
+        <div
+          ref={canvasRef}
+          onDrop={handleDrop}
+          onDragOver={(e) => e.preventDefault()}
+          style={{
+            width: '100%',
+            minHeight: '100%',
+            backgroundColor: '#ffffff',
+            position: 'relative',
+            backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
+            backgroundSize: '20px 20px'
+          }}
+        >
+          {elements.map(element => (
+            <div
+              key={element.id}
+              onClick={() => handleElementClick(element)}
+              style={{
+                position: 'absolute',
+                left: element.x,
+                top: element.y,
+                width: element.width,
+                height: element.height,
+                cursor: 'pointer',
+                border: selectedElement?.id === element.id ? '2px solid #3b82f6' : '1px solid transparent',
+                ...element.style,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                userSelect: 'none'
+              }}
+            >
+              {element.content}
+              {selectedElement?.id === element.id && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-10px',
+                  right: '-10px',
+                  width: '20px',
+                  height: '20px',
+                  backgroundColor: '#3b82f6',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  color: 'white',
+                  cursor: 'move'
+                }}>
+                  ✋
+                </div>
+              )}
+            </div>
+          ))}
+          
+          {elements.length === 0 && (
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              textAlign: 'center',
+              color: '#6b7280',
+              fontSize: '18px'
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '20px' }}>🎨</div>
+              <div>גרור רכיבים מהסרגל הצדדי לכאן</div>
+              <div style={{ fontSize: '14px', marginTop: '10px' }}>
+                התחל לבנות את האתר שלך עכשיו!
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
