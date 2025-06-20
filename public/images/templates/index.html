@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebMaster Pro - גלריית תבניות אתרים מקצועיים</title>
+    <title>WebMaster Pro - גלריית תבניות מקצועיות</title>
     <style>
         * {
             margin: 0;
@@ -15,28 +15,87 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+        }
+
+        .navbar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 40px 20px;
         }
 
-        .header {
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-header {
             text-align: center;
             margin-bottom: 50px;
             color: white;
         }
 
-        .header h1 {
+        .main-header h1 {
             font-size: 3.5rem;
             font-weight: 800;
             margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .header p {
+        .main-header p {
             font-size: 1.2rem;
             opacity: 0.9;
             max-width: 600px;
@@ -48,6 +107,7 @@
             justify-content: center;
             gap: 40px;
             margin: 30px 0;
+            flex-wrap: wrap;
         }
 
         .stat {
@@ -56,6 +116,7 @@
             padding: 20px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
+            min-width: 120px;
         }
 
         .stat-number {
@@ -69,63 +130,38 @@
             color: rgba(255,255,255,0.8);
         }
 
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-            gap: 40px;
-            margin-bottom: 50px;
-        }
-
-        .category {
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .category h2 {
-            color: #2d3748;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .templates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
         }
 
         .template-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
             transition: all 0.3s ease;
             border: 2px solid transparent;
-            cursor: pointer;
         }
 
         .template-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
             border-color: #667eea;
         }
 
         .template-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 4rem;
+            margin-bottom: 20px;
             display: block;
         }
 
         .template-title {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #2d3748;
             margin-bottom: 10px;
@@ -133,21 +169,22 @@
 
         .template-subtitle {
             color: #718096;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
+            font-size: 1rem;
+            margin-bottom: 25px;
         }
 
         .template-buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -174,6 +211,50 @@
             background: #e2e8f0;
         }
 
+        .website-content {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .website-content h2 {
+            color: #2d3748;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .website-content h3 {
+            color: #4a5568;
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+        }
+
+        .website-content p {
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
         .footer {
             text-align: center;
             margin-top: 60px;
@@ -195,11 +276,11 @@
         }
 
         @media (max-width: 768px) {
-            .header h1 {
+            .main-header h1 {
                 font-size: 2.5rem;
             }
             
-            .categories {
+            .templates-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -207,417 +288,651 @@
                 flex-direction: column;
                 gap: 20px;
             }
-            
-            .templates-grid {
-                grid-template-columns: 1fr;
+
+            .navbar-content {
+                flex-direction: column;
+                gap: 15px;
             }
-        }
 
-        .template-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .modal-title {
-            font-size: 2rem;
-            color: #2d3748;
-            margin-bottom: 10px;
-        }
-
-        .modal-subtitle {
-            color: #718096;
-            font-size: 1.1rem;
-        }
-
-        .modal-pages {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .page-item {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .page-item:hover {
-            border-color: #667eea;
-            background: #edf2f7;
-        }
-
-        .page-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .page-name {
-            font-weight: 600;
-            color: #2d3748;
-            font-size: 0.9rem;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-            color: #718096;
-        }
-
-        .close-modal:hover {
-            color: #2d3748;
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">🚀 WebMaster Pro</div>
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="showPage('home')">דף הבית</button>
+                <button class="nav-btn" onclick="showPage('all-sites')">כל האתרים</button>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
-        <div class="header">
-            <h1>🚀 WebMaster Pro</h1>
-            <p>גלריית תבניות אתרים מקצועיים - 17 תבניות מוכנות לשימוש מיידי</p>
+        <!-- דף הבית -->
+        <div id="home" class="page active">
+            <div class="main-header">
+                <h1>🚀 WebMaster Pro</h1>
+                <p>גלריית תבניות אתרים מקצועיים - 17 תבניות מוכנות לשימוש מיידי</p>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number">17</div>
+                        <div class="stat-label">תבניות</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">7</div>
+                        <div class="stat-label">דפים בכל תבנית</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">קטגוריות</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="templates-grid">
+                <div class="template-card">
+                    <span class="template-icon">💪</span>
+                    <div class="template-title">מאמן כושר אישי</div>
+                    <div class="template-subtitle">אתר מקצועי למאמני כושר</div>
+                    <div class="template-buttons">
+                        <button class="btn btn-primary" onclick="showWebsite('fitness')">צפה באתר</button>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <span class="template-icon">👨‍🏫</span>
+                    <div class="template-title">מורה פרטי</div>
+                    <div class="template-subtitle">אתר למורים פרטיים</div>
+                    <div class="template-buttons">
+                        <button class="btn btn-primary" onclick="showWebsite('teacher')">צפה באתר</button>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <span class="template-icon">💇‍♀️</span>
+                    <div class="template-title">מספרה</div>
+                    <div class="template-subtitle">אתר לסלון יופי ומספרה</div>
+                    <div class="template-buttons">
+                        <button class="btn btn-primary" onclick="showWebsite('salon')">צפה באתר</button>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <span class="template-icon">⚖️</span>
+                    <div class="template-title">משרד עורכי דין</div>
+                    <div class="template-subtitle">אתר מקצועי למשרד עורכי דין</div>
+                    <div class="template-buttons">
+                        <button class="btn btn-primary" onclick="showWebsite('law')">צפה באתר</button>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <span class="template-icon">🧘‍♀️</span>
+                    <div class="template-title">סטודיו יוגה</div>
+                    <div class="template-subtitle">אתר לסטודיו יוגה ומדיטציה</div>
+                    <div class="template-buttons">
+                        <button class="btn btn-primary" onclick="showWebsite('yoga')">צפה באתר</button>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <span class="template-icon">🧠</span>
+                    <div class="template-title">פסיכולוגיה קלינית</div>
+                    <div class="template-subtitle">אתר לפסיכולוג קליני</div>
+                    <div class="template-buttons">
+                        <button class="btn btn-primary" onclick="showWebsite('psychology')">צפה באתר</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <h3>מוכן להתחיל?</h3>
+                <p>כל תבנית כוללת 7 דפים מקצועיים: דף הבית, אודות, שירותים, גלריה, מאמרים, המלצות וצור קשר.<br>
+                מוכן לשימוש מיידי ולהתאמה אישית.</p>
+            </div>
+        </div>
+
+        <!-- כל האתרים -->
+        <div id="all-sites" class="page">
+            <div class="main-header">
+                <h1>כל האתרים</h1>
+                <p>רשימה מלאה של כל 17 התבניות</p>
+            </div>
+
+            <div class="templates-grid">
+                <div class="template-card" onclick="showWebsite('fitness')">
+                    <span class="template-icon">💪</span>
+                    <div class="template-title">מאמן כושר אישי</div>
+                    <div class="template-subtitle">site1</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('teacher')">
+                    <span class="template-icon">👨‍🏫</span>
+                    <div class="template-title">מורה פרטי</div>
+                    <div class="template-subtitle">site2</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('salon')">
+                    <span class="template-icon">💇‍♀️</span>
+                    <div class="template-title">מספרה</div>
+                    <div class="template-subtitle">site3</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('payroll')">
+                    <span class="template-icon">💼</span>
+                    <div class="template-title">שירותי שכר</div>
+                    <div class="template-subtitle">site4</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('law')">
+                    <span class="template-icon">⚖️</span>
+                    <div class="template-title">משרד עורכי דין</div>
+                    <div class="template-subtitle">site5</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('yoga')">
+                    <span class="template-icon">🧘‍♀️</span>
+                    <div class="template-title">סטודיו יוגה</div>
+                    <div class="template-subtitle">site6</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('psychology')">
+                    <span class="template-icon">🧠</span>
+                    <div class="template-title">פסיכולוגיה קלינית</div>
+                    <div class="template-subtitle">site7</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('solar')">
+                    <span class="template-icon">☀️</span>
+                    <div class="template-title">יועץ סולארי</div>
+                    <div class="template-subtitle">site8</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('mental')">
+                    <span class="template-icon">🧘</span>
+                    <div class="template-title">מאמן מנטלי</div>
+                    <div class="template-subtitle">site9</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('nutrition')">
+                    <span class="template-icon">🥗</span>
+                    <div class="template-title">תזונאי קליני</div>
+                    <div class="template-subtitle">site10</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('cyber')">
+                    <span class="template-icon">🛡️</span>
+                    <div class="template-title">מומחה סייבר</div>
+                    <div class="template-subtitle">site11</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('biotech')">
+                    <span class="template-icon">🧬</span>
+                    <div class="template-title">ביוטכנולוגיה</div>
+                    <div class="template-subtitle">site12</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('science')">
+                    <span class="template-icon">🔬</span>
+                    <div class="template-title">מורה למדעים</div>
+                    <div class="template-subtitle">site13</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('interior')">
+                    <span class="template-icon">🏠</span>
+                    <div class="template-title">מעצב פנים</div>
+                    <div class="template-subtitle">site14</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('speech')">
+                    <span class="template-icon">🗣️</span>
+                    <div class="template-title">קלינאי תקשורת</div>
+                    <div class="template-subtitle">site15</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('accessibility')">
+                    <span class="template-icon">♿</span>
+                    <div class="template-title">יועץ נגישות</div>
+                    <div class="template-subtitle">site16</div>
+                </div>
+
+                <div class="template-card" onclick="showWebsite('webmaster')">
+                    <span class="template-icon">💻</span>
+                    <div class="template-title">WebMaster Pro</div>
+                    <div class="template-subtitle">site17</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- אתר מאמן כושר -->
+        <div id="fitness" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
             
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-number">17</div>
-                    <div class="stat-label">תבניות</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">דפים בכל תבנית</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number">6</div>
-                    <div class="stat-label">קטגוריות</div>
-                </div>
+            <div class="website-content">
+                <h2>💪 מאמן כושר אישי - אלון כהן</h2>
+                
+                <h3>דף הבית</h3>
+                <p><strong>כותרת ראשית:</strong> השג את המטרות שלך עם מאמן אישי מקצועי</p>
+                <p>ברוכים הבאים למרכז האימונים הפרטי של אלון כהן. כאן תמצאו מגוון רחב של שירותי אימון אישי, תוכניות תזונה מותאמות אישית ותמיכה מקצועית להשגת המטרות שלכם.</p>
+                
+                <h3>השירותים שלנו</h3>
+                <p>• אימונים אישיים מותאמים אישית<br>
+                • תוכניות תזונה מקצועיות<br>
+                • אימוני כוח ועמידות<br>
+                • ייעוץ בנושאי כושר ותזונה<br>
+                • מעקב והתאמה שוטפת של התוכנית</p>
+                
+                <h3>אודותי</h3>
+                <p>אלון כהן, מאמן כושר מוסמך עם ניסיון של מעל 10 שנים בתחום. בעל תעודות מקצועיות בהדרכת כושר, תזונה ספורטיבית ושיקום פציעות. מאמין בגישה אישית לכל מתאמן והתאמת התוכנית לצרכים האישיים.</p>
+                
+                <h3>המלצות</h3>
+                <p>"אלון שינה לי את החיים! תוך 6 חודשים הגעתי למשקל המטרה שלי ורכשתי הרגלי חיים בריאים לכל החיים." - שרה ל.</p>
+                <p>"מאמן מקצועי, סבלני ומעניק תמיכה מלאה. ממליץ בחום!" - דני מ.</p>
+                
+                <h3>צור קשר</h3>
+                <p><strong>טלפון:</strong> 050-1234567<br>
+                <strong>אימייל:</strong> alon@fitness-coach.co.il<br>
+                <strong>כתובת:</strong> רחוב הספורט 15, תל אביב<br>
+                <strong>שעות פעילות:</strong> ימים א-ו, 06:00-22:00</p>
             </div>
         </div>
 
-        <div class="categories">
-            <div class="category">
-                <h2>🏥 בריאות ורפואה</h2>
-                <div class="templates-grid">
-                    <div class="template-card" onclick="openModal('Clinical Psychologist', 'פסיכולוג קליני', '🧠')">
-                        <span class="template-icon">🧠</span>
-                        <div class="template-title">Clinical Psychologist</div>
-                        <div class="template-subtitle">פסיכולוג קליני</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Clinical Nutritionist', 'תזונאי קליני', '🥗')">
-                        <span class="template-icon">🥗</span>
-                        <div class="template-title">Clinical Nutritionist</div>
-                        <div class="template-subtitle">תזונאי קליני</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Speech Therapist', 'קלינאי תקשורת', '🗣️')">
-                        <span class="template-icon">🗣️</span>
-                        <div class="template-title">Speech Therapist</div>
-                        <div class="template-subtitle">קלינאי תקשורת</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Mental Coach', 'מאמן נפשי', '🧘')">
-                        <span class="template-icon">🧘</span>
-                        <div class="template-title">Mental Coach</div>
-                        <div class="template-subtitle">מאמן נפשי</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="category">
-                <h2>🎓 חינוך והוראה</h2>
-                <div class="templates-grid">
-                    <div class="template-card" onclick="openModal('Private Teacher', 'מורה פרטי', '👨‍🏫')">
-                        <span class="template-icon">👨‍🏫</span>
-                        <div class="template-title">Private Teacher</div>
-                        <div class="template-subtitle">מורה פרטי</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Science Tutor', 'מורה למדעים', '🔬')">
-                        <span class="template-icon">🔬</span>
-                        <div class="template-title">Science Tutor</div>
-                        <div class="template-subtitle">מורה למדעים</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="category">
-                <h2>💪 כושר ובריאות</h2>
-                <div class="templates-grid">
-                    <div class="template-card" onclick="openModal('Fitness Coach', 'מאמן כושר', '💪')">
-                        <span class="template-icon">💪</span>
-                        <div class="template-title">Fitness Coach</div>
-                        <div class="template-subtitle">מאמן כושר</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Yoga Studio', 'סטודיו יוגה', '🧘‍♀️')">
-                        <span class="template-icon">🧘‍♀️</span>
-                        <div class="template-title">Yoga Studio</div>
-                        <div class="template-subtitle">סטודיו יוגה</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="category">
-                <h2>🎨 עיצוב ויופי</h2>
-                <div class="templates-grid">
-                    <div class="template-card" onclick="openModal('Hair Salon', 'מספרה', '💇‍♀️')">
-                        <span class="template-icon">💇‍♀️</span>
-                        <div class="template-title">Hair Salon</div>
-                        <div class="template-subtitle">מספרה</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Interior Designer', 'מעצב פנים', '🏠')">
-                        <span class="template-icon">🏠</span>
-                        <div class="template-title">Interior Designer</div>
-                        <div class="template-subtitle">מעצב פנים</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="category">
-                <h2>⚖️ משפטים ועסקים</h2>
-                <div class="templates-grid">
-                    <div class="template-card" onclick="openModal('Law Firm', 'משרד עורכי דין', '⚖️')">
-                        <span class="template-icon">⚖️</span>
-                        <div class="template-title">Law Firm</div>
-                        <div class="template-subtitle">משרד עורכי דין</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Payroll Services', 'שירותי שכר', '💼')">
-                        <span class="template-icon">💼</span>
-                        <div class="template-title">Payroll Services</div>
-                        <div class="template-subtitle">שירותי שכר</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="category">
-                <h2>🔬 טכנולוגיה ויעוץ</h2>
-                <div class="templates-grid">
-                    <div class="template-card" onclick="openModal('Cyber Expert', 'מומחה סייבר', '🛡️')">
-                        <span class="template-icon">🛡️</span>
-                        <div class="template-title">Cyber Expert</div>
-                        <div class="template-subtitle">מומחה סייבר</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Biotechnology', 'ביוטכנולוגיה', '🧬')">
-                        <span class="template-icon">🧬</span>
-                        <div class="template-title">Biotechnology</div>
-                        <div class="template-subtitle">ביוטכנולוגיה</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Solar Consultant', 'יועץ אנרגיה סולארית', '☀️')">
-                        <span class="template-icon">☀️</span>
-                        <div class="template-title">Solar Consultant</div>
-                        <div class="template-subtitle">יועץ אנרגיה סולארית</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Accessibility Consultant', 'יועץ נגישות', '♿')">
-                        <span class="template-icon">♿</span>
-                        <div class="template-title">Accessibility Consultant</div>
-                        <div class="template-subtitle">יועץ נגישות</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                    
-                    <div class="template-card" onclick="openModal('Webmaster Pro Frontend', 'פלטפורמת פיתוח', '💻')">
-                        <span class="template-icon">💻</span>
-                        <div class="template-title">Webmaster Pro</div>
-                        <div class="template-subtitle">פלטפורמת פיתוח</div>
-                        <div class="template-buttons">
-                            <a href="#" class="btn btn-primary">תצוגה מקדימה</a>
-                            <a href="#" class="btn btn-secondary">השתמש בתבנית</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <h3>מוכן להתחיל?</h3>
-            <p>כל תבנית כוללת 7 דפים מקצועיים: דף הבית, אודות, שירותים, גלריה, מאמרים, המלצות וצור קשר.<br>
-            מוכן לשימוש מיידי ולהתאמה אישית.</p>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div id="templateModal" class="template-modal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal()">&times;</button>
-            <div class="modal-header">
-                <div class="modal-title" id="modalTitle"></div>
-                <div class="modal-subtitle" id="modalSubtitle"></div>
-            </div>
+        <!-- אתר מורה פרטי -->
+        <div id="teacher" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
             
-            <div class="modal-pages">
-                <div class="page-item" onclick="alert('דף הבית - בהמשך נוסיף קישור לתצוגה מקדימה')">
-                    <span class="page-icon">🏠</span>
-                    <div class="page-name">דף הבית</div>
-                </div>
-                <div class="page-item" onclick="alert('דף אודות - בהמשך נוסיף קישור לתצוגה מקדימה')">
-                    <span class="page-icon">👤</span>
-                    <div class="page-name">אודות</div>
-                </div>
-                <div class="page-item" onclick="alert('דף שירותים - בהמשך נוסיף קישור לתצוגה מקדימה')">
-                    <span class="page-icon">⚙️</span>
-                    <div class="page-name">שירותים</div>
-                </div>
-                <div class="page-item" onclick="alert('גלריה - בהמשך נוסיף קישור לתצוגה מקדימה')">
-                    <span class="page-icon">🖼️</span>
-                    <div class="page-name">גלריה</div>
-                </div>
-                <div class="page-item" onclick="alert('מאמרים - בהמשך נוסיף קישור לתצוגה מקדימה')">
-                    <span class="page-icon">📰</span>
-                    <div class="page-name">מאמרים</div>
-                </div>
-                <div class="page-item" onclick="alert('המלצות - בהמשך נוסיף קישור לתצוגה מקדימה')">
-                    <span class="page-icon">⭐</span>
-                    <div class="page-name">המלצות</div>
-                </div>
-                <div class="page-item" onclick="alert('צור קשר - בהמשך נוסיף קישור לתצוגה מקדימה')">
-                    <span class="page-icon">📞</span>
-                    <div class="page-name">צור קשר</div>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="#" class="btn btn-primary" style="margin-left: 10px;">השתמש בתבנית זו</a>
-                <a href="#" class="btn btn-secondary">הורד קבצים</a>
+            <div class="website-content">
+                <h2>👨‍🏫 מורה פרטי - מיכל רוזן</h2>
+                
+                <h3>דף הבית</h3>
+                <p><strong>כותרת ראשית:</strong> שיפור ציונים והצלחה לימודית עם מורה פרטי מנוסה</p>
+                <p>מיכל רוזן, מורה פרטי מנוסה עם ותק של 15 שנה בהוראה. מתמחה בהוראת מתמטיקה, אנגלית ומדעים לתלמידי יסודי וחטיבת ביניים. גישה אישית ומותאמת לכל תלמיד.</p>
+                
+                <h3>התמחויות</h3>
+                <p>• מתמטיקה - כל הרמות<br>
+                • אנגלית - שפה וספרות<br>
+                • מדעים - ביולוגיה, כימיה, פיזיקה<br>
+                • הכנה לבגרות<br>
+                • שיפור הרגלי למידה<br>
+                • תמיכה בקשיי למידה</p>
+                
+                <h3>השיטה שלי</h3>
+                <p>כל תלמיד הוא עולם ומלואו. אני מאמינה בהתאמה אישית של שיטות ההוראה לכל תלמיד. מטרתי היא לא רק לשפר ציונים, אלא להעניק כלים ללמידה עצמאית ולבניית ביטחון עצמי אקדמי.</p>
+                
+                <h3>המלצות הורים</h3>
+                <p>"מיכל הצליחה לשנות את הגישה של הבן שלי ללמידה. הציונים שלו השתפרו משמעותית והוא רכש אהבה ללמידה." - רחל כהן</p>
+                <p>"מורה מסורה ומקצועית שיודעת בדיוק איך להגיע לכל ילד. ממליצה בחום!" - אבי לוי</p>
+                
+                <h3>פרטי התקשרות</h3>
+                <p><strong>טלפון:</strong> 052-9876543<br>
+                <strong>אימייל:</strong> michal@private-teacher.co.il<br>
+                <strong>שעות זמינות:</strong> ימים א-ה, 15:00-20:00<br>
+                <strong>אזור שירות:</strong> גוש דן והמרכז</p>
             </div>
         </div>
+
+        <!-- בואו נוסיף עוד אתרים... -->
+        <div id="salon" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
+            
+            <div class="website-content">
+                <h2>💇‍♀️ סלון יופי "נועה" - מספרה ועיצוב שיער</h2>
+                
+                <h3>ברוכות הבאות לסלון "נועה"</h3>
+                <p>סלון יופי מוביל בעיר, המתמחה בעיצוב שיער מקצועי, צביעות מתקדמות וטיפולי שיער. אנו מציעים חוויית יופי מלאה במחירים הוגנים ושירות מקצועי ברמה הגבוהה ביותר.</p>
+                
+                <h3>השירותים שלנו</h3>
+                <p>• תספורות נשים וגברים<br>
+                • צביעות ובהירות מתקדמות<br>
+                • טיפולי קרטין וחלקה<br>
+                • עיצוב שיער לאירועים<br>
+                • תוספות שיער<br>
+                • טיפולי שיער מקצועיים</p>
+                
+                <h3>הצוות המקצועי שלנו</h3>
+                <p>נועה - מעצבת שיער ראשית עם ניסיון של 12 שנה. בעלת תעודות מקצועיות מהמכללות המובילות בישראל. מתמחה בצביעות מתקדמות ועיצוב שיער לכלות.</p>
+                <p>הצוות שלנו עובר השתלמויות קבועות ומתעדכן בטרנדים העדכניים ביותר בעולם היופי.</p>
+                
+                <h3>המלצות לקוחות</h3>
+                <p>"סלון מדהים! נועה היא אמנית אמיתית. יצאתי משם מרגישה כמו מלכה!" - דנה מ.</p>
+                <p>"שירות מקצועי ברמה הגבוהה ביותר. בהחלט אחזור!" - יעל ר.</p>
+                
+                <h3>פרטי הסלון</h3>
+                <p><strong>כתובת:</strong> רחוב דיזנגוף 125, תל אביב<br>
+                <strong>טלפון:</strong> 03-5555678<br>
+                <strong>וואטסאפ:</strong> 050-5555678<br>
+                <strong>שעות פתיחה:</strong><br>
+                א-ה: 09:00-19:00<br>
+                ו: 08:00-15:00<br>
+                ש: סגור</p>
+            </div>
+        </div>
+
+        <!-- שאר האתרים ממשיכים כך... -->
+        <div id="law" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
+            
+            <div class="website-content">
+                <h2>⚖️ משרד עורכי דין כהן ושותפים</h2>
+                
+                <h3>ייצוג משפטי מקצועי ואמין</h3>
+                <p>משרד עורכי דין כהן ושותפים מתמחה במגוון רחב של תחומי משפט. אנו מספקים ייצוג משפטי מקצועי ויעוץ חוקי ברמה הגבוהה ביותר, תוך הקפדה על שירות אישי וזמינות מלאה ללקוחותינו.</p>
+                
+                <h3>תחומי ההתמחות שלנו</h3>
+                <p>• דיני משפחה וגירושין<br>
+                • דיני נזיקין ותביעות ביטוח<br>
+                • דיני מקרקעין ונדל"ן<br>
+                • דיני עבודה<br>
+                • דיני חוזים ומסחר<br>
+                • ייצוג פלילי</p>
+                
+                <h3>הצוות המשפטי</h3>
+                <p>עו"ד יוסי כהן - שותף בכיר, מתמחה בדיני משפחה ונדל"ן. ניסיון של 20 שנה.<br>
+                עו"ד שרה לוי - שותפה, מתמחה בדיני עבודה ונזיקין. ניסיון של 15 שנה.<br>
+                עו"ד אמיר דוד - עו"ד זוטר, מתמחה בדיני מסחר וחוזים.</p>
+                
+                <h3>למה לבחור בנו?</h3>
+                <p>• ניסיון עשיר של מעל 20 שנה<br>
+                • יחס אישי ומקצועי לכל לקוח<br>
+                • זמינות גבוהה ותגובה מהירה<br>
+                • שקיפות מלאה בתהליכים ובעלויות<br>
+                • הצלחות משמעותיות בבתי המשפט</p>
+                
+                <h3>פרטי התקשרות</h3>
+                <p><strong>כתובת:</strong> רחוב הארבעה 10, תל אביב<br>
+                <strong>טלפון:</strong> 03-6666789<br>
+                <strong>פקס:</strong> 03-6666790<br>
+                <strong>אימייל:</strong> office@cohen-law.co.il<br>
+                <strong>שעות קבלת קהל:</strong> א-ה 09:00-17:00</p>
+            </div>
+        </div>
+
+        <!-- אתר יוגה -->
+        <div id="yoga" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
+            
+            <div class="website-content">
+                <h2>🧘‍♀️ סטודיו יוגה "נשימה בתנועה"</h2>
+                
+                <h3>ברוכים הבאים לעולם של שלווה ואיזון</h3>
+                <p>סטודיו "נשימה בתנועה" מציע חוויית יוגה מותאמת אישית לכל הרמות. אנו מאמינים שיוגה היא לא רק פעילות גופנית, אלא דרך חיים שמביאה איזון בין הגוף, הנפש והרוח.</p>
+                
+                <h3>סוגי השיעורים שלנו</h3>
+                <p>• האתה יוגה - לשיפור הגמישות והכוח<br>
+                • וויניאסה - זרימה דינמית עם נשימה<br>
+                • יוגה מתחילים - ליוגה ראשונה שלכם<br>
+                • יוגה טיפולית - לשיקום וריפוי<br>
+                • מדיטציה ונשימה - לשלווה נפשית<br>
+                • יוגה נשים - מותאם לצרכים נשיים</p>
+                
+                <h3>המדריכות שלנו</h3>
+                <p>מיכל אור - מדריכת יוגה מוסמכת עם ניסיון של 8 שנים. בעלת הסמכות בינלאומיות ומתמחה ביוגה טיפולית.</p>
+                <p>רונית כהן - מדריכת וויניאסא ומדיטציה. בעלת ניסיון של 6 שנים והכשרה במרכזי יוגה מובילים בהודו.</p>
+                
+                <h3>המלצות תלמידות</h3>
+                <p>"הסטודיו הזה שינה לי את החיים. מצאתי כאן שלווה ואיזון שחיפשתי שנים." - ליאת מ.</p>
+                <p>"מיכל היא מורה מדהימה שיודעת בדיוק איך להנחות ולעודד. אווירה מיוחדת!" - יעל ש.</p>
+                
+                <h3>מידע נוסף</h3>
+                <p><strong>כתובת:</strong> רחוב הצפון 8, רמת גן<br>
+                <strong>טלפון:</strong> 03-7777890<br>
+                <strong>אימייל:</strong> info@yoga-breath.co.il<br>
+                <strong>מחירים:</strong> שיעור בודד: 80₪ | מנוי חודשי: 300₪<br>
+                <strong>שעות פעילות:</strong> א-ו 07:00-21:00, ש 09:00-12:00</p>
+            </div>
+        </div>
+
+        <!-- אתר פסיכולוגיה -->
+        <div id="psychology" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
+            
+            <div class="website-content">
+                <h2>🧠 ד"ר נועה רוזן - פסיכולוגיה קלינית</h2>
+                
+                <h3>מרחב בטוח לצמיחה אישית</h3>
+                <p>ד"ר נועה רוזן היא פסיכולוגית קלינית מוסמכת עם ניסיון של 12 שנה בטיפול פסיכותרפויטי. המרפאה מציעה טיפול אישי למבוגרים, זוגות ובני נוער במגוון נושאים רגשיים ופסיכולוגיים.</p>
+                
+                <h3>תחומי הטיפול</h3>
+                <p>• חרדות ופחדים<br>
+                • דיכאון ומצבי רוח נמוכים<br>
+                • טיפול זוגי ומשפחתי<br>
+                • התמודדות עם אובדן וצער<br>
+                • הפרעות קשב וריכוז<br>
+                • ליווי במשברי חיים<br>
+                • פיתוח דימוי עצמי חיובי</p>
+                
+                <h3>הגישה הטיפולית</h3>
+                <p>אני מאמינה בגישה רגישה ומותאמת אישית לכל מטופל. הטיפול מתבסס על שילוב של גישות טיפוליות מוכחות: CBT, DBT וטיפול הומניסטי. המטרה היא ליצור מרחב בטוח לחקירה עצמית ולצמיחה אישית.</p>
+                
+                <h3>השכלה ומקצועיות</h3>
+                <p>• דוקטור לפסיכולוגיה קלינית - אוניברסיטת תל אביב<br>
+                • התמחות בטיפול CBT - המרכז למדעי ההתנהגות<br>
+                • הכשרה בטיפול זוגי - מכון אדלר<br>
+                • חברה בהתאחדות הפסיכולוגים בישראל</p>
+                
+                <h3>המלצות מטופלים</h3>
+                <p>"ד"ר רוזן עזרה לי להתמודד עם תקופה קשה בחיי. יחס חם ומקצועי ברמה הגבוהה ביותר." - ר.מ.</p>
+                <p>"טיפול שלם שעזר לי להבין את עצמי ולשפר את איכות החיים שלי." - י.כ.</p>
+                
+                <h3>קביעת תור</h3>
+                <p><strong>כתובת:</strong> רחוב ביאליק 12, תל אביב<br>
+                <strong>טלפון:</strong> 03-8888901<br>
+                <strong>אימייל:</strong> dr.noa@psychology-clinic.co.il<br>
+                <strong>שעות קבלה:</strong> א-ה 16:00-21:00<br>
+                <strong>ימי ו:</strong> 09:00-14:00 (לפי תיאום מראש)</p>
+            </div>
+        </div>
+
+        <!-- נוסיף עוד כמה אתרים חשובים -->
+        <div id="solar" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
+            
+            <div class="website-content">
+                <h2>☀️ יועץ אנרגיה סולארית - דן גרין</h2>
+                
+                <h3>פתרונות אנרגיה סולארית מקצועיים</h3>
+                <p>דן גרין, יועץ אנרגיה סולארית מוסמך עם ניסיון של 10 שנים בתחום. מתמחה בתכנון והתקנת מערכות סולאריות למגזר הפרטי והעסקי. פתרונות חכמים לחיסכון בחשמל והפיכת הבית שלכם לידידותי לסביבה.</p>
+                
+                <h3>השירותים שלנו</h3>
+                <p>• ייעוץ ותכנון מערכת סולארית<br>
+                • סקר אתר וחישוב כדאיות<br>
+                • התקנה מקצועית ואחריות מלאה<br>
+                • תחזוקה ושירות שוטף<br>
+                • ליווי בקבלת אישורים<br>
+                • מממון גמיש ופתרונות תשלום</p>
+                
+                <h3>למה אנרגיה סולארית?</h3>
+                <p>• חיסכון של עד 90% בחשבון החשמל<br>
+                • השקעה משתלמת תוך 4-6 שנים<br>
+                • הגדלת ערך הנכס<br>
+                • תרומה לסביבה וקיימות<br>
+                • עצמאות אנרגטית<br>
+                • אחריות של 25 שנה על הפאנלים</p>
+                
+                <h3>פרויקטים שביצענו</h3>
+                <p>מעל 500 מערכות הותקנו בהצלחה במגזר הפרטי והעסקי. חיסכון מצטבר של מיליוני שקלים ללקוחותינו וצמצום משמעותי בפליטת גזי חממה.</p>
+                
+                <h3>צור קשר לייעוץ חינם</h3>
+                <p><strong>טלפון:</strong> 050-1111234<br>
+                <strong>אימייל:</strong> dan@solar-green.co.il<br>
+                <strong>כתובת:</strong> האומן 5, פתח תקווה<br>
+                <strong>שעות פעילות:</strong> א-ו 08:00-18:00</p>
+            </div>
+        </div>
+
+        <!-- אתר מומחה סייבר -->
+        <div id="cyber" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
+            
+            <div class="website-content">
+                <h2>🛡️ אבטחת סייבר - רון שילד</h2>
+                
+                <h3>הגנה מתקדמת בעולם הדיגיטלי</h3>
+                <p>רון שילד, מומחה אבטחת סייבר עם ניסיון של 15 שנה בתחום. מתמחה באבטחת מידע, חדירות אתיות והגנה מפני איומי סייבר. שירותים מקצועיים לעסקים קטנים וגדולים כאחד.</p>
+                
+                <h3>השירותים שלנו</h3>
+                <p>• הערכת סיכוני סייבר ואבטחת מידע<br>
+                • בדיקות חדירה (Penetration Testing)<br>
+                • הטמעת מדיניות אבטחה<br>
+                • הדרכות עובדים ומודעות לסייבר<br>
+                • ניטור מתמיד ותגובה לאירועים<br>
+                • ייעוץ תקינה והתאמה לתקנות</p>
+                
+                <h3>למה אבטחת סייבר חשובה?</h3>
+                <p>• 95% מהעסקים חווים ניסיונות פריצה<br>
+                • הנזק הממוצע מפריצה: 4.5 מיליון דולר<br>
+                • חוק הגנת הפרטיות מחייב אבטחה<br>
+                • אובדן מוניטין ואמון לקוחות<br>
+                • השבתת מערכות וירידה ברווחיות</p>
+                
+                <h3>ההתמחויות שלי</h3>
+                <p>• CISSP - Certified Information Systems Security Professional<br>
+                • CEH - Certified Ethical Hacker<br>
+                • CISM - Certified Information Security Manager<br>
+                • ניסיון ביחידה טכנולוגית בצה"ל<br>
+                • מרצה באוניברסיטאות מובילות</p>
+                
+                <h3>בואו נדבר על האבטחה שלכם</h3>
+                <p><strong>טלפון:</strong> 052-3333456<br>
+                <strong>אימייל:</strong> ron@cyber-security.co.il<br>
+                <strong>כתובת:</strong> פארק הימית, הרצליה<br>
+                <strong>ייעוץ ראשוני:</strong> חינם וללא התחייבות</p>
+            </div>
+        </div>
+
+        <!-- נוסיף עוד אתרים... -->
+        <div id="payroll" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
+            
+            <div class="website-content">
+                <h2>💼 שירותי שכר - אופיר הנהלת חשבונות</h2>
+                
+                <h3>פתרונות שכר מקצועיים לעסק שלכם</h3>
+                <p>משרד אופיר מתמחה במתן שירותי שכר מקצועיים ומדויקים. אנו מספקים פתרונות מותאמים לעסקים בכל הגדלים - מעסקים משפחתיים ועד חברות גדולות. שירות אמין, מדויק ובהתאם לכל התקנות החדשות.</p>
+                
+                <h3>השירותים שאנו מעניקים</h3>
+                <p>• עיבוד שכר חודשי מלא<br>
+                • דיווחים למוסדות (מס הכנסה, ביטוח לאומי)<br>
+                • הכנת תלושי שכר דיגיטליים<br>
+                • ייעוץ בנושאי יחסי עבודה<br>
+                • ביקורת שכר ותיקון טעויות<br>
+                • הכנה לביקורות רשויות</p>
+                
+                <h3>למה לבחור בנו?</h3>
+                <p>• ניסיון של מעל 12 שנה בתחום<br>
+                • דיוק מוחלט ועמידה בלוחות זמנים<br>
+                • מערכות טכנולוגיות מתקדמות<br>
+                • שירות אישי ונגישות גבוהה<br>
+                • מחירים תחרותיים והוגנים<br>
+                • עדכון שוטף בחקיקה ותקנות</p>
+                
+                <h3>הצוות המקצועי</h3>
+                <p>אופיר לוי - רו"ח מוסמך, מתמחה בשכר וביטוח לאומי. ניסיון של 12 שנה.<br>
+                רינה כהן - מנהלת שכר בכירה. מומחית בתחום יחסי העבודה והדין הסוציאלי.</p>
+                
+                <h3>צרו קשר לייעוץ</h3>
+                <p><strong>טלפון:</strong> 03-4444567<br>
+                <strong>פקס:</strong> 03-4444568<br>
+                <strong>אימייל:</strong> office@payroll-services.co.il<br>
+                <strong>כתובת:</strong> דרך בגין 35, תל אביב<br>
+                <strong>שעות קבלה:</strong> א-ה 08:30-17:00</p>
+            </div>
+        </div>
+
+        <div id="nutrition" class="page">
+            <button class="back-btn" onclick="showPage('home')">← חזרה לדף הבית</button>
+            
+            <div class="website-content">
+                <h2>🥗 תזונה קלינית - לירון ברק</h2>
+                
+                <h3>תזונה מותאמת אישית לבריאות מיטבית</h3>
+                <p>לירון ברק, תזונאית קלינית מוסמכת עם התמחות בתזונה טיפולית ובחירה בריאה של אורח חיים. מתמחה בטיפול תזונתי במחלות כרוניות, ירידה במשקל בריאה ושיפור ביצועים ספורטיביים.</p>
+                
+                <h3>התמחויות טיפוליות</h3>
+                <p>• ירידה במשקל בריאה וקיימת<br>
+                • טיפול תזונתי בסוכרת<br>
+                • תזונה לבעיות עיכול<br>
+                • תזונה ספורטיבית<br>
+                • טיפול בהפרעות אכילה<br>
+                • תזונה בהיריון והנקה<br>
+                • תזונה לילדים ובני נוער</p>
+                
+                <h3>הגישה שלי</h3>
+                <p>אני מאמינה שתזונה נכונה היא לא דיאטה זמנית, אלא אורח חיים. הגישה שלי מתבססת על מחקרים מדעיים עדכניים, התאמה אישית לכל מטופל, ויצירת שינוי הדרגתי וקיים ללא תחושת מחסור.</p>
+                
+                <h3>מה מקבלים בטיפול?</h3>
+                <p>• בדיקת מצב תזונתי מקיפה<br>
+                • תוכנית תזונה אישית ומפורטת<br>
+                • מתכונים ורשימת קניות<br>
+                • מעקב ותמיכה שוטפת<br>
+                • התאמות לפי התקדמות<br>
+                • הדרכה וחינוך תזונתי</p>
+                
+                <h3>המלצות מטופלים</h3>
+                <p>"לירון שינתה לי את הגישה לאוכל. ירדתי 15 קילו תוך 6 חודשים ושמרתי על המשקל כבר שנה!" - מירב ל.</p>
+                <p>"הצלחתי לווסת את הסוכרת שלי רק עם שינויים תזונתיים. מומלץ בחום!" - אבי מ.</p>
+                
+                <h3>פרטי התקשרות</h3>
+                <p><strong>טלפון:</strong> 052-5555789<br>
+                <strong>אימייל:</strong> liron@clinical-nutrition.co.il<br>
+                <strong>כתובת:</strong> רחוב הרופאים 18, רמת גן<br>
+                <strong>שעות קבלה:</strong> א-ה 09:00-19:00<br>
+                <strong>יום ו:</strong> 09:00-13:00</p>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        function openModal(title, subtitle, icon) {
-            document.getElementById('modalTitle').innerHTML = icon + ' ' + title;
-            document.getElementById('modalSubtitle').textContent = subtitle;
-            document.getElementById('templateModal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            document.getElementById('templateModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // Close modal when clicking outside
-        document.getElementById('templateModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        // Add some interactivity
-        document.querySelectorAll('.template-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-8px) scale(1.02)';
+        function showPage(pageId) {
+            // הסתר את כל הדפים
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
             });
             
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
+            // הצג את הדף הנבחר
+            document.getElementById(pageId).classList.add('active');
+            
+            // עדכן את כפתורי הניווט
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // מצא ועדכן את הכפתור הפעיל
+            const activeBtn = Array.from(navBtns).find(btn => 
+                btn.textContent.includes(pageId === 'home' ? 'דף הבית' : 'כל האתרים')
+            );
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            // גלילה לראש הדף
+            window.scrollTo(0, 0);
+        }
+        
+        function showWebsite(websiteId) {
+            showPage(websiteId);
+        }
+
+        // אנימציות לכרטיסים
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.template-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
             });
         });
     </script>
