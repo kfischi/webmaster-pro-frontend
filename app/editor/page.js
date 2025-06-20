@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Brain, Layout, Sparkles, Video, Image, Type, Save, Download } from 'lucide-react';
 
 export default function AdvancedEditor() {
   const [selectedTab, setSelectedTab] = useState('ai');
@@ -11,24 +10,93 @@ export default function AdvancedEditor() {
 
   // רכיבים בסיסיים
   const components = [
-    { id: 'hero', name: 'Hero עם וידאו', icon: Video },
-    { id: 'gallery', name: 'גלריה', icon: Image },
-    { id: 'text', name: 'טקסט', icon: Type }
+    { id: 'hero', name: 'Hero עם וידאו', icon: '🎬' },
+    { id: 'gallery', name: 'גלריה', icon: '🖼️' },
+    { id: 'text', name: 'טקסט', icon: '📝' },
+    { id: 'button', name: 'כפתור', icon: '🔘' },
+    { id: 'form', name: 'טופס', icon: '📋' }
   ];
 
-  // תבניות
+  // תבניות מקצועיות
   const templates = [
-    { id: 'barber', name: 'מספרה יוקרתית', image: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=300' },
-    { id: 'gym', name: 'חדר כושר', image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300' },
-    { id: 'lawyer', name: 'עורך דין', image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=300' }
+    { 
+      id: 'barber', 
+      name: 'מספרה יוקרתית', 
+      image: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=300&h=200&fit=crop',
+      description: 'עיצוב מודרני עם וידאו ברקע'
+    },
+    { 
+      id: 'gym', 
+      name: 'חדר כושר מתקדם', 
+      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop',
+      description: 'אנימציות ומונים דינמיים'
+    },
+    { 
+      id: 'lawyer', 
+      name: 'משרד עורכי דין', 
+      image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=300&h=200&fit=crop',
+      description: 'עיצוב קלאסי ומקצועי'
+    },
+    { 
+      id: 'restaurant', 
+      name: 'מסעדה גורמה', 
+      image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=200&fit=crop',
+      description: 'תפריט דיגיטלי והזמנות'
+    },
+    { 
+      id: 'clinic', 
+      name: 'קליניקה רפואית', 
+      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=300&h=200&fit=crop',
+      description: 'הזמנת תורים ומידע רפואי'
+    },
+    { 
+      id: 'studio', 
+      name: 'סטודיו יוגה', 
+      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop',
+      description: 'שיעורים ומדיטציה'
+    }
+  ];
+
+  // AI דוגמאות
+  const aiExamples = [
+    "צור hero section למספרה יוקרתית עם וידאו ברקע",
+    "הוסף גלריית עבודות אינטראקטיבית",
+    "צור מקטע שירותים עם מחירון",
+    "הוסף טופס יצירת קשר מעוצב",
+    "צור מקטע המלצות לקוחות",
+    "הוסף מונים אנימטיים להישגים"
   ];
 
   // הוספת אלמנט
   const addElement = (type) => {
+    const elementTypes = {
+      hero: {
+        content: '🎬 Hero Section עם וידאו ברקע',
+        style: 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 60px 20px; border-radius: 12px;'
+      },
+      gallery: {
+        content: '🖼️ גלריית תמונות אינטראקטיבית',
+        style: 'background: #f8fafc; padding: 40px 20px; border-radius: 12px; border: 2px dashed #cbd5e1;'
+      },
+      text: {
+        content: '📝 כותרת או פסקת טקסט',
+        style: 'background: #ffffff; padding: 30px; border-radius: 8px; border-left: 4px solid #3b82f6;'
+      },
+      button: {
+        content: '🔘 כפתור פעולה',
+        style: 'background: #3b82f6; color: white; padding: 15px 30px; border-radius: 8px; text-align: center; cursor: pointer;'
+      },
+      form: {
+        content: '📋 טופס יצירת קשר',
+        style: 'background: #f1f5f9; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;'
+      }
+    };
+
     const newElement = {
       id: Date.now(),
       type: type,
-      content: `אלמנט ${type} חדש`
+      content: elementTypes[type]?.content || `אלמנט ${type}`,
+      style: elementTypes[type]?.style || 'padding: 20px; border: 1px solid #ccc; border-radius: 8px;'
     };
     setElements([...elements, newElement]);
   };
@@ -39,10 +107,31 @@ export default function AdvancedEditor() {
     
     setIsGenerating(true);
     setTimeout(() => {
+      const prompt = aiPrompt.toLowerCase();
+      let elementType = 'text';
+      let content = `🤖 תוכן שנוצר עם AI: ${aiPrompt}`;
+      let style = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 10px;';
+
+      // זיהוי סוג תוכן לפי הפרומפט
+      if (prompt.includes('hero') || prompt.includes('פתיחה')) {
+        elementType = 'hero';
+        content = '🎬 Hero Section מותאם אישית';
+        style = 'background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%); color: white; text-align: center; padding: 60px 20px; border-radius: 12px;';
+      } else if (prompt.includes('גלריה') || prompt.includes('תמונות')) {
+        elementType = 'gallery';
+        content = '🖼️ גלריה מותאמת אישית';
+        style = 'background: #f8fafc; padding: 40px 20px; border-radius: 12px; border: 2px dashed #10b981;';
+      } else if (prompt.includes('טופס') || prompt.includes('קשר')) {
+        elementType = 'form';
+        content = '📋 טופס מותאם אישית';
+        style = 'background: #f0fdf4; padding: 30px; border-radius: 12px; border: 1px solid #10b981;';
+      }
+
       const newElement = {
         id: Date.now(),
-        type: 'ai-generated',
-        content: `תוכן שנוצר עם AI: ${aiPrompt}`
+        type: elementType,
+        content: content,
+        style: style
       };
       setElements([...elements, newElement]);
       setIsGenerating(false);
@@ -52,86 +141,194 @@ export default function AdvancedEditor() {
 
   // טעינת תבנית
   const loadTemplate = (templateId) => {
-    const templateElements = [
-      { id: Date.now(), type: 'hero', content: `Hero Section - ${templateId}` },
-      { id: Date.now() + 1, type: 'gallery', content: `גלריה - ${templateId}` }
-    ];
-    setElements(templateElements);
+    const templateConfigs = {
+      barber: [
+        { type: 'hero', content: '💈 ברבר סטייל - המספרה המובילה', style: 'background: linear-gradient(135deg, #000000 0%, #434343 100%); color: #d4af37; text-align: center; padding: 80px 20px; border-radius: 12px;' },
+        { type: 'gallery', content: '✂️ גלריית העבודות שלנו', style: 'background: #1f2937; color: white; padding: 40px 20px; border-radius: 12px;' },
+        { type: 'form', content: '📅 הזמנת תור', style: 'background: #d4af37; color: black; padding: 30px; border-radius: 12px;' }
+      ],
+      gym: [
+        { type: 'hero', content: '🏋️ גיים צ\'יינג פיטנס', style: 'background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%); color: white; text-align: center; padding: 80px 20px; border-radius: 12px;' },
+        { type: 'text', content: '💪 500+ חברי מועדון מרוצים', style: 'background: #fff5f5; padding: 30px; border-radius: 8px; border-left: 4px solid #ff6b6b; text-align: center; font-weight: bold;' },
+        { type: 'form', content: '📋 הצטרפות למועדון', style: 'background: #fff5f5; padding: 30px; border-radius: 12px; border: 2px solid #ff6b6b;' }
+      ],
+      lawyer: [
+        { type: 'hero', content: '⚖️ משרד עורכי דין כהן ושות\'', style: 'background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); color: white; text-align: center; padding: 80px 20px; border-radius: 12px;' },
+        { type: 'text', content: '🏛️ מקצועיות, יושרה והצלחה משפטית', style: 'background: #eff6ff; padding: 30px; border-radius: 8px; border-left: 4px solid #1e40af;' },
+        { type: 'form', content: '📞 יעוץ משפטי ראשוני', style: 'background: #eff6ff; padding: 30px; border-radius: 12px; border: 1px solid #1e40af;' }
+      ],
+      restaurant: [
+        { type: 'hero', content: '🍽️ מסעדת גורמה פרימיום', style: 'background: linear-gradient(135deg, #92400e 0%, #78350f 100%); color: white; text-align: center; padding: 80px 20px; border-radius: 12px;' },
+        { type: 'gallery', content: '👨‍🍳 התפריט המיוחד שלנו', style: 'background: #fef3c7; padding: 40px 20px; border-radius: 12px;' },
+        { type: 'form', content: '🍷 הזמנת שולחן', style: 'background: #fef3c7; padding: 30px; border-radius: 12px; border: 2px solid #92400e;' }
+      ],
+      clinic: [
+        { type: 'hero', content: '🏥 קליניקה רפואית מתקדמת', style: 'background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; text-align: center; padding: 80px 20px; border-radius: 12px;' },
+        { type: 'text', content: '👨‍⚕️ צוות רפואי מקצועי ומנוסה', style: 'background: #f0fdf4; padding: 30px; border-radius: 8px; border-left: 4px solid #059669;' },
+        { type: 'form', content: '📋 הזמנת תור לרופא', style: 'background: #f0fdf4; padding: 30px; border-radius: 12px; border: 1px solid #059669;' }
+      ],
+      studio: [
+        { type: 'hero', content: '🧘 סטודיו יוגה ומדיטציה', style: 'background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: white; text-align: center; padding: 80px 20px; border-radius: 12px;' },
+        { type: 'text', content: '🌸 איזון גוף ונפש במקום אחד', style: 'background: #faf5ff; padding: 30px; border-radius: 8px; border-left: 4px solid #7c3aed;' },
+        { type: 'form', content: '🕉️ הרשמה לשיעור', style: 'background: #faf5ff; padding: 30px; border-radius: 12px; border: 1px solid #7c3aed;' }
+      ]
+    };
+
+    const templateElements = templateConfigs[templateId] || [];
+    const newElements = templateElements.map((template, index) => ({
+      id: Date.now() + index,
+      type: template.type,
+      content: template.content,
+      style: template.style
+    }));
+    
+    setElements(newElements);
   };
 
   return (
-    <div className="h-screen flex bg-slate-900 text-white">
+    <div style={{ 
+      height: '100vh', 
+      display: 'flex', 
+      background: '#0f172a', 
+      color: 'white',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
       {/* Left Panel */}
-      <div className="w-80 bg-slate-800 border-r border-slate-700">
+      <div style={{ 
+        width: '350px', 
+        background: '#1e293b', 
+        borderRight: '1px solid #334155',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         {/* Header */}
-        <div className="p-4 border-b border-slate-700">
-          <h1 className="text-xl font-bold flex items-center">
-            <Sparkles className="mr-2 text-blue-500" size={24} />
-            WebMaster Pro
+        <div style={{ 
+          padding: '20px', 
+          borderBottom: '1px solid #334155',
+          background: 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)'
+        }}>
+          <h1 style={{ 
+            margin: 0, 
+            fontSize: '24px', 
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            ⚡ WebMaster Pro
           </h1>
-          <p className="text-sm opacity-70">Advanced Builder</p>
+          <p style={{ margin: '5px 0 0 0', fontSize: '14px', opacity: 0.8 }}>
+            Advanced Builder
+          </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-slate-700">
+        <div style={{ 
+          display: 'flex', 
+          borderBottom: '1px solid #334155'
+        }}>
           {[
-            { id: 'ai', label: 'AI', icon: Brain },
-            { id: 'components', label: 'רכיבים', icon: Layout },
-            { id: 'templates', label: 'תבניות', icon: Sparkles }
+            { id: 'ai', label: 'AI', icon: '🧠' },
+            { id: 'components', label: 'רכיבים', icon: '🧩' },
+            { id: 'templates', label: 'תבניות', icon: '✨' }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setSelectedTab(tab.id)}
-              className={`flex-1 p-3 text-center border-b-2 transition-colors ${
-                selectedTab === tab.id 
-                  ? 'border-blue-500 text-blue-500' 
-                  : 'border-transparent opacity-70 hover:opacity-100'
-              }`}
+              style={{
+                flex: 1,
+                padding: '15px 10px',
+                background: selectedTab === tab.id ? '#3b82f6' : 'transparent',
+                color: selectedTab === tab.id ? 'white' : '#94a3b8',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '12px',
+                transition: 'all 0.3s ease'
+              }}
             >
-              <tab.icon size={18} className="mx-auto mb-1" />
-              <div className="text-xs">{tab.label}</div>
+              <div style={{ fontSize: '18px', marginBottom: '4px' }}>{tab.icon}</div>
+              {tab.label}
             </button>
           ))}
         </div>
 
         {/* Content */}
-        <div className="p-4 h-full overflow-y-auto">
+        <div style={{ 
+          padding: '20px', 
+          flex: 1, 
+          overflowY: 'auto'
+        }}>
           {/* AI Tab */}
           {selectedTab === 'ai' && (
-            <div className="space-y-4">
-              <div className="text-center">
-                <Brain className="mx-auto mb-2 text-purple-500" size={32} />
-                <h3 className="font-semibold">AI Assistant</h3>
-                <p className="text-sm opacity-70">יצירת תוכן עם AI</p>
+            <div>
+              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '10px' }}>🧠</div>
+                <h3 style={{ margin: 0, fontSize: '18px' }}>AI Assistant Pro</h3>
+                <p style={{ margin: '5px 0 0 0', fontSize: '14px', opacity: 0.7 }}>
+                  יצירת תוכן מתקדם עם בינה מלאכותית
+                </p>
               </div>
               
               <textarea
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="תאר מה אתה רוצה ליצור..."
-                className="w-full p-3 rounded-lg bg-slate-700 border border-slate-600 resize-none"
+                placeholder="תאר מה אתה רוצה ליצור... למשל: 'צור hero section למספרה יוקרתית'"
+                style={{
+                  width: '100%',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  background: '#334155',
+                  border: '1px solid #475569',
+                  color: 'white',
+                  resize: 'none',
+                  fontSize: '14px',
+                  minHeight: '100px'
+                }}
                 rows={4}
               />
               
               <button
                 onClick={generateWithAI}
                 disabled={isGenerating || !aiPrompt.trim()}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white p-3 rounded-lg hover:from-purple-600 hover:to-pink-700 disabled:opacity-50"
+                style={{
+                  width: '100%',
+                  marginTop: '15px',
+                  padding: '15px',
+                  background: isGenerating 
+                    ? '#6b7280' 
+                    : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: isGenerating ? 'not-allowed' : 'pointer',
+                  fontSize: '16px',
+                  fontWeight: 'bold'
+                }}
               >
-                {isGenerating ? 'יוצר...' : 'צור עם AI'}
+                {isGenerating ? '🔄 יוצר...' : '✨ צור עם AI'}
               </button>
 
-              <div className="space-y-2">
-                <h4 className="font-medium">דוגמאות:</h4>
-                {[
-                  "צור hero section למספרה",
-                  "הוסף גלריית תמונות",
-                  "צור מקטע שירותים"
-                ].map((example, idx) => (
+              <div style={{ marginTop: '20px' }}>
+                <h4 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>דוגמאות מהירות:</h4>
+                {aiExamples.map((example, idx) => (
                   <button
                     key={idx}
                     onClick={() => setAiPrompt(example)}
-                    className="w-full text-left p-2 rounded text-sm hover:bg-slate-700"
+                    style={{
+                      width: '100%',
+                      textAlign: 'right',
+                      padding: '10px',
+                      margin: '5px 0',
+                      background: 'transparent',
+                      color: '#cbd5e1',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      transition: 'background 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.background = '#334155'}
+                    onMouseLeave={(e) => e.target.style.background = 'transparent'}
                   >
                     • {example}
                   </button>
@@ -142,22 +339,43 @@ export default function AdvancedEditor() {
 
           {/* Components Tab */}
           {selectedTab === 'components' && (
-            <div className="space-y-4">
-              <div className="text-center">
-                <Layout className="mx-auto mb-2 text-green-500" size={32} />
-                <h3 className="font-semibold">רכיבים</h3>
-                <p className="text-sm opacity-70">גרור והשחרר</p>
+            <div>
+              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '10px' }}>🧩</div>
+                <h3 style={{ margin: 0, fontSize: '18px' }}>רכיבים מתקדמים</h3>
+                <p style={{ margin: '5px 0 0 0', fontSize: '14px', opacity: 0.7 }}>
+                  לחץ כדי להוסיף לקנבס
+                </p>
               </div>
               
-              <div className="grid grid-cols-1 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
                 {components.map(component => (
                   <button
                     key={component.id}
                     onClick={() => addElement(component.id)}
-                    className="p-4 rounded-lg border-2 border-dashed border-slate-600 hover:border-blue-500 hover:bg-slate-700 transition-all"
+                    style={{
+                      padding: '15px',
+                      borderRadius: '8px',
+                      background: 'linear-gradient(135deg, #374151 0%, #1f2937 100%)',
+                      border: '2px dashed #4b5563',
+                      color: 'white',
+                      cursor: 'pointer',
+                      textAlign: 'right',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.borderColor = '#3b82f6';
+                      e.target.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.borderColor = '#4b5563';
+                      e.target.style.background = 'linear-gradient(135deg, #374151 0%, #1f2937 100%)';
+                    }}
                   >
-                    <component.icon className="mx-auto mb-2" size={24} />
-                    <div className="text-sm font-medium">{component.name}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '20px' }}>{component.icon}</span>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{component.name}</span>
+                    </div>
                   </button>
                 ))}
               </div>
@@ -166,27 +384,53 @@ export default function AdvancedEditor() {
 
           {/* Templates Tab */}
           {selectedTab === 'templates' && (
-            <div className="space-y-4">
-              <div className="text-center">
-                <Sparkles className="mx-auto mb-2 text-yellow-500" size={32} />
-                <h3 className="font-semibold">תבניות</h3>
-                <p className="text-sm opacity-70">ברמה עולמית</p>
+            <div>
+              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '10px' }}>✨</div>
+                <h3 style={{ margin: 0, fontSize: '18px' }}>תבניות ברמה עולמית</h3>
+                <p style={{ margin: '5px 0 0 0', fontSize: '14px', opacity: 0.7 }}>
+                  {templates.length} תבניות מקצועיות
+                </p>
               </div>
               
-              <div className="space-y-3">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
                 {templates.map(template => (
                   <div
                     key={template.id}
                     onClick={() => loadTemplate(template.id)}
-                    className="rounded-lg border border-slate-600 overflow-hidden cursor-pointer hover:border-yellow-500 transition-all"
+                    style={{
+                      borderRadius: '12px',
+                      border: '1px solid #374151',
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      background: '#1f2937'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.borderColor = '#fbbf24';
+                      e.target.style.transform = 'scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.borderColor = '#374151';
+                      e.target.style.transform = 'scale(1)';
+                    }}
                   >
                     <img 
                       src={template.image} 
                       alt={template.name}
-                      className="w-full h-24 object-cover"
+                      style={{
+                        width: '100%',
+                        height: '120px',
+                        objectFit: 'cover'
+                      }}
                     />
-                    <div className="p-3">
-                      <h4 className="font-medium text-sm">{template.name}</h4>
+                    <div style={{ padding: '15px' }}>
+                      <h4 style={{ margin: '0 0 5px 0', fontSize: '14px', fontWeight: 'bold' }}>
+                        {template.name}
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '12px', opacity: 0.7 }}>
+                        {template.description}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -197,52 +441,240 @@ export default function AdvancedEditor() {
       </div>
 
       {/* Main Canvas */}
-      <div className="flex-1 flex flex-col">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Toolbar */}
-        <div className="bg-slate-800 border-b border-slate-700 p-3 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">העורך המתקדם</h2>
-          <div className="flex space-x-2">
-            <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center space-x-2">
-              <Save size={16} />
-              <span>שמור</span>
+        <div style={{
+          background: '#1e293b',
+          borderBottom: '1px solid #334155',
+          padding: '15px 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
+            🎨 העורך המתקדם
+          </h2>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button style={{
+              padding: '10px 20px',
+              background: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 'bold'
+            }}>
+              💾 שמור
             </button>
-            <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center space-x-2">
-              <Download size={16} />
-              <span>ייצא</span>
+            <button style={{
+              padding: '10px 20px',
+              background: '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 'bold'
+            }}>
+              📤 ייצא
             </button>
           </div>
         </div>
 
         {/* Canvas */}
-        <div className="flex-1 p-8 overflow-auto">
-          <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl min-h-96 p-8">
+        <div style={{
+          flex: 1,
+          padding: '30px',
+          overflowY: 'auto',
+          background: '#0f172a'
+        }}>
+          <div style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            background: 'white',
+            borderRadius: '12px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            minHeight: '600px',
+            padding: '40px',
+            color: '#1f2937'
+          }}>
             {elements.length === 0 ? (
-              <div className="text-center text-gray-500 py-20">
-                <Sparkles className="mx-auto mb-4" size={64} />
-                <h3 className="text-2xl font-bold mb-2">התחל ליצור</h3>
-                <p>השתמש ב-AI, רכיבים או תבניות כדי להתחיל</p>
+              <div style={{
+                textAlign: 'center',
+                color: '#6b7280',
+                padding: '100px 20px'
+              }}>
+                <div style={{ fontSize: '64px', marginBottom: '20px' }}>✨</div>
+                <h3 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '10px' }}>
+                  ברוכים הבאים לעורך המתקדם
+                </h3>
+                <p style={{ fontSize: '16px', marginBottom: '30px' }}>
+                  התחל לבנות אתרים ברמה עולמית עם AI, רכיבים מתקדמים ותבניות מקצועיות
+                </p>
+                <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => setSelectedTab('ai')}
+                    style={{
+                      padding: '15px 25px',
+                      background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    🧠 התחל עם AI
+                  </button>
+                  <button
+                    onClick={() => setSelectedTab('templates')}
+                    style={{
+                      padding: '15px 25px',
+                      background: 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    ✨ בחר תבנית
+                  </button>
+                  <button
+                    onClick={() => setSelectedTab('components')}
+                    style={{
+                      padding: '15px 25px',
+                      background: '#6b7280',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    🧩 הוסף רכיבים
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {elements.map(element => (
                   <div
                     key={element.id}
-                    className="p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 transition-colors cursor-pointer"
+                    style={{
+                      ...element.style ? {} : { padding: '20px', border: '2px dashed #d1d5db', borderRadius: '8px' },
+                      position: 'relative',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'scale(1.02)';
+                      e.target.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'scale(1)';
+                      e.target.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                    }}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-600">{element.type}</span>
-                      <button
-                        onClick={() => setElements(elements.filter(el => el.id !== element.id))}
-                        className="text-red-500 hover:text-red-700 text-sm"
-                      >
-                        מחק
-                      </button>
+                    <div style={element.style ? { cssText: element.style } : {}}>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '10px'
+                      }}>
+                        <span style={{
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          color: '#6b7280',
+                          background: '#f3f4f6',
+                          padding: '4px 8px',
+                          borderRadius: '4px'
+                        }}>
+                          {element.type}
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setElements(elements.filter(el => el.id !== element.id));
+                          }}
+                          style={{
+                            background: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            padding: '4px 8px',
+                            cursor: 'pointer',
+                            fontSize: '12px'
+                          }}
+                        >
+                          🗑️ מחק
+                        </button>
+                      </div>
+                      <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                        {element.content}
+                      </div>
                     </div>
-                    <div className="text-gray-800">{element.content}</div>
                   </div>
                 ))}
+                
+                {/* Summary Stats */}
+                <div style={{
+                  marginTop: '30px',
+                  padding: '20px',
+                  background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+                  borderRadius: '12px',
+                  border: '1px solid #0ea5e9'
+                }}>
+                  <h4 style={{ margin: '0 0 10px 0', color: '#0c4a6e' }}>
+                    📊 סטטיסטיקות הדף
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '15px' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#0ea5e9' }}>
+                        {elements.length}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>רכיבים</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#10b981' }}>
+                        {elements.filter(el => el.type === 'hero').length}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>Hero Sections</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#f59e0b' }}>
+                        {elements.filter(el => el.type === 'form').length}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>טפסים</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#8b5cf6' }}>
+                        {elements.filter(el => el.content.includes('AI')).length}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>AI Generated</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
+          </div>
+          
+          {/* Footer Info */}
+          <div style={{
+            textAlign: 'center',
+            marginTop: '20px',
+            color: '#64748b',
+            fontSize: '14px'
+          }}>
+            <p>🚀 WebMaster Pro - פלטפורמת בניית אתרים מתקדמת עם AI</p>
+            <p style={{ fontSize: '12px', opacity: 0.7 }}>
+              גרסה 2.0 | ללא תלויות חיצוניות | מוכן לפרודקשן
+            </p>
           </div>
         </div>
       </div>
