@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Search, Plus, Image, Video, Type, Square, Circle, Download, Upload, Undo, Redo, Play, Pause, Volume2, Settings, Layers, Eye, EyeOff, Lock, Unlock, Copy, Trash2, Move, RotateCw, Palette, Grid, Smartphone, Monitor, Tablet, Sun, Moon, Users, Save, FolderOpen, Share2, Code, Zap, Star, Filter, Tag, ChevronDown, ChevronRight, MessageSquare, Brain, Wand2, Sparkles, MousePointer2, PanelLeftOpen, PanelLeftClose, Layout, MoreHorizontal, Camera, Music, MapPin, Calendar, Mail, Phone, Globe, Heart } from 'lucide-react';
 
