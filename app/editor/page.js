@@ -760,4 +760,3 @@ const responsiveStyles = {
     marginBottom: '30px',
     lineHeight: 1.6
   },
-  hero
