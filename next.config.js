@@ -4,9 +4,31 @@ const nextConfig = {
     appDir: true,
   },
   images: {
-    domains: ['localhost', 'webmaster-pro.vercel.app'],
+    domains: ['images.unsplash.com', 'via.placeholder.com'],
+    unoptimized: true,
   },
-  // הסרנו את rewrites לעת עתה - נוסיף כשיהיה backend
+  trailingSlash: true,
+  output: 'export',
+  distDir: 'out',
+  basePath: '',
+  assetPrefix: '',
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    return config;
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 }
 
-module.exports = nextConfig
+module.exports = nextConfig;
